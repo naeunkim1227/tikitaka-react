@@ -29,7 +29,9 @@ module.exports = (env) => {
                 ]
             }, {
                 test: /\.(png|gif|jpe?g|svg|ico|tiff?|bmp)$/i,
-                type: 'asset/resource'
+                exclude: /node_modules/,
+                type: 'asset/resource',
+                use: ['file-loader?name=[name].[ext]']
             }]
         },
         devtool: "eval-source-map",
