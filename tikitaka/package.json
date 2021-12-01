@@ -38,6 +38,12 @@
     "react-devtools": "^4.21.0",
     "react-dom": "^17.0.2",
     "react-router": "^6.0.2",
-    "react-router-dom": "^6.0.2"
+    "react-router-dom": "^6.0.2",
+    "bootstrap": "^4.2.1",
+    "bootstrap-colorpicker": "^3.0.3",
+    "bootstrap-daterangepicker": "^3.0.3",
+    "bootstrap-social": "^5.1.1",
+    "bootstrap-tagsinput": "^0.7.1",
+    "bootstrap-timepicker": "^0.5.2"
   }
 }
