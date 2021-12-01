@@ -1,12 +1,18 @@
 import React from "react";
 
+import '../src/assets/css/style.css';
+import '../src/assets/css/components.css';
 
-const App = function(){
-    //const app = document.createElement('h1');
-    //app.textContent = 'Hellooo world3 ';
-    const app = React.createElement('h1', null, 'Hello React!');
 
-    return app;
+
+
+import Login from './App/user/Login';
+
+export default function(){
+    return(
+        <div id="App">
+            <Login />
+        </div>
+    
+    )
 }
-
-export {App}
