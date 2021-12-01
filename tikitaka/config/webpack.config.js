@@ -10,11 +10,11 @@ module.exports = (env) => {
         output: {
             path: path.resolve('public'),
             filename: 'bundle.js',
-            assetModuleFilename: 'assets/images/[hash][ext]'
+            assetModuleFilename: '../src/App/assets/images/[hash][ext]'
         },
         module: {
             rules: [{
-                test: /\.js$/i,
+                test: /\.js$|jsx/i,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 options: {
@@ -34,7 +34,7 @@ module.exports = (env) => {
         },
         devtool: "eval-source-map",
         devServer: {
-            host: '0.0.0.0',  //gcp
+            host: '0.0.0.0',  
             port: 9988,
             hot: false,
             compress: true,
