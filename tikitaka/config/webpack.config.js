@@ -10,7 +10,7 @@ module.exports = (env) => {
         output: {
             path: path.resolve('public'),
             filename: 'bundle.js',
-            assetModuleFilename: '../src/App/assets/images/[hash][ext]'
+            assetModuleFilename: '../src/app/assets/images/[hash][ext]'
         },
         module: {
             rules: [{
@@ -24,14 +24,14 @@ module.exports = (env) => {
                 test: /\.(sa|sc|c)ss$/i,
                 use:[
                     'style-loader', 
-                    {loader: 'css-loader', options: {modules: false} }, 
+                    {loader: 'css-loader', options: {modules: true} }, 
                     'sass-loader'
                 ]
             }, {
                 test: /\.(png|gif|jpe?g|svg|ico|tiff?|bmp)$/i,
                 exclude: /node_modules/,
                 type: 'asset/resource',
-                use: ['file-loader?name=[name].[ext]']
+
             }]
         },
         devtool: "eval-source-map",
