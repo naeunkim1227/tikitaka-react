@@ -9,6 +9,7 @@ ReactDOM.render(
   <BrowserRouter basename="/demo/purple-react-free/template/demo_1/preview">
     <App />
   </BrowserRouter>
+  
 , document.getElementById('root'));
 
 serviceWorker.unregister();
