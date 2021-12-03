@@ -44,7 +44,7 @@ export default function RegisterForm() {
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Stack spacing={3}>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
               fullWidth
               label="First name"
@@ -60,23 +60,31 @@ export default function RegisterForm() {
               error={Boolean(touched.lastName && errors.lastName)}
               helperText={touched.lastName && errors.lastName}
             />
-          </Stack>
-
+          </Stack> */}
           <TextField
             fullWidth
-            autoComplete="username"
-            type="email"
-            label="Email address"
-            {...getFieldProps('email')}
-            error={Boolean(touched.email && errors.email)}
-            helperText={touched.email && errors.email}
+            autoComplete="userNo"
+            type="text"
+            label="사원번호"
+            {...getFieldProps('userNo')}
+            error={Boolean(touched.userNo && errors.userNo)}
+            helperText={touched.userNo && errors.userNo}
+          />
+          <TextField
+            fullWidth
+            autoComplete="name"
+            type="test"
+            label="이름"
+            {...getFieldProps('name')}
+            error={Boolean(touched.name && errors.name)}
+            helperText={touched.name && errors.name}
           />
 
           <TextField
             fullWidth
-            autoComplete="current-password"
+            autoComplete="password"
             type={showPassword ? 'text' : 'password'}
-            label="Password"
+            label="비밀번호"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -90,6 +98,24 @@ export default function RegisterForm() {
             error={Boolean(touched.password && errors.password)}
             helperText={touched.password && errors.password}
           />
+          <TextField
+            fullWidth
+            autoComplete="email"
+            type="email"
+            label="이메일"
+            {...getFieldProps('email')}
+            error={Boolean(touched.email && errors.email)}
+            helperText={touched.email && errors.email}
+          />
+          <TextField
+            fullWidth
+            autoComplete="phone"
+            type="text"
+            label="전화번호"
+            {...getFieldProps('phone')}
+            error={Boolean(touched.phone && errors.phone)}
+            helperText={touched.phone && errors.phone}
+          />
 
           <LoadingButton
             fullWidth
@@ -98,7 +124,16 @@ export default function RegisterForm() {
             variant="contained"
             loading={isSubmitting}
           >
-            Register
+            회원가입
+          </LoadingButton>
+          <LoadingButton
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+            loading={isSubmitting}
+          >
+            로그인
           </LoadingButton>
         </Stack>
       </Form>
