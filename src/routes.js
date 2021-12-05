@@ -10,6 +10,7 @@ import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import NotFound from './pages/Page404';
+import Notice from './pages/Notice';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,14 @@ export default function Router() {
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/dashboard" /> },
         { path: '*', element: <Navigate to="/404" /> }
+      ]
+    },
+    {
+      path: '/main',
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/main/notice" replace /> },
+        { path: 'notice', element: <Notice /> }
       ]
     },
     { path: '*', element: <Navigate to="/404" replace /> }
