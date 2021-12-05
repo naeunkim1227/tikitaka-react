@@ -8,7 +8,7 @@ import AuthLayout from '../layouts/AuthLayout';
 // components
 import Page from '../components/Page';
 import { MHidden } from '../components/@material-extend';
-import { LoginForm } from '../components/authentication/login';
+import ResetPassFrom from '../components/authentication/login/ResetPassForm';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Login() {
+export default function ResetPassword() {
   return (
     <RootStyle title="Login | Minimal-UI">
       <AuthLayout>
@@ -42,7 +42,9 @@ export default function Login() {
 
       <Container maxWidth="sm">
         <ContentStyle>
-          <LoginForm />
+
+          <ResetPassFrom />
+          
           <MHidden width="smUp">
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
               Don’t have an account?&nbsp;

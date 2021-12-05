@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
@@ -11,11 +12,24 @@ import Blog from './pages/Blog';
 import User from './pages/User';
 import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
+import Main from './pages/Main';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import ImportantNotice from './pages/ImportantNotice';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   return useRoutes([
+    {
+      path: '/tikitaka',
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/main" replace /> },
+        { path: 'main', element: <Main /> },
+        { path: 'importantNotice', element: <ImportantNotice /> }
+      ]
+    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -30,15 +44,21 @@ export default function Router() {
     },
     {
       path: '/',
-      element: <LogoOnlyLayout />,
+      element: <DashboardLayout />,
       children: [
-        { path: 'login', element: <Login /> },
+        // { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/dashboard" /> },
-        { path: '*', element: <Navigate to="/404" /> }
+        { path: '*', element: <Navigate to="/404" /> },
+        { path: '/login', element: <Login /> },
+        { path: 'forgotPassword', element: <ForgotPassword />},
+        { path: 'resetPassword', element: <ResetPassword />}
       ]
     },
+    // { path: '/login', element: <Login /> },
     { path: '*', element: <Navigate to="/404" replace /> }
+    // { path: 'forgotPassword', element: <ForgotPassword />},
+    // { path: 'resetPassword', element: <ResetPassword />}
   ]);
 }
