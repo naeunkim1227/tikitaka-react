@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
@@ -9,8 +10,10 @@ import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
+import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
 import Notice from './pages/Notice';
+import ForgotPassword from './pages/ForgotPassword';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +26,7 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
+        { path: 'chat', element: <Chat /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
@@ -35,7 +39,8 @@ export default function Router() {
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/dashboard" /> },
-        { path: '*', element: <Navigate to="/404" /> }
+        { path: '*', element: <Navigate to="/404" /> },
+        { path: 'forgotPassword', element: <ForgotPassword />}
       ]
     },
     {

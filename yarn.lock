@@ -1459,6 +1459,11 @@
   "resolved" "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.0.tgz"
   "version" "1.2.0"
 
+"@iconify-icons/carbon@^1.1.7":
+  "integrity" "sha512-4O7O9tVuAhvSVfTYXtdBy6VWD6Gz47V/ychGOwF7BxRwX33Ao7uNfTpP97DKKdQNBvIbO22R+On8XS1Cz10/SA=="
+  "resolved" "https://registry.npmjs.org/@iconify-icons/carbon/-/carbon-1.1.7.tgz"
+  "version" "1.1.7"
+
 "@iconify/icons-ant-design@^1.1.0":
   "integrity" "sha512-sE4NKXMfN9arTFmfvt4zARoS+hjhd8P0z5osjWYxVkQPCri1RYpF+NRa9MsDh3ScqAcSU9wfUeQ3X4Gf8GrcNQ=="
   "resolved" "https://registry.npmjs.org/@iconify/icons-ant-design/-/icons-ant-design-1.1.0.tgz"
