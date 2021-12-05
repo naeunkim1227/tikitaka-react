@@ -37,6 +37,81 @@ const TIMELINES = [
     type: 'order4'
   },
   {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
+    title: 'New order placed #XF-2356',
+    time: faker.date.past(),
+    type: 'order4'
+  },
+  {
     title: 'New order placed #XF-2346',
     time: faker.date.past(),
     type: 'order5'
