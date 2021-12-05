@@ -16,7 +16,7 @@ import account from '../../_mocks_/account';
 
 // ----------------------------------------------------------------------
 
-const DRAWER_WIDTH = 700;
+const DRAWER_WIDTH = 450;
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {

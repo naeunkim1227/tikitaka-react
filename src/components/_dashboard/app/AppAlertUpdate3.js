@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { formatDistance } from 'date-fns';
 import { Link as RouterLink } from 'react-router-dom';
 import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
+import Pagination from '@mui/material/Pagination';
 // material
 import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from '@mui/material';
 // utils
@@ -34,12 +35,6 @@ function NewsItem({ news }) {
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
-      <Box
-        component="img"
-        alt={title}
-        src={image}
-        sx={{ width: 48, height: 48, borderRadius: 1.5 }}
-      />
       <Box sx={{ minWidth: 240 }}>
         <Link to="#" color="inherit" underline="hover" component={RouterLink}>
           <Typography variant="subtitle2" noWrap>
@@ -69,20 +64,8 @@ export default function AppNewsUpdate() {
           ))}
         </Stack>
       </Scrollbar>
-
       <Divider />
-
-      <Box sx={{ p: 2, textAlign: 'right' }}>
-        <Button
-          to="/tikitaka/ImportantNotice"
-          size="small"
-          color="inherit"
-          component={RouterLink}
-          endIcon={<Icon icon={arrowIosForwardFill} />}
-        >
-          View all
-        </Button>
-      </Box>
+      <Pagination count={10} color="primary" />
     </Card>
   );
 }
