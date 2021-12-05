@@ -20,6 +20,7 @@ import {
   TableContainer,
   TablePagination
 } from '@mui/material';
+
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -34,8 +35,8 @@ import USERLIST from '../_mocks_/user';
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  // { id: 'role', label: 'Role', alignRight: false },
+  // { id: 'isVerified', label: 'Verified', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' }
 ];
@@ -198,8 +199,8 @@ export default function User() {
                             </Stack>
                           </TableCell>
                           <TableCell align="left">{company}</TableCell>
-                          <TableCell align="left">{role}</TableCell>
-                          <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                          {/* <TableCell align="left">{role}</TableCell> */}
+                          {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
                           <TableCell align="left">
                             <Label
                               variant="ghost"

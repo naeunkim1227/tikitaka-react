@@ -10,6 +10,7 @@ import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
+import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
 import ForgotPassword from './pages/ForgotPassword';
 
@@ -24,6 +25,7 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
+        { path: 'chat', element: <Chat /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
