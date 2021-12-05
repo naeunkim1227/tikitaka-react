@@ -13,6 +13,7 @@ import User from './pages/User';
 import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 // ----------------------------------------------------------------------
 
@@ -32,16 +33,21 @@ export default function Router() {
     },
     {
       path: '/',
-      element: <LogoOnlyLayout />,
+      element: <DashboardLayout />,
       children: [
-        { path: 'login', element: <Login /> },
+        // { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/dashboard" /> },
         { path: '*', element: <Navigate to="/404" /> },
-        { path: 'forgotPassword', element: <ForgotPassword />}
+        { path: '/login', element: <Login /> },
+        { path: 'forgotPassword', element: <ForgotPassword />},
+        { path: 'resetPassword', element: <ResetPassword />}
       ]
     },
+    // { path: '/login', element: <Login /> },
     { path: '*', element: <Navigate to="/404" replace /> }
+    // { path: 'forgotPassword', element: <ForgotPassword />},
+    // { path: 'resetPassword', element: <ResetPassword />}
   ]);
 }

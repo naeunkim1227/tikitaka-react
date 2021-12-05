@@ -61,7 +61,7 @@ export default function ForgotPassword() {
             fullWidth
             autoComplete="userNo"
             type="text"
-            label="사원번호"
+            label="사원번호 또는 거래처번호"
             {...getFieldProps('userNo')}
             error={Boolean(touched.userNo && errors.userNo)}
             helperText={touched.userNo && errors.userNo}
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
             fullWidth
             autoComplete="username"
             type="email"
-            label="Email address"
+            label="이메일"
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
@@ -92,7 +92,7 @@ export default function ForgotPassword() {
           variant="contained"
           loading={isSubmitting}
         >
-          Find
+          비밀번호 찾기
         </LoadingButton>
       </Form>
     </FormikProvider>

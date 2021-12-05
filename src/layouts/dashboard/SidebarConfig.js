@@ -46,11 +46,6 @@ const sidebarConfig = [
     title: 'Not found',
     path: '/404',
     icon: getIcon(alertTriangleFill)
-  },
-  {
-    title: 'ForgotPassword',
-    path: '/forgotPassword',
-    icon: getIcon(lockFill)
   }
 ];
 
