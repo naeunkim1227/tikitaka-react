@@ -12,13 +12,24 @@ import Blog from './pages/Blog';
 import User from './pages/User';
 import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
+import Main from './pages/Main';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import ImportantNotice from './pages/ImportantNotice';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   return useRoutes([
+    {
+      path: '/tikitaka',
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/main" replace /> },
+        { path: 'main', element: <Main /> },
+        { path: 'importantNotice', element: <ImportantNotice /> }
+      ]
+    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
