@@ -49,6 +49,9 @@ export default function LoginForm() {
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Stack spacing={3}>
+
+          메일로 전송된 비밀번호 재설정 링크를 확인해 주세요
+
           <TextField
             fullWidth
             autoComplete="username"
@@ -63,7 +66,26 @@ export default function LoginForm() {
             fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
-            label="비밀번호"
+            label="새 비밀번호"
+            {...getFieldProps('password')}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleShowPassword} edge="end">
+                    <Icon icon={showPassword ? eyeFill : eyeOffFill} />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            error={Boolean(touched.password && errors.password)}
+            helperText={touched.password && errors.password}
+          />
+
+          <TextField
+            fullWidth
+            autoComplete="current-password"
+            type={showPassword ? 'text' : 'password'}
+            label="비밀번호 확인"
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -79,11 +101,7 @@ export default function LoginForm() {
           />
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <Link component={RouterLink} variant="subtitle2" to="/forgotPassword">
-            비밀번호를 잊으셨나요?
-          </Link>
-        </Stack>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }} />
 
         <LoadingButton
           fullWidth
@@ -92,7 +110,7 @@ export default function LoginForm() {
           variant="contained"
           loading={isSubmitting}
         >
-          로그인
+          비밀번호 재설정
         </LoadingButton>
       </Form>
     </FormikProvider>
