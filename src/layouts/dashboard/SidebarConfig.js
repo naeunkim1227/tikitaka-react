@@ -22,16 +22,16 @@ const sidebarConfig = [
     path: '/dashboard/user',
     icon: getIcon(peopleFill)
   },
-  {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: getIcon(shoppingBagFill)
-  },
-  {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: getIcon(fileTextFill)
-  },
+  // {
+  //   title: 'product',
+  //   path: '/dashboard/products',
+  //   icon: getIcon(shoppingBagFill)
+  // },
+  // {
+  //   title: 'blog',
+  //   path: '/dashboard/blog',
+  //   icon: getIcon(fileTextFill)
+  // },
   {
     title: 'login',
     path: '/login',
@@ -46,6 +46,11 @@ const sidebarConfig = [
     title: 'Not found',
     path: '/404',
     icon: getIcon(alertTriangleFill)
+  },
+  {
+    title: 'ForgotPassword',
+    path: '/forgotPassword',
+    icon: getIcon(lockFill)
   }
 ];
 

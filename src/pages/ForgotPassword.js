@@ -2,13 +2,15 @@
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
-import { Link, Container, Typography } from '@mui/material';
+import { Card, Stack, Link, Container, Typography } from '@mui/material';
 // layouts
 import AuthLayout from '../layouts/AuthLayout';
 // components
 import Page from '../components/Page';
 import { MHidden } from '../components/@material-extend';
-import { LoginForm } from '../components/authentication/login';
+
+import AuthSocial from '../components/authentication/AuthSocial';
+import ForgotPassForm from '../components/authentication/login/ForgotPassForm';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +32,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Login() {
+export default function ForgotPassword() {
   return (
     <RootStyle title="Login | Minimal-UI">
       <AuthLayout>
@@ -42,7 +44,7 @@ export default function Login() {
 
       <Container maxWidth="sm">
         <ContentStyle>
-          <LoginForm />
+          <ForgotPassForm />
           <MHidden width="smUp">
             <Typography variant="body2" align="center" sx={{ mt: 3 }}>
               Don’t have an account?&nbsp;
