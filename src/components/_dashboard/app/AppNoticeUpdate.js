@@ -1,90 +1,98 @@
 /* eslint-disable */
-import faker from 'faker';
-import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
-import { formatDistance } from 'date-fns';
-import { Link as RouterLink } from 'react-router-dom';
-import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
-// material
-import Pagination from '@mui/material/Pagination';
-import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from '@mui/material';
-// utils
-import { mockImgCover } from '../../../utils/mockImages';
-//
-import Scrollbar from '../../Scrollbar';
+import * as React from 'react';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Card from '@mui/material/Card';
+import { Stack } from '@mui/material';
+import CardHeader from '@mui/material/CardHeader';
 
-// ----------------------------------------------------------------------
 
-const NEWS = [...Array(5)].map((_, index) => {
-  const setIndex = index + 1;
-  return {
-    title: faker.name.title(),
-    description: faker.lorem.paragraphs(),
-    image: mockImgCover(setIndex),
-    postedAt: faker.date.soon()
-  };
-});
+const columns = [
+  { id: 'content', label: '', minWidth: 150 },
+];
 
-// ----------------------------------------------------------------------
-
-NewsItem.propTypes = {
-  news: PropTypes.object.isRequired
-};
-
-function NewsItem({ news }) {
-  const { image, title, description, postedAt } = news;
-
-  return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <Box
-        component="img"
-        alt={title}
-        src={image}
-        sx={{ width: 48, height: 48, borderRadius: 1.5 }}
-      />
-      <Box sx={{ minWidth: 240 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
-            {title}
-          </Typography>
-        </Link>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-          {description}
-        </Typography>
-      </Box>
-      <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-        {formatDistance(postedAt, new Date())}
-      </Typography>
-    </Stack>
-  );
+function createData(content, size) {
+  const density = content / size;
+  return { content, size };
 }
 
-export default function AppNewsUpdate() {
+const rows = [
+  createData('테스트중입니다'),
+  createData('테스트중입니다'),
+  createData('테스트중입니다'),
+  createData('테스트중입니다'),
+  createData('테스트중입니다'),
+  createData('테스트중입니다'),
+  createData('테스트중입니다')
+];
+
+export default function StickyHeadTable() {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Card>
       <CardHeader title="중요 공지" />
-
-      <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-          {NEWS.map((news) => (
-            <NewsItem key={news.title} news={news} />
-          ))}
-    </Stack>
-      </Scrollbar>
-
-      <Divider />
-
-      <Box sx={{ p: 2, textAlign: 'right' }}>
-        <Button
-          to="#"
-          size="small"
-          color="inherit"
-          component={RouterLink}
-          endIcon={<Icon icon={arrowIosForwardFill} />}
-        >
-          View all
-        </Button>
-      </Box>
+    <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+              return (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  {columns.map((column) => {
+                    const value = row[column.id];
+                    return (
+                      <TableCell key={column.id} align={column.align}>
+                        {column.format && typeof value === 'number' ? column.format(value) : value}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 15]}
+        component="div"
+        count={rows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      </Stack>
     </Card>
+    
   );
 }

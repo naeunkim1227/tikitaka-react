@@ -12,13 +12,23 @@ import Blog from './pages/Blog';
 import User from './pages/User';
 import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
-import Notice from './pages/Notice';
+import Main from './pages/Main';
 import ForgotPassword from './pages/ForgotPassword';
+import ImportantNotice from './pages/ImportantNotice';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   return useRoutes([
+    {
+      path: '/tikitaka',
+      element: <DashboardLayout />,
+      children: [
+        { element: <Navigate to="/main" replace /> },
+        { path: 'main', element: <Main /> },
+        { path: 'importantNotice', element: <ImportantNotice /> }
+      ]
+    },
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -41,14 +51,6 @@ export default function Router() {
         { path: '/', element: <Navigate to="/dashboard" /> },
         { path: '*', element: <Navigate to="/404" /> },
         { path: 'forgotPassword', element: <ForgotPassword />}
-      ]
-    },
-    {
-      path: '/main',
-      element: <DashboardLayout />,
-      children: [
-        { element: <Navigate to="/main/notice" replace /> },
-        { path: 'notice', element: <Notice /> }
       ]
     },
     { path: '*', element: <Navigate to="/404" replace /> }

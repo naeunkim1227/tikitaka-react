@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
@@ -21,6 +20,7 @@ import {
   TableContainer,
   TablePagination
 } from '@mui/material';
+
 // components
 import Page from '../components/Page';
 import Label from '../components/Label';
@@ -34,8 +34,8 @@ import USERLIST from '../_mocks_/user';
 
 const TABLE_HEAD = [
   { id: 'name', label: '작성자', alignRight: false },
-  { id: 'company', label: '공지 내용', alignRight: false },
-  { id: 'time', label: '작성시각', alignRight: false },
+  { id: 'company', label: '내용', alignRight: false },
+  { id: 'status', label: '작성시간', alignRight: false },
   { id: '' }
 ];
 
@@ -133,6 +133,12 @@ export default function User() {
   return (
     <Page title="User | Minimal-UI">
       <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h5" gutterBottom>
+            중요 알림을 확인하세요.
+          </Typography>
+        </Stack>
+
         <Card>
           <UserListToolbar
             numSelected={selected.length}
@@ -156,7 +162,7 @@ export default function User() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, company, avatarUrl } = row;
+                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
@@ -183,7 +189,20 @@ export default function User() {
                             </Stack>
                           </TableCell>
                           <TableCell align="left">{company}</TableCell>
-                          <TableCell align="left">11:25</TableCell>
+                          {/* <TableCell align="left">{role}</TableCell> */}
+                          {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+                          <TableCell align="left">
+                            <Label
+                              variant="ghost"
+                              color={(status === 'banned' && 'error') || 'success'}
+                            >
+                              {sentenceCase(status)}
+                            </Label>
+                          </TableCell>
+
+                          <TableCell align="right">
+                            <UserMoreMenu />
+                          </TableCell>
                         </TableRow>
                       );
                     })}
