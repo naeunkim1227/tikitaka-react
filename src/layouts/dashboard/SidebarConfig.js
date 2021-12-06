@@ -22,6 +22,11 @@ const sidebarConfig = [
     path: '/dashboard/user',
     icon: getIcon(peopleFill)
   },
+  {
+    title: 'chat',
+    path: '/dashboard/chat',
+    icon: getIcon(peopleFill)
+  },
   // {
   //   title: 'product',
   //   path: '/dashboard/products',

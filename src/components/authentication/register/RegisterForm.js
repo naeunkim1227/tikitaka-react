@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
@@ -8,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+import data from '@iconify/icons-eva/menu-2-fill';
 
 // ----------------------------------------------------------------------
 
@@ -27,45 +31,43 @@ export default function RegisterForm() {
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
+      userNo: '',
+      name: '',
+      password: '',
       email: '',
-      password: ''
+      phone: ''
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: async() => {
+      const data = await axios.post('/TT/join', initialValues)
+      .then(function(response){
+        console.log(response);
+        // console.log(initialValues.userNo + ":",
+        //           initialValues.name + ":",
+        //           initialValues.password + ":",
+        //           initialValues.email + ":",
+        //           initialValues.phone + ":",);
+      })
+      
+      //navigate('/dashboard', { replace: true });
     }
-  });
+
+  }, []);
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+
 
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Stack spacing={3}>
-          {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField
-              fullWidth
-              label="First name"
-              {...getFieldProps('firstName')}
-              error={Boolean(touched.firstName && errors.firstName)}
-              helperText={touched.firstName && errors.firstName}
-            />
-
-            <TextField
-              fullWidth
-              label="Last name"
-              {...getFieldProps('lastName')}
-              error={Boolean(touched.lastName && errors.lastName)}
-              helperText={touched.lastName && errors.lastName}
-            />
-          </Stack> */}
+          
           <TextField
             fullWidth
             autoComplete="userNo"
             type="text"
             label="사원번호"
+            value={formik.userNo}
             {...getFieldProps('userNo')}
             error={Boolean(touched.userNo && errors.userNo)}
             helperText={touched.userNo && errors.userNo}
@@ -75,6 +77,7 @@ export default function RegisterForm() {
             autoComplete="name"
             type="test"
             label="이름"
+            value={formik.name}
             {...getFieldProps('name')}
             error={Boolean(touched.name && errors.name)}
             helperText={touched.name && errors.name}
@@ -85,6 +88,7 @@ export default function RegisterForm() {
             autoComplete="password"
             type={showPassword ? 'text' : 'password'}
             label="비밀번호"
+            value={formik.password}
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -103,6 +107,7 @@ export default function RegisterForm() {
             autoComplete="email"
             type="email"
             label="이메일"
+            value={formik.email}
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
@@ -112,6 +117,7 @@ export default function RegisterForm() {
             autoComplete="phone"
             type="text"
             label="전화번호"
+            value={formik.phone}
             {...getFieldProps('phone')}
             error={Boolean(touched.phone && errors.phone)}
             helperText={touched.phone && errors.phone}
