@@ -12,7 +12,9 @@
     "lint": "eslint --ext .js,.jsx ./src",
     "lint:fix": "eslint --fix --ext .js,.jsx ./src"
   },
+
   "proxy": "http://localhost:8080",
+
   "eslintConfig": {
     "extends": [
       "react-app",

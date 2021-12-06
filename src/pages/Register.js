@@ -67,7 +67,7 @@ export default function Register() {
       <AuthLayout>
         Already have an account? &nbsp;
         <Link underline="none" variant="subtitle2" component={RouterLink} to="/login">
-          Login {message}
+          Login 
         </Link>
       </AuthLayout>
 
@@ -102,7 +102,7 @@ export default function Register() {
             </Link>
             &nbsp;and&nbsp;
             <Link underline="always" sx={{ color: 'text.primary' }}>
-              Privacy Policy
+              Privacy Policy {message}
             </Link>
             .
           </Typography>

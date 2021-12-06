@@ -1,5 +1,3 @@
-/* eslint-disable */ 
-
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
@@ -14,13 +12,6 @@ import { LoadingButton } from '@mui/lab';
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
-  const[totaldata, setTotalData] = useState({
-    userNo: '',
-    name: '',
-    password: '',
-    email: '',
-    phone: ''
-  });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,39 +26,17 @@ export default function RegisterForm() {
   });
 
   const formik = useFormik({
-    //설정할 초기값
     initialValues: {
-      userNo: '',
-      name: '',
-      password: '',
+      firstName: '',
+      lastName: '',
       email: '',
-      phone: ''
+      password: ''
     },
-    //validation 처리
     validationSchema: RegisterSchema,
-    //제출시 처리할 함수. 인자는 없는 상태
-    onSubmit: async (e) => {
-
-      const res = await fetch('http://localhost:8080/TT/joinsuccess',{
-        method: 'post',
-        headers: {
-          'Content-Type':'application/json'
-        },
-        body:JSON.stringify({
-          userNo: "totaldata.userNo",
-          name: "totaldata.name",
-          password: "totaldata.password",
-          email: "totaldata.email",
-          phone: "totaldata.phone"
-        })
-      });
-
+    onSubmit: () => {
       navigate('/dashboard', { replace: true });
     }
   });
-
-
-
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
@@ -97,8 +66,6 @@ export default function RegisterForm() {
             autoComplete="userNo"
             type="text"
             label="사원번호"
-            value={totaldata.userNo}
-            onChange={(e) => setTotalData(Object.assign({}, totaldata, {userNo:e.target.value}))}
             {...getFieldProps('userNo')}
             error={Boolean(touched.userNo && errors.userNo)}
             helperText={touched.userNo && errors.userNo}
@@ -108,8 +75,6 @@ export default function RegisterForm() {
             autoComplete="name"
             type="test"
             label="이름"
-            value={totaldata.name}
-            onChange={(e) => setTotalData(Object.assign({}, totaldata, {name:e.target.value}))}
             {...getFieldProps('name')}
             error={Boolean(touched.name && errors.name)}
             helperText={touched.name && errors.name}
@@ -120,8 +85,6 @@ export default function RegisterForm() {
             autoComplete="password"
             type={showPassword ? 'text' : 'password'}
             label="비밀번호"
-            value={totaldata.password}
-            onChange={(e) => setTotalData(Object.assign({}, totaldata, {password:e.target.value}))}
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -140,8 +103,6 @@ export default function RegisterForm() {
             autoComplete="email"
             type="email"
             label="이메일"
-            value={totaldata.email}
-            onChange={(e) => setTotalData(Object.assign({}, totaldata, {email:e.target.value}))}
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
@@ -151,8 +112,6 @@ export default function RegisterForm() {
             autoComplete="phone"
             type="text"
             label="전화번호"
-            value={totaldata.phone}
-            onChange={(e) => setTotalData(Object.assign({}, totaldata, {phone:e.target.value}))}
             {...getFieldProps('phone')}
             error={Boolean(touched.phone && errors.phone)}
             helperText={touched.phone && errors.phone}
