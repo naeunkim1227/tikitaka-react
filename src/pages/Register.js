@@ -87,7 +87,7 @@ export default function Register() {
             </Link>
             &nbsp;and&nbsp;
             <Link underline="always" sx={{ color: 'text.primary' }}>
-              Privacy Policy {message}
+              Privacy Policy
             </Link>
             .
           </Typography>
