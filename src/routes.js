@@ -16,6 +16,8 @@ import Main from './pages/Main';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ImportantNotice from './pages/ImportantNotice';
+import Profile from './pages/Profile';
+import UpdateProfile from './pages/UpdateProfile';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +40,8 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
         { path: 'chat', element: <Chat /> },
+        { path: 'profile', element: <Profile /> },
+        { path: 'updateProfile', element: <UpdateProfile /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
