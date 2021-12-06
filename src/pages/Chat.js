@@ -8,7 +8,6 @@ export default function chat(){
     useEffect(() => {
         const script = document.createElement('script');
         script.src = "./src/chat/components-chats-box.js"
-        console.log("12시10시")
         document.body.appendChild(script);
     },[]);
 
