@@ -39,7 +39,7 @@ export default function LoginForm() {
 
       console.log("들어와");
 
-      const response = await fetch('/TT/joinsuccess',{
+      const response = await fetch('/TT/login',{
         method: "post",
         headers: {"Content-Type":"application/json"},
         body:JSON.stringify({
