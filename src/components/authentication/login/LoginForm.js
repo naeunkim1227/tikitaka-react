@@ -22,6 +22,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
@@ -34,8 +35,25 @@ export default function LoginForm() {
       remember: true
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
+    onSubmit: async (values) => {
+
+      console.log("들어와");
+
+      const response = await fetch('/TT/joinsuccess',{
+        method: "post",
+        headers: {"Content-Type":"application/json"},
+        body:JSON.stringify({
+          email: values.email,
+          password: values.password })
+      });
+      if (!response.ok) {
+        console.log(response)
+        throw `${response.status} ${response.statusText}`;
+      }
+      console.log(response)
+      
       navigate('/dashboard', { replace: true });
+
     }
   });
 
@@ -54,6 +72,7 @@ export default function LoginForm() {
             autoComplete="username"
             type="email"
             label="이메일"
+            value={formik.values.email}
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}

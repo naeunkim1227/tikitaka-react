@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
@@ -9,6 +11,11 @@ import Page from '../components/Page';
 import { MHidden } from '../components/@material-extend';
 import { RegisterForm } from '../components/authentication/register';
 import AuthSocial from '../components/authentication/AuthSocial';
+
+
+////ysw
+import { useEffect, useState } from 'react';
+///////
 
 // ----------------------------------------------------------------------
 
@@ -37,15 +44,30 @@ const ContentStyle = styled('div')(({ theme }) => ({
   padding: theme.spacing(12, 0)
 }));
 
+
+
 // ----------------------------------------------------------------------
 
 export default function Register() {
+  /////////ysw
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    fetch('/TT/api/hello')
+        .then(response => response.text())
+        .then(message => {
+          setMessage(message);
+        });
+  },[])
+  /////////
+
+
   return (
     <RootStyle title="Register | Minimal-UI">
       <AuthLayout>
         Already have an account? &nbsp;
         <Link underline="none" variant="subtitle2" component={RouterLink} to="/login">
-          Login
+          Login 
         </Link>
       </AuthLayout>
 
@@ -80,7 +102,7 @@ export default function Register() {
             </Link>
             &nbsp;and&nbsp;
             <Link underline="always" sx={{ color: 'text.primary' }}>
-              Privacy Policy
+              Privacy Policy {message}
             </Link>
             .
           </Typography>
