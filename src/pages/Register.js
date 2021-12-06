@@ -13,9 +13,6 @@ import { RegisterForm } from '../components/authentication/register';
 import AuthSocial from '../components/authentication/AuthSocial';
 
 
-////ysw
-import { useEffect, useState } from 'react';
-///////
 
 // ----------------------------------------------------------------------
 
@@ -49,18 +46,6 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
-  /////////ysw
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetch('/TT/api/hello')
-        .then(response => response.text())
-        .then(message => {
-          setMessage(message);
-        });
-  },[])
-  /////////
-
 
   return (
     <RootStyle title="Register | Minimal-UI">
