@@ -14,7 +14,7 @@ import Container from "@mui/material/Container";
 const move = function(){
     window.location.href="/dashboard/updateProfile"
 }
-
+//
 const Prifile = () => {
     return (
         <div align="center">
