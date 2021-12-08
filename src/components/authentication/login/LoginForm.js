@@ -80,7 +80,6 @@ export default function LoginForm() {
         setAlert(true);
       }
       console.log(response)
-      
      // navigate('/dashboard', { replace: true });
 
     }
