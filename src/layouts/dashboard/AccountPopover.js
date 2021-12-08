@@ -35,6 +35,7 @@ const MENU_OPTIONS = [
 ];
 
 
+//로그아웃
 const logout = async(e) => {
 
     e.preventDefault();
