@@ -79,7 +79,8 @@ export default function LoginForm() {
       } else{
         setAlert(true);
       }
-
+      console.log(response)
+     // navigate('/dashboard', { replace: true });
 
     }
   });
