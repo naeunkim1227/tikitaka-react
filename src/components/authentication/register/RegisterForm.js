@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
@@ -8,64 +10,80 @@ import { useNavigate } from 'react-router-dom';
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import axios from 'axios';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+// import data from '@iconify/icons-eva/menu-2-fill';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [state, setState] = useState('CP');
 
   const RegisterSchema = Yup.object().shape({
-    firstName: Yup.string()
+    userNo: Yup.string()
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
-      .required('First name required'),
-    lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name required'),
+      .required('userNo required'),
+    name: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('name required'),
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required')
+    password: Yup.string().required('Password is required'),
+    phone: Yup.string().required('Phone is required')
   });
 
   const formik = useFormik({
     initialValues: {
-      firstName: '',
-      lastName: '',
+      role: state,
+      userNo: '',
+      name: '',
+      password: '',
       email: '',
-      password: ''
+      phone: ''
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: async (data) => {
+      const response = await axios.post('/TT/join', data)
+                      .then((response) => {
+                        console.log(response);
+                        if(response.statusText !== "OK") {
+                          console.log("들어오니?");
+                          throw  `${response.status} ${response.statusText}`;
+                        }
+                        navigate('/login', { replace: true });
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      })
     }
+
   });
 
-  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+  const chooseRole = (e) => {
+    setState(e.target.value.toString());
+  };
+ 
+  const { errors, touched,handleSubmit, isSubmitting, getFieldProps } = formik;
 
   return (
     <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+      
+      <Form autoComplete="off" 
+            noValidate 
+            onSubmit={handleSubmit}>
         <Stack spacing={3}>
-          {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField
-              fullWidth
-              label="First name"
-              {...getFieldProps('firstName')}
-              error={Boolean(touched.firstName && errors.firstName)}
-              helperText={touched.firstName && errors.firstName}
-            />
-
-            <TextField
-              fullWidth
-              label="Last name"
-              {...getFieldProps('lastName')}
-              error={Boolean(touched.lastName && errors.lastName)}
-              helperText={touched.lastName && errors.lastName}
-            />
-          </Stack> */}
+          <RadioGroup defaultValue="CP" row aria-label="role" name="radio-group" >
+          <FormControlLabel type="text" value="CP"  control={<Radio />} label="사원" checked={state === "CP"} onChange={chooseRole}/>
+          <FormControlLabel type="text" value="CS"  control={<Radio />} label="고객" checked={state === "CS"} onChange={chooseRole}/>
+          </RadioGroup>
           <TextField
             fullWidth
             autoComplete="userNo"
             type="text"
             label="사원번호"
+            value={formik.userNo}
             {...getFieldProps('userNo')}
             error={Boolean(touched.userNo && errors.userNo)}
             helperText={touched.userNo && errors.userNo}
@@ -75,6 +93,7 @@ export default function RegisterForm() {
             autoComplete="name"
             type="test"
             label="이름"
+            value={formik.name}
             {...getFieldProps('name')}
             error={Boolean(touched.name && errors.name)}
             helperText={touched.name && errors.name}
@@ -85,6 +104,7 @@ export default function RegisterForm() {
             autoComplete="password"
             type={showPassword ? 'text' : 'password'}
             label="비밀번호"
+            value={formik.password}
             {...getFieldProps('password')}
             InputProps={{
               endAdornment: (
@@ -103,6 +123,7 @@ export default function RegisterForm() {
             autoComplete="email"
             type="email"
             label="이메일"
+            value={formik.email}
             {...getFieldProps('email')}
             error={Boolean(touched.email && errors.email)}
             helperText={touched.email && errors.email}
@@ -112,6 +133,7 @@ export default function RegisterForm() {
             autoComplete="phone"
             type="text"
             label="전화번호"
+            value={formik.phone}
             {...getFieldProps('phone')}
             error={Boolean(touched.phone && errors.phone)}
             helperText={touched.phone && errors.phone}
