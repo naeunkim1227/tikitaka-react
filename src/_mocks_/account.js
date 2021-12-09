@@ -1,6 +1,6 @@
-// ----------------------------------------------------------------------여기내용바꾸기
+/* eslint-disable */
 
-const account = {
+let account = {
   displayName: 'Jaydon Frankie',
   email: 'demo@minimals.cc',
   photoURL: '/static/mock-images/avatars/avatar_default.jpg'

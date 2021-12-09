@@ -18,49 +18,51 @@ import ResetPassword from './pages/ResetPassword';
 import ImportantNotice from './pages/ImportantNotice';
 import Profile from './pages/Profile';
 import UpdateProfile from './pages/UpdateProfile';
-
+import { useAuthState } from './Context';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const userDetails = useAuthState();
   return useRoutes([
+    {
+      path: '/',
+      element: !Boolean(userDetails.token) ? (<Navigate to='tikitaka/login' />):(<DashboardLayout />),
+      children: [
+        { element: <Navigate to="tikitaka/login" replace /> },
+        { path: 'register', element: <Register /> },
+        { path: '404', element: <NotFound /> },
+        { path: '*', element: <Navigate to="/404" /> },
+        { path: '/', element: <Navigate to="tikitaka/login" /> },
+      ]
+    },
     {
       path: '/tikitaka',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/main" replace /> },
+        { element: <Navigate to="main" replace /> },
+        { path: 'login', element: <Login /> },
+        { path: 'forgotPassword', element: <ForgotPassword />},
+        { path: 'resetPassword', element: <ResetPassword />},
         { path: 'main', element: <Main /> },
         { path: 'user', element: <User /> },
-        { path: 'importantNotice', element: <ImportantNotice /> }
+        { path: 'importantNotice', element: <ImportantNotice /> },
+        { path: 'chat', element: <Chat /> }
       ]
     },
-    {
-      path: '/dashboard',
-      element: <DashboardLayout />,
-      children: [
-        { element: <Navigate to="/dashboard/app" replace /> },
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
-        { path: 'chat', element: <Chat /> },
-        { path: 'profile', element: <Profile /> },
-        { path: 'updateProfile', element: <UpdateProfile /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
-      ]
-    },
-    {
-      path: '/',
-      element: <DashboardLayout />,
-      children: [
-        // { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/login" /> },
-        { path: '*', element: <Navigate to="/404" /> },
-        { path: '/login', element: <Login /> },
-        { path: 'forgotPassword', element: <ForgotPassword />},
-        { path: 'resetPassword', element: <ResetPassword />}
-      ]
-    },
+    // {
+    //   path: '/dashboard',
+    //   element: <DashboardLayout />,
+    //   children: [
+    //     { element: <Navigate to="/dashboard/app" replace /> },
+    //     { path: 'app', element: <DashboardApp /> },
+    //     { path: 'user', element: <User /> },
+    //     { path: 'profile', element: <Profile /> },
+    //     { path: 'updateProfile', element: <UpdateProfile /> },
+    //     { path: 'products', element: <Products /> },
+    //     { path: 'blog', element: <Blog /> }
+    //   ]
+    // },
+ 
     // { path: '/login', element: <Login /> },
     { path: '*', element: <Navigate to="/404" replace /> }
     // { path: 'forgotPassword', element: <ForgotPassword />},

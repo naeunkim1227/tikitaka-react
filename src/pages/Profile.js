@@ -38,7 +38,7 @@ const Prifile = () => {
                     id="inline"
                     label="이름:"
                     color="warning"
-                    value="김티키"
+                    value={sessionStorage.getItem("name")}
                     InputProps={{
                     readOnly: true
                     }}
@@ -86,7 +86,7 @@ const Prifile = () => {
                     id="inline"
                     label="연락처:"
                     color="warning"
-                    value="010-1111-2222"
+                    value={sessionStorage.getItem("phone")}
                     InputProps={{
                     readOnly: true
                     }}
