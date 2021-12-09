@@ -17,9 +17,8 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // ----------------------------------------------------------------------
-////////////////
 import {loginUser, useAuthState, useAuthDispatch} from '../../../Context';
-////////////////
+
 export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +42,6 @@ export default function LoginForm() {
       setAlert(false); // Alert창 false로 설정
       try {
         let response = await loginUser(dispatch, values);
-        console.log(response);
         if (!response){
           setAlert(true);
           return;
