@@ -1,45 +1,46 @@
 /* eslint-disable */
 
-//localStorage.clear();
-//localStorage는 clear안하면 리액트의 뷰가 안그려지는 문제 때문에 
-//localStorage을 sessionStorage으로 전부다 변경
-
 //sessionStorage.clear();
 let token = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').no : '';
-let user = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').name : '';
+let name = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').name : '';
 let password = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').password : '';
-
-export const initialState ={
+let email = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').email : '';
+let profile = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').profile : '';
+export const initialState ={ //초기값 설정
     token:""||token,
-    user:""||user,
+    name:""||name,
     password:""||password,
-    loading:false,
-    errorMessage:null
+    email:""||email,
+    profile:""||profile
+    // loading:false,
+    // errorMessage:null
 }
 
-export const AuthReducer =(initialState,action)=>{
+export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값들 반환
     switch (action.type){
-        case 'REQUEST_LOGIN':
-            return{
-                ...initialState,
-                loading: true
-            }
         case 'LOGIN_SUCCESS':
             console.log("reducer",initialState.token);
-            console.log("reducer",initialState.user);
+            console.log("reducer",initialState.name);
             console.log("reducer",initialState.password);
+            console.log("reducer",initialState.email);
+            console.log("reducer",initialState.profile);
             return{
                 ...initialState,
                 token:action.payload.no,
-                user:action.payload.name,
+                name:action.payload.name,
                 password:action.payload.password,
-                loading: false
+                email:action.payload.email,
+                profile:action.payload.profile
+                //loading: false
             }
         case 'LOGOUT':
             return{
                 ...initialState,
-                user:'',
-                token:''
+                token:'',
+                name:'',
+                password:'',
+                email:'',
+                profile:''
             }
         case 'LOGIN_ERROR':
             return{

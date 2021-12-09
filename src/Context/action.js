@@ -9,7 +9,7 @@ export const loginUser=async (dispatch,loginPayload)=>{
                 loginPayload )
         }).then(response =>{
             if(!response.ok){
-                console.log("실패");
+                console.log("fail");
             }else{
                 return response.json();
             }
@@ -30,20 +30,6 @@ export const loginUser=async (dispatch,loginPayload)=>{
         console.log(error);
     }
 }
-
-    //     //////////////
-    //     if(response.status ===200){
-    //         dispatch({type:'LOGIN_SUCCESS',payload:response.data})
-    //         localStorage.setItem('currentUser',JSON.stringify(response.data))
-    //         return response.data
-    //     }else{
-    //         dispatch({type:'LOGIN_ERROR',error:response.data.error[0]})
-    //     }
-    //     return ;
-    // }catch (e){
-    //     dispatch({type:'LOGIN_ERROR',error:e})
-    // }
-
 
 export async function logout(dispatch) {
     dispatch({ type: 'LOGOUT' });

@@ -48,7 +48,7 @@ export default function LoginForm() {
           setAlert(true);
           return;
         }
-        navigate('/dashboard', { replace: true });
+        navigate('/tikitaka', { replace: true });
       } catch (error) {
         console.log(error);
       }
