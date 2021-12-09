@@ -1,5 +1,6 @@
+/* eslint-disable */
 import { Icon } from '@iconify/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import homeFill from '@iconify/icons-eva/home-fill';
 import personFill from '@iconify/icons-eva/person-fill';
 import settings2Fill from '@iconify/icons-eva/settings-2-fill';
@@ -11,6 +12,7 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '
 import MenuPopover from '../../components/MenuPopover';
 //
 import account from '../../_mocks_/account';
+import ThemeConfig from 'src/theme';
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +33,43 @@ const MENU_OPTIONS = [
     linkTo: '#'
   }
 ];
+
+
+//로그아웃
+const logout = async(e) => {
+
+    e.preventDefault();
+     
+      try {
+          const response = await fetch('/TT/logout', {
+              method: 'get',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+              }
+          })
+          .then((response) => {
+            console.log(response);
+          });
+
+          if(!response.ok) {
+              throw new Error(`${response.status} ${response.statusText}`);
+          }
+
+          const json = await response.json();
+
+          console.log(json);
+
+          if(json.result !== 'success') {
+              throw json.message;
+          }
+
+      } catch(err) {
+          console.error(err);
+      
+  
+  }
+}
 
 // ----------------------------------------------------------------------
 
@@ -110,7 +149,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button fullWidth color="inherit" variant="outlined" onClick={ logout }>
             Logout
           </Button>
         </Box>

@@ -30,6 +30,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/main" replace /> },
         { path: 'main', element: <Main /> },
+        { path: 'user', element: <User /> },
         { path: 'importantNotice', element: <ImportantNotice /> }
       ]
     },
@@ -55,7 +56,7 @@ export default function Router() {
         // { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
+        { path: '/', element: <Navigate to="/login" /> },
         { path: '*', element: <Navigate to="/404" /> },
         { path: '/login', element: <Login />, isPrivate: false },
         { path: 'forgotPassword', element: <ForgotPassword />},

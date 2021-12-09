@@ -1,5 +1,9 @@
 /* eslint-disable */
 import * as React from 'react';
+import { useEffect } from 'react';
+
+
+//import meterial or css
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,6 +15,20 @@ import TableRow from '@mui/material/TableRow';
 import Card from '@mui/material/Card';
 import { Stack } from '@mui/material';
 import CardHeader from '@mui/material/CardHeader';
+
+
+//임의 데이터 생성
+//const user ={ no: 2 }
+
+// useEffect(() => {
+
+//   setInterval(() => {
+//     getAlertData();
+//   }, 2000);
+
+// },[])
+
+const getAlertData =  () => {console.log("test")}
 
 
 const columns = [
