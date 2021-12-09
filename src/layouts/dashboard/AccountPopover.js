@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import homeFill from '@iconify/icons-eva/home-fill';
 import personFill from '@iconify/icons-eva/person-fill';
 import settings2Fill from '@iconify/icons-eva/settings-2-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Navigate,Link as RouterLink } from 'react-router-dom';
 // material
 import { alpha } from '@mui/material/styles';
 import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '@mui/material';
@@ -15,6 +15,7 @@ import account from '../../_mocks_/account';
 import ThemeConfig from 'src/theme';
 
 // ----------------------------------------------------------------------
+import { useAuthState } from '../../Context';
 
 const MENU_OPTIONS = [
   {
@@ -74,11 +75,13 @@ const logout = async(e) => {
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const loaduser = useAuthState(); //useContext를 이용하여 user값 불러옴
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-
+  const [showloginout, setShowloginout] = useState(false); //login유무에 따라 보여지는게 달라짐
   const handleOpen = () => {
     setOpen(true);
+    setShowloginout(loaduser.token);
   };
   const handleClose = () => {
     setOpen(false);
@@ -108,8 +111,9 @@ export default function AccountPopover() {
       >
         <Avatar src={account.photoURL} alt="photoURL" />
       </IconButton>
-
-      <MenuPopover
+      {
+        showloginout ?  
+        <MenuPopover
         open={open}
         onClose={handleClose}
         anchorEl={anchorRef.current}
@@ -117,10 +121,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {loaduser.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {loaduser.password}
           </Typography>
         </Box>
 
@@ -154,6 +158,22 @@ export default function AccountPopover() {
           </Button>
         </Box>
       </MenuPopover>
+      :
+      <MenuPopover
+      open={open}
+      onClose={handleClose}
+      anchorEl={anchorRef.current}
+      sx={{ width: 220 }}
+      >
+        <Box sx={{ p: 2, pt: 1.5 }}>
+        <Button fullWidth color="inherit" variant="outlined" onClick={ <Navigate to='/login' /> }>
+          LogIn
+        </Button>
+        </Box>
+      </MenuPopover>
+      }
+      
+
     </>
   );
 }

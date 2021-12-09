@@ -14,32 +14,17 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 const sidebarConfig = [
   {
     title: 'dashboard',
-    path: '/dashboard/app',
+    path: '/tikitaka/app',
     icon: getIcon(pieChart2Fill)
   },
   {
     title: 'user',
-    path: '/dashboard/user',
+    path: '/tikitaka/user',
     icon: getIcon(peopleFill)
   },
   {
     title: 'chat',
-    path: '/dashboard/chat',
-    icon: getIcon(peopleFill)
-  },
-  // {
-  //   title: 'product',
-  //   path: '/dashboard/products',
-  //   icon: getIcon(shoppingBagFill)
-  // },
-  // {
-  //   title: 'blog',
-  //   path: '/dashboard/blog',
-  //   icon: getIcon(fileTextFill)
-  // },
-  {
-    title: 'chat',
-    path: '/dashboard/chat',
+    path: '/tikitaka/chat',
     icon: getIcon(lockFill)
   },
 
