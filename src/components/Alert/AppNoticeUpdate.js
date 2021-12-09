@@ -1,116 +1,96 @@
 /* eslint-disable */
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+import faker from 'faker';
+import PropTypes from 'prop-types';
+import { Icon } from '@iconify/react';
+import { formatDistance } from 'date-fns';
+import { Link as RouterLink } from 'react-router-dom';
+import arrowIosForwardFill from '@iconify/icons-eva/arrow-ios-forward-fill';
+// material
+import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from '@mui/material';
+// utils
+import { mockImgCover } from '../../utils/mockImages';
+//
+import Scrollbar from '../Scrollbar';
 
 
-//import meterial or css
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Card from '@mui/material/Card';
-import { Stack } from '@mui/material';
-import CardHeader from '@mui/material/CardHeader';
+//component 추가
+import NoticeList from './NoticeList';
 
 
-//임의 데이터 생성
-//const user ={ no: 2 }
-
-// useEffect(() => {
-
-//   setInterval(() => {
-//     getAlertData();
-//   }, 2000);
-
-// },[])
-
-const getAlertData =  () => {console.log("test")}
+export default function AppNewsUpdate() {
 
 
-const columns = [
-  { id: 'content', label: '', minWidth: 150 },
-];
+const [notice, setNotice] = useState([]);
 
-function createData(content, size) {
-  const density = content / size;
-  return { content, size };
+  //임의 데이터 생성
+const data = {
+  userno: 1
 }
 
-const rows = [
-  createData('테스트중입니다'),
-  createData('테스트중입니다'),
-  createData('테스트중입니다'),
-  createData('테스트중입니다'),
-  createData('테스트중입니다'),
-  createData('테스트중입니다'),
-  createData('테스트중입니다')
-];
+const datas = [
+  {no: 1,
+  title: 'test'},
+  {no: 2,
+    title: 'test2'},
+  {no: 3,
+      title: 'test3'},
+]
 
-export default function StickyHeadTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+useEffect(() => {
+    getAlertData();
+}, []);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+
+const getAlertData =  async () => {
+    
+  try{
+    const res = await fetch(`/TT/main/`, {
+      method: 'post',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    
+    const json = await res.json();
+
+    console.log(json.data);
+    
+    setNotice(json.data);
+    console.log(notice);
+    
+
+    if(!res.ok){ 
+      throw new Error(`${res.status} ${res.statusText}`)}
+
+
+      if(json.result !== 'success'){
+        throw json.message;
+      }
+
+
+    }catch(err){
+      console.log('main fetch error',err);
+    }
+
+
+}
+
 
   return (
     <Card>
       <CardHeader title="중요 공지" />
-    <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-              return (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                  {columns.map((column) => {
-                    const value = row[column.id];
-                    return (
-                      <TableCell key={column.id} align={column.align}>
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
-        component="div"
-        count={rows.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
-      </Stack>
+      <Scrollbar>
+        <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
+          <NoticeList notice={notice} />
+        </Stack>
+      </Scrollbar>
+      <Divider />
     </Card>
-    
   );
 }
