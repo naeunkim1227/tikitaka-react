@@ -49,7 +49,7 @@ export default function RegisterForm() {
                       .then((response) => {
                         console.log(response);
                         if(response.statusText !== "OK") {
-                          console.log("들어오니?");
+                          console.log("들어오니? 쥐리제");
                           throw  `${response.status} ${response.statusText}`;
                         }
                         navigate('/login', { replace: true });
