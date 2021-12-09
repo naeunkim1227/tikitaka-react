@@ -16,72 +16,42 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-
 // ----------------------------------------------------------------------
-
+////////////////
+import {loginUser, useAuthState, useAuthDispatch} from '../../../Context';
+////////////////
 export default function LoginForm() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [alert, setAlert] = useState(false);
-
-  // useEffect(() => {
-  //   console.log("hook action");
-  //   //alert("test");
-
-  //   //Fetch GET
-  //   fetch('/TT/logincheck')
-  //     .then(response => response.text)
-  //     .then(testtext => {setTesttext(testtext)
-  //     });
-
-  // },[TextField]);
-
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
   });
 
+  	const dispatch = useAuthDispatch();
+	  //const { loading, errorMessage } = useAuthState();
+
   const formik = useFormik({
     initialValues: {
       email: '',
-      password: '',
-      remember: true
+      password: ''
+      //remember: true
     },
     validationSchema: LoginSchema,
     onSubmit: async (values) => {
-      setAlert(false); // 팝업창 false로 설정
-
-      const useremail = values.email;
-      const userpassword = values.password;
-
-      //Fetch POST
-      const response = await fetch('/TT/login',{
-        method: "post",
-        headers: {"Content-Type":"application/json"},
-        body:JSON.stringify({
-          email: useremail,
-          password: userpassword })
-      }).then(response => {
-        if(!response.ok){
+      setAlert(false); // Alert창 false로 설정
+      try {
+        let response = await loginUser(dispatch, values);
+        console.log(response);
+        if (!response){
           setAlert(true);
-      }else {
-          //console.log(response.json());
-          return response.json();
+          return;
+        }
+        navigate('/dashboard', { replace: true });
+      } catch (error) {
+        console.log(error);
       }
-    }).then(res => {
-      console.log(res.result);
-      return res.result});
-
-
-
-      if(response == 'success'){ //입력창이 빈칸이 아닐때
-        //navigate('/dashboard', { replace: true });
-      } else{
-        setAlert(true);
-      }
-      console.log(response)
-     // navigate('/dashboard', { replace: true });
-
     }
   });
 
@@ -93,7 +63,7 @@ export default function LoginForm() {
 
   const handleShowAlert = () => { // 알람이 뜬후 2초뒤에 알람 hidden
     if(alert == true){
-      console.log("이프문 트루");
+      console.log("alert생성후 2초후 hidden");
       setTimeout(() => {
         setAlert(false)
     }, 2000);
@@ -149,7 +119,6 @@ export default function LoginForm() {
             비밀번호를 잊으셨나요?
           </Link>
         </Stack>
-
         <LoadingButton
           fullWidth
           size="large"

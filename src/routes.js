@@ -19,9 +19,10 @@ import ImportantNotice from './pages/ImportantNotice';
 import Profile from './pages/Profile';
 import UpdateProfile from './pages/UpdateProfile';
 
+import { useAuthState } from '../src/Context';
 // ----------------------------------------------------------------------
-
 export default function Router() {
+  const userDetails = useAuthState();
   return useRoutes([
     {
       path: '/tikitaka',
@@ -35,7 +36,8 @@ export default function Router() {
     },
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      isPrivate: true,
+      element: !Boolean(userDetails.token) ? (<Navigate to='/login' />):(<DashboardLayout />),
       children: [
         { element: <Navigate to="/dashboard/app" replace /> },
         { path: 'app', element: <DashboardApp /> },
@@ -56,7 +58,7 @@ export default function Router() {
         { path: '404', element: <NotFound /> },
         { path: '/', element: <Navigate to="/login" /> },
         { path: '*', element: <Navigate to="/404" /> },
-        { path: '/login', element: <Login /> },
+        { path: '/login', element: <Login />, isPrivate: false },
         { path: 'forgotPassword', element: <ForgotPassword />},
         { path: 'resetPassword', element: <ResetPassword />}
       ]
