@@ -43,12 +43,14 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   }));
 
 //
+
+
 const Profile = () => {
 
     
     
     const user = {
-        // axios 로 사원에대한 정보 localstorage에 저장하기
+        no: "1",
         profile: "",
         name: "김티키",
         company: "부산 본부",
