@@ -6,12 +6,14 @@ let name = sessionStorage.getItem('currentUser')? sessionStorage.getItem('curren
 let password = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').password : '';
 let email = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').email : '';
 let profile = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').profile : '';
+let phone = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').phone : '';
 export const initialState ={ //초기값 설정
     token:""||token,
     name:""||name,
     password:""||password,
     email:""||email,
-    profile:""||profile
+    profile:""||profile,
+    phone:""||phone
     // loading:false,
     // errorMessage:null
 }
@@ -30,7 +32,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 name:action.payload.name,
                 password:action.payload.password,
                 email:action.payload.email,
-                profile:action.payload.profile
+                profile:action.payload.profile,
+                phone:action.payload.phone
                 //loading: false
             }
         case 'LOGOUT':
@@ -40,7 +43,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 name:'',
                 password:'',
                 email:'',
-                profile:''
+                profile:'',
+                phone:''
             }
         case 'LOGIN_ERROR':
             return{

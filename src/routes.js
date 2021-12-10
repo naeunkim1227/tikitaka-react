@@ -24,17 +24,19 @@ import {Routes, Route} from 'react-router';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  // const [flag, setFlag] = useState(false);
-  // useEffect(() => {
-  //   console.log('After Rendering');
-  //   if(!loginUser.token&&flag==false){
-  //     console.log("로그인화면으로 가기");
-  //     setFlag(true);
-  //     //window.location.href="/tikitaka/login";
-  //   }
-  // },[flag]);
-
   const loginUser = useAuthState();
+
+  // const [flag, setFlag] = useState(loginUser.token);
+  // useEffect(() => {
+  //   console.log('Rendering checkUserToken',flag);
+  //   if(flag == undefined){
+  //     console.log("token==undefined ->/login이동");
+  //     setFlag("checkuser");
+  //     //window.location.href="/login";
+  //   }
+  // });
+
+  
   return useRoutes([
     {
       path: '/tikitaka',
@@ -45,8 +47,8 @@ export default function Router() {
         { path: 'user', element: <User /> },
         { path: 'chat', element: <Chat /> },
         { path: 'importantNotice', element: <ImportantNotice /> },
-        { path: 'profile', element: <Profile /> }
-        
+        { path: 'profile', element: <Profile /> },
+        { path: 'updateProfile', element: <UpdateProfile />}
 
       ]
     },

@@ -29,7 +29,6 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
-
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
