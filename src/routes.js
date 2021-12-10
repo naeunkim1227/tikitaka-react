@@ -30,19 +30,19 @@ export default function Router() {
         { element: <Navigate to="/main" replace /> },
         { path: 'main', element: <Main /> },
         { path: 'user', element: <User /> },
+        { path: 'profile', element: <Profile /> },
+        { path: 'updateProfile', element: <UpdateProfile /> },
         { path: 'importantNotice', element: <ImportantNotice /> }
       ]
     },
     {
-      path: '/dashboard',
+      path: '/',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" replace /> },
+        { element: <Navigate to="tikitaka/main" replace /> },
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
         { path: 'chat', element: <Chat /> },
-        { path: 'profile', element: <Profile /> },
-        { path: 'updateProfile', element: <UpdateProfile /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
       ]
