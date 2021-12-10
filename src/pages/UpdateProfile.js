@@ -84,6 +84,20 @@ const UpdateProfile = () => {
                                     return response;
     }
     
+    const getImage = async () => {
+        try {
+            const response = await axios.get(`/TT/getImage/${user.no}`)
+                                        .then((res) => {
+                                            setUrlData(res.data);
+                                        })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getImage();
+    })
 
     return (
         <div align="center">
@@ -97,7 +111,7 @@ const UpdateProfile = () => {
             <CardContent>
                 <form encType="multipart/form-data">
                     <Badge color="success" overlap="circular" badgeContent=" ">
-                    <Avatar id='avatar' alt="" src={`/TT${userImage}`} sx={{ width: 100, height: 100 }} />
+                    <Avatar id='avatar' alt="" src={`/TT${urlData}`} sx={{ width: 100, height: 100 }} />
                     </Badge>
                     <br />
                     <br />
