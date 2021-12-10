@@ -45,8 +45,8 @@ export default function Router() {
         { path: 'user', element: <User /> },
         { path: 'chat', element: <Chat /> },
         { path: 'importantNotice', element: <ImportantNotice /> },
-        { path: 'profile', element: <Profile /> }
-        
+        { path: 'profile', element: <Profile /> },
+        { path: 'updateProfile', element: <UpdateProfile />}
 
       ]
     },
