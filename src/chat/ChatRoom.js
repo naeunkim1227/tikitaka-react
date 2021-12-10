@@ -29,7 +29,7 @@ const ChatRoom = () => {
         chatNo: '5',
         type: "TEXT",
         contents: message,
-        readCount: 3
+        readCount: 1
       };
 
       await axios.post('/TT/send', JSON.stringify(data), {headers:{"Content-Type":"application/json"}})
