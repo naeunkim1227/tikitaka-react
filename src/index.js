@@ -1,3 +1,4 @@
+/* eslint-disable */
 // scroll bar
 import 'simplebar/src/simplebar.css';
 
@@ -9,15 +10,18 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
-
+//context
+import { Context } from './Context';
 // ----------------------------------------------------------------------
 
 ReactDOM.render(
-  <HelmetProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </HelmetProvider>,
+  <Context>
+    <HelmetProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </HelmetProvider>
+  </Context>,
   document.getElementById('root')
 );
 

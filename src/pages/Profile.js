@@ -94,7 +94,7 @@ const Profile = () => {
                     id="inline"
                     label="이름:"
                     color="warning"
-                    value={user.name}
+                    value={sessionStorage.getItem("name")}
                     InputProps={{
                     readOnly: true
                     }}
@@ -159,7 +159,7 @@ const Profile = () => {
                     id="inline"
                     label="연락처:"
                     color="warning"
-                    value={user.phone}
+                    value={sessionStorage.getItem("phone")}
                     InputProps={{
                     readOnly: true
                     }}

@@ -18,52 +18,55 @@ import ResetPassword from './pages/ResetPassword';
 import ImportantNotice from './pages/ImportantNotice';
 import Profile from './pages/Profile';
 import UpdateProfile from './pages/UpdateProfile';
-
+import { useAuthState } from './Context';
+import { useEffect, useState } from 'react';
+import {Routes, Route} from 'react-router';
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const [flag, setFlag] = useState(false);
+  useEffect(() => {
+    console.log('After Rendering');
+    if(!loginUser.token&&flag==false){
+      console.log("로그인화면으로 가기");
+      setFlag(true);
+      //window.location.href="/tikitaka/login";
+    }
+  },[flag]);
+
+  const loginUser = useAuthState();
   return useRoutes([
     {
       path: '/tikitaka',
-      element: <DashboardLayout />,
+      element: !Boolean(loginUser.token) ? (<Navigate to='/login' />):(<DashboardLayout />),  //loginUser.token == 로그인된 userno
       children: [
-        { element: <Navigate to="/main" replace /> },
+        { element: <Navigate to="/tikitaka/main" replace /> },
         { path: 'main', element: <Main /> },
         { path: 'user', element: <User /> },
-        { path: 'profile', element: <Profile /> },
-        { path: 'updateProfile', element: <UpdateProfile /> },
-        { path: 'importantNotice', element: <ImportantNotice /> }
-      ]
-    },
-    {
-      path: '/',
-      element: <DashboardLayout />,
-      children: [
-        { element: <Navigate to="tikitaka/main" replace /> },
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
         { path: 'chat', element: <Chat /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
+        { path: 'importantNotice', element: <ImportantNotice /> },
+        { path: 'profile', element: <Profile /> }
+        
+
       ]
     },
     {
+            /**
+       * localhost:8080 ('/') 으로 들어가면 <DashboardLayout />이 뷰에 그려지고 children.element프로퍼티에 의해
+       * /tikitaka/main 주소로 가게 된다. /tikitaka에서 userno(token)값 유무를 묻게 되고 false이면 로그인화면('/login')으로,
+       * true면 /tikitaka/main로 가서 <Main />이 뷰에 그려지게 된다..
+       */
       path: '/',
       element: <DashboardLayout />,
       children: [
-        // { path: 'login', element: <Login /> },
+        { element: <Navigate to="/tikitaka/main" replace /> },
+        { path: 'login', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/login" /> },
         { path: '*', element: <Navigate to="/404" /> },
-        { path: '/login', element: <Login /> },
         { path: 'forgotPassword', element: <ForgotPassword />},
         { path: 'resetPassword', element: <ResetPassword />}
       ]
-    },
-    // { path: '/login', element: <Login /> },
-    { path: '*', element: <Navigate to="/404" replace /> }
-    // { path: 'forgotPassword', element: <ForgotPassword />},
-    // { path: 'resetPassword', element: <ResetPassword />}
+    }
   ]);
 }

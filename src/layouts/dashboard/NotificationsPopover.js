@@ -1,13 +1,15 @@
+/* eslint-disable */
 import faker from 'faker';
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { set, sub, formatDistanceToNow } from 'date-fns';
 import { Icon } from '@iconify/react';
 import bellFill from '@iconify/icons-eva/bell-fill';
 import clockFill from '@iconify/icons-eva/clock-fill';
 import doneAllFill from '@iconify/icons-eva/done-all-fill';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 // material
 import { alpha } from '@mui/material/styles';
 import {
@@ -81,28 +83,17 @@ const NOTIFICATIONS = [
   }
 ];
 
+
 function renderContent(notification) {
   const title = (
     <Typography variant="subtitle2">
-      {notification.title}
-      <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
-      </Typography>
+      {notification.title}누가누가 채팅 방을 만들었습니다
+      {/* <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+        &nbsp; {noCase(notification.description)}그래요~
+      </Typography> */}
     </Typography>
   );
 
-  if (notification.type === 'order_placed') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_package.svg" />,
-      title
-    };
-  }
-  if (notification.type === 'order_shipped') {
-    return {
-      avatar: <img alt={notification.title} src="/static/icons/ic_notification_shipping.svg" />,
-      title
-    };
-  }
   if (notification.type === 'mail') {
     return {
       avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
@@ -116,7 +107,7 @@ function renderContent(notification) {
     };
   }
   return {
-    avatar: <img alt={notification.title} src={notification.avatar} />,
+    avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
     title
   };
 }
@@ -143,7 +134,7 @@ function NotificationItem({ notification }) {
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar> 프로필
       </ListItemAvatar>
       <ListItemText
         primary={title}
@@ -151,7 +142,7 @@ function NotificationItem({ notification }) {
           <Typography
             variant="caption"
             sx={{
-              mt: 0.5,
+              mt: 0.5, 
               display: 'flex',
               alignItems: 'center',
               color: 'text.disabled'

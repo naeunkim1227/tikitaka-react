@@ -1,5 +1,9 @@
 /* eslint-disable */
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+
+
+//import meterial or css
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -33,6 +37,10 @@ const rows = [
 ];
 
 export default function StickyHeadTable() {
+
+
+
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -47,7 +55,7 @@ export default function StickyHeadTable() {
 
   return (
     <Card>
-      <CardHeader title="중요 공지" />
+      <CardHeader title="자세히 보기 업뎃 예정 시간 되면..." />
     <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">

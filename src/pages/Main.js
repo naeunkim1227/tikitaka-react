@@ -7,8 +7,8 @@ import {
   AppNewsUpdate
 } from '../components/_dashboard/app';
 
-import AppAlertUpdate from  '../components/_dashboard/app/AppAlertUpdate';
-import AppNoticeUpdate from '../components/_dashboard/app/AppNoticeUpdate';
+import AppNoticeUpdate  from  '../components/Alert/AppNoticeUpdate';
+import AppNoticeView from '../components/Alert/AppNoticeView';
 
 
 // ----------------------------------------------------------------------
@@ -19,10 +19,10 @@ export default function DashboardApp() {
       <Container maxWidth="xl">
         <Grid container spacing={5}>
           <Grid item xs={5} md={15} lg={6}>
-          <AppNoticeUpdate />
+          <AppNoticeUpdate />y
           </Grid>
           <Grid item xs={5} md={15} lg={6}>
-          <AppAlertUpdate />
+          <AppNoticeView />
           </Grid>
         </Grid>
       </Container>
