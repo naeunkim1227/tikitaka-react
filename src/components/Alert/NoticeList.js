@@ -24,10 +24,11 @@ export default function NoticeList({ notice }) {
     <Fragment>
     {notice.map(notice => <NoticeListItem
       key={notice.no}  
-      title={notice.title} 
-      chatTitle={notice.chatTitle}
-      reg_date={notice.reg_date}
-      contents={notice.contents}
+      chatTitle={notice.c_title}
+      title={notice.n_title} 
+      reg_date={notice.n_reg_date}
+      contents={notice.n_contents}
+      writer={notice.w_name}
       />)}
     </Fragment>
   );

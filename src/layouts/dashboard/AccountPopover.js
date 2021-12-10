@@ -12,9 +12,11 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '
 import MenuPopover from '../../components/MenuPopover';
 //
 import ThemeConfig from 'src/theme';
+import {useAuthDispatch, useAuthState} from '../../Context';
+import { logout } from '../../Context';
+
 
 // ----------------------------------------------------------------------
-import { useAuthState } from '../../Context';
 
 const MENU_OPTIONS = [
   {
@@ -35,41 +37,6 @@ const MENU_OPTIONS = [
 ];
 
 
-//로그아웃
-const logout = async(e) => {
-
-    e.preventDefault();
-     
-      try {
-          const response = await fetch('/TT/logout', {
-              method: 'get',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json'
-              }
-          })
-          .then((response) => {
-            console.log(response);
-          });
-
-          if(!response.ok) {
-              throw new Error(`${response.status} ${response.statusText}`);
-          }
-
-          const json = await response.json();
-
-          console.log(json);
-
-          if(json.result !== 'success') {
-              throw json.message;
-          }
-
-      } catch(err) {
-          console.error(err);
-      
-  
-  }
-}
 // ----------------------------------------------------------------------
 //auth.token
 export default function AccountPopover() {
@@ -84,6 +51,21 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const dispatch = useAuthDispatch();
+  
+  const Auth = useAuthState();
+
+  const data = {
+    token : Auth.token
+  }
+
+  //로그아웃
+  const dologout = async(e) => {
+    e.preventDefault();
+    const response = await logout(dispatch,data);
+  }
+
 
   return (
     <>
@@ -152,7 +134,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined" onClick={ logout }>
+          <Button fullWidth color="inherit" variant="outlined" onClick={ dologout }>
             Logout
           </Button>
         </Box>
