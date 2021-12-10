@@ -1708,6 +1708,13 @@
     "prop-types" "^15.7.2"
     "react-is" "^17.0.2"
 
+"@mui/icons-material@^5.2.1":
+  "integrity" "sha512-AFOn0bbaGd1dw8oYE40dv3I+QnfS5xP5HSUiUGsvb1ntP0cM1kW4VqQp7BtL7DbOpEsw1ZTbw67tDqSCH7utNg=="
+  "resolved" "https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.2.1.tgz"
+  "version" "5.2.1"
+  dependencies:
+    "@babel/runtime" "^7.16.3"
+
 "@mui/lab@^5.0.0-alpha.47":
   "integrity" "sha512-og0OYSbxkmrj41A0aChAEXugq9fs334jpVTFOoY735yP0TBedI/djqjrqnSm7JdMrwUxy8JfMt1PXYWrw/2SEg=="
   "resolved" "https://registry.npmjs.org/@mui/lab/-/lab-5.0.0-alpha.47.tgz"
@@ -1727,7 +1734,7 @@
     "react-transition-group" "^4.4.2"
     "rifm" "^0.12.0"
 
-"@mui/material@^5.0.0-rc.0", "@mui/material@^5.2.3":
+"@mui/material@^5.0.0", "@mui/material@^5.0.0-rc.0", "@mui/material@^5.2.3":
   "integrity" "sha512-qhHAVpkQh77xiic38TIDMrKGafRRy9WT16uvexvE2UdyI259YP4HvFamYz3prSNnZi5UozwKpH/QGnv6+JT7/g=="
   "resolved" "https://registry.npmjs.org/@mui/material/-/material-5.2.3.tgz"
   "version" "5.2.3"
