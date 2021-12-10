@@ -11,7 +11,6 @@ import { Button, Box, Divider, MenuItem, Typography, Avatar, IconButton } from '
 // components
 import MenuPopover from '../../components/MenuPopover';
 //
-import account from '../../_mocks_/account';
 import ThemeConfig from 'src/theme';
 
 // ----------------------------------------------------------------------
@@ -72,15 +71,15 @@ const logout = async(e) => {
   }
 }
 // ----------------------------------------------------------------------
-
+//auth.token
 export default function AccountPopover() {
-  const loaduser = useAuthState(); //useContext를 이용하여 user값 불러옴
+  const auth = useAuthState(); //useContext를 이용하여 user값 불러옴
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [showloginout, setShowloginout] = useState(false); //login유무에 따라 보여지는게 달라짐
   const handleOpen = () => {
     setOpen(true);
-    setShowloginout(loaduser.token);
+    setShowloginout(auth.token);
   };
   const handleClose = () => {
     setOpen(false);
@@ -108,7 +107,8 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar src={account.photoURL} alt="photoURL" />
+        <Avatar src={auth.profile} alt="photoURL" /> 
+        {/* photo경로 예제: photoURL: '/static/mock-images/avatars/avatar_default.jpg' */}
       </IconButton>
       {
         showloginout ?  
@@ -120,10 +120,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {account.displayName}
+            {auth.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {auth.email}
           </Typography>
         </Box>
 
