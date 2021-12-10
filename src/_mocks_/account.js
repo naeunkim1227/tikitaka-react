@@ -1,9 +1,30 @@
-// ----------------------------------------------------------------------여기내용바꾸기
+/* eslint-disable */
+// import {AuthStateContext} from "../Context/context";
+
+// const loginUser = AuthStateContext;
+
+
+
+// if(loginUser != null){
+//   account = {
+//     displayName: loginUser.name,
+//     email: loginUser.email,
+//     photoURL: loginUser.profile
+//   };
+// }
+// else{
+//   account = {
+//     displayName:"sdfdsf",
+//     email: "sdfdsf",
+//     photoURL: "sdfdsf"
+//   };
+// }
 
 const account = {
-  displayName: 'Jaydon Frankie',
-  email: 'demo@minimals.cc',
-  photoURL: '/static/mock-images/avatars/avatar_default.jpg'
+  displayName: 'DB값 적용안됨추후수정',
+  email: 'HGD@gmai.com',
+  photoURL: '/static/mock-images/avatars/avatar_default.jpg', 
+  role:"꼰대"
 };
 
 export default account;
