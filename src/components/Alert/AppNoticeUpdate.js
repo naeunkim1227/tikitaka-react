@@ -19,26 +19,16 @@ import Scrollbar from '../Scrollbar';
 //component 추가
 import NoticeList from './NoticeList';
 
-
+import { useAuthState } from '../../Context';
 export default function AppNewsUpdate() {
 
 
 const [notice, setNotice] = useState([]);
+const Auth = useAuthState();
 
-  //임의 데이터 생성
 const data = {
-  userno: 1
+  token : Auth.token
 }
-
-const datas = [
-  {no: 1,
-  title: 'test'},
-  {no: 2,
-    title: 'test2'},
-  {no: 3,
-      title: 'test3'},
-]
-
 
 useEffect(() => {
     getAlertData();
@@ -75,7 +65,6 @@ const getAlertData =  async () => {
 
 
 }
-
 
   return (
     <Card>
