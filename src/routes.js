@@ -24,15 +24,15 @@ import {Routes, Route} from 'react-router';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const [flag, setFlag] = useState(false);
-  useEffect(() => {
-    console.log('After Rendering');
-    if(!loginUser.token&&flag==false){
-      console.log("로그인화면으로 가기");
-      setFlag(true);
-      //window.location.href="/tikitaka/login";
-    }
-  },[flag]);
+  // const [flag, setFlag] = useState(false);
+  // useEffect(() => {
+  //   console.log('After Rendering');
+  //   if(!loginUser.token&&flag==false){
+  //     console.log("로그인화면으로 가기");
+  //     setFlag(true);
+  //     //window.location.href="/tikitaka/login";
+  //   }
+  // },[flag]);
 
   const loginUser = useAuthState();
   return useRoutes([
