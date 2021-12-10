@@ -15,7 +15,7 @@ export const loginUser=async (dispatch,loginPayload)=>{
             }
         });
         console.log("action called", response.data);
-        if(response.status === 200){
+        if(response.result === "success"){
             console.log("acton-loginsuccess 실행");
             dispatch({type:'LOGIN_SUCCESS',payload: response.data})
             sessionStorage.setItem('currentUser',response.data)
