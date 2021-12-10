@@ -15,12 +15,12 @@ import { mockImgCover } from '../../utils/mockImages';
 //
 import Scrollbar from '../Scrollbar';
 
-
 //component 추가
 import NoticeList from './NoticeList';
-
 import { useAuthState } from '../../Context';
-export default function AppNewsUpdate() {
+
+
+export default function AppNoticeUpdate() {
 
 
 const [notice, setNotice] = useState([]);
@@ -70,7 +70,7 @@ const getAlertData =  async () => {
     <Card>
       <CardHeader title="중요 공지" />
       <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
+        <Stack spacing={7} sx={{ p: 5, pr: 0 }}>
           <NoticeList notice={notice} />
         </Stack>
       </Scrollbar>
