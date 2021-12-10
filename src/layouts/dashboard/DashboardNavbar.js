@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import menu2Fill from '@iconify/icons-eva/menu-2-fill';
@@ -39,6 +40,22 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
+
+const getAllAlertData =  (e) => {
+  e.preventDefault();
+  console.log("test 와라라라라ㅏ라");
+
+}
+
+
+
+
+
+
+// ----------------------------------------------------------------------
+
+
+
 DashboardNavbar.propTypes = {
   onOpenSidebar: PropTypes.func
 };
@@ -58,7 +75,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           <MessagePopover />
-          <NotificationsPopover />
+          <NotificationsPopover onClick={ console.log("fsdfasdfasdfdsfs") } />
           <AccountPopover />
         </Stack>
       </ToolbarStyle>

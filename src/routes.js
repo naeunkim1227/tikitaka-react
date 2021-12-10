@@ -47,6 +47,7 @@ export default function Router() {
         { path: 'importantNotice', element: <ImportantNotice /> },
         { path: 'profile', element: <Profile /> }
         
+
       ]
     },
     {
