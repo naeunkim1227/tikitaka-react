@@ -26,7 +26,7 @@ const MENU_OPTIONS = [
   {
     label: 'Profile',
     icon: personFill,
-    linkTo: '/dashboard/profile'
+    linkTo: '/tikitaka/profile'
   },
   {
     label: 'Settings',
@@ -71,7 +71,6 @@ const logout = async(e) => {
   
   }
 }
-
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
@@ -121,10 +120,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>
-            {loaduser.name}
+            {account.displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {loaduser.password}
+            {account.email}
           </Typography>
         </Box>
 
@@ -166,7 +165,7 @@ export default function AccountPopover() {
       sx={{ width: 220 }}
       >
         <Box sx={{ p: 2, pt: 1.5 }}>
-        <Button fullWidth color="inherit" variant="outlined" onClick={ <Navigate to='/login' /> }>
+        <Button fullWidth color="inherit" variant="outlined" onClick={ ()=>{window.location.href="/login"} }>
           LogIn
         </Button>
         </Box>
