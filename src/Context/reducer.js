@@ -7,13 +7,16 @@ let password = sessionStorage.getItem('currentUser')? sessionStorage.getItem('cu
 let email = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').email : '';
 let profile = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').profile : '';
 let phone = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').phone : '';
+let status = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').status : '';
+
 export const initialState ={ //초기값 설정
     token:""||token,
     name:""||name,
     password:""||password,
     email:""||email,
     profile:""||profile,
-    phone:""||phone
+    phone:""||phone,
+    status:""||status
     // loading:false,
     // errorMessage:null
 }
@@ -26,6 +29,7 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
             console.log("reducer",initialState.password);
             console.log("reducer",initialState.email);
             console.log("reducer",initialState.profile);
+            console.log("reducer",initialState.status);
             return{
                 ...initialState,
                 token:action.payload.no,
@@ -33,7 +37,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 password:action.payload.password,
                 email:action.payload.email,
                 profile:action.payload.profile,
-                phone:action.payload.phone
+                phone:action.payload.phone,
+                status:action.payload.status
                 //loading: false
             }
         case 'LOGOUT':
@@ -44,7 +49,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 password:'',
                 email:'',
                 profile:'',
-                phone:''
+                phone:'',
+                status:''
             }
         case 'LOGIN_ERROR':
             return{
