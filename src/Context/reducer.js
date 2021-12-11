@@ -19,11 +19,11 @@ export const initialState ={ //초기값 설정
 export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값들 반환
     switch (action.type){
         case 'LOGIN_SUCCESS':
-            console.log("reducer",initialState.token);
-            console.log("reducer",initialState.name);
-            console.log("reducer",initialState.password);
-            console.log("reducer",initialState.email);
-            console.log("reducer",initialState.profile);
+            // console.log("reducer",initialState.token);
+            // console.log("reducer",initialState.name);
+            // console.log("reducer",initialState.password);
+            // console.log("reducer",initialState.email);
+            // console.log("reducer",initialState.profile);
             return{
                 ...initialState,
                 token:action.payload.no,
