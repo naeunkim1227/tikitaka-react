@@ -10,6 +10,7 @@ import bellFill from '@iconify/icons-eva/bell-fill';
 import clockFill from '@iconify/icons-eva/clock-fill';
 import doneAllFill from '@iconify/icons-eva/done-all-fill';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+
 // material
 import { alpha } from '@mui/material/styles';
 import {
@@ -55,12 +56,25 @@ const NOTIFICATIONS =     [
     
   ]
 
+const NEWCHAT =  [
+  {
+      c_title: '아아ㅏ악',
+      title: '악앙ㄱ악',
+      type: 'order_placed',
+      createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+      isUnRead: true
+    }
+    
+  ]
+
 export default function NotificationsPopover() {
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [newchats,setNewchat] = useState(NEWCHAT);
   const [datalength, setDatalength] = useState(0);
+  const [type, setType] = useState();
   //const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
   const Auth = useAuthState();
   
@@ -81,13 +95,17 @@ export default function NotificationsPopover() {
                       throw `${res.status} ${res.statusText}`
                     }
 
-                    setNotifications(res.data.data);
-                    setDatalength(res.data.data.length);
+                    setNotifications(res.data.data.Nlist);
+                    setDatalength(res.data.data.Nlist.length + res.data.data.Clist.length);
+                    setType("notice");
+                    
+                    console.log(res.data.data.Nlist)
+                    setNewchat(res.data.data.Clist);
+                    
                   }).catch((err) => {console.log(err)})
-                  
                 }
               
-              console.log(`나와악`,notifications);
+              // console.log(`나와악`,notifications);
 
   const handleOpen = () => {
     setOpen(true);
@@ -100,23 +118,21 @@ export default function NotificationsPopover() {
   const handleMarkAllAsRead = () => {
     setNotifications(
       notifications.map((notification) => ({
-        ...notification,
+        ...notificaton,
+        isUnRead: false
+      }))
+    );
+
+    setNewchat(
+      newchats.map((newchat) => ({
+        ...newchat,
         isUnRead: false
       }))
     );
   };
 
-  const outterRef = useRef(null);
-  
-  const onUp = function(e){
-    const offsetTop = outterRef.current.offsetTop;
-    const offsetBottom = outterRef.current.offsetBottom;
-    console.log('offset:', `${e.clientX - offsetBottom }, ${e.clientY - offsetTop }`);
-  }
-
     return (
-      <div ref={ outterRef }>
-        
+      <>
         <IconButton
           ref={anchorRef}
           size="large"
@@ -132,19 +148,18 @@ export default function NotificationsPopover() {
             <Icon icon={bellFill} width={20} height={20} />
           </Badge>
         </IconButton>
-        
         <MenuPopover
           open={open}
           onClose={handleClose}
           anchorEl={anchorRef.current}
           sx={{ width: 360 }}
-          onMouseMove={onUp}>
+         >
         
           <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="subtitle1">Notifications</Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                등록된 공지가 {datalength} 개 있습니다.
+                확인할 알림이 {datalength} 개 있습니다.
               </Typography>
             </Box>
 
@@ -159,29 +174,39 @@ export default function NotificationsPopover() {
 
           <Divider />
 
-          <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+          <Scrollbar sx={{ height: { xs: 500, sm: 400 } }}>
             <List
               disablePadding
               subheader={
                 <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
-                  New
+                  Notice
                 </ListSubheader>
               }
             >
               {notifications.slice(0, datalength).map((notification) => (
                 <NotificationItem key={notification.id} notification={notification} />
-              ))}
+                ))}
+            </List>
+            <List
+              disablePadding
+              subheader={
+                <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                  Chat
+                </ListSubheader>
+              }>
+              {newchats.slice(0, datalength).map((newchat) => (
+                <NewChat newchat={newchat}/>
+                ))}
             </List>
           </Scrollbar>
 
         </MenuPopover>
-        
-      </div>
+        </>
     );
 }
 
 
-function renderContent(notification) {
+function renderContent(notification, newchat , type ) {
 
 const title = (
   <div>
@@ -194,7 +219,19 @@ const title = (
   </div>
 );
 
-if (notification.type === 'mail') {
+// const chattitle = (
+//   <div>
+//   <Typography variant="subtitle2">
+//     {notification.writer} 님이 공지를 등록했습니다.
+//   </Typography>
+//     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+//     {notification.c_title}
+//     </Typography>
+//   </div>
+// );
+
+
+if (notification.type  = "notice") {
   return {
     avatar: <img alt={notification.title} src="/static/icons/ic_notification_mail.svg" />,
     title
@@ -256,3 +293,44 @@ return (
   </ListItemButton>
 );
 }
+
+function NewChat({ newchat }) {
+  const { avatar, title } = renderContent(newchat);
+  //const date = moment(newchat.createdAt).format('YY/MM/DD HH:mm');
+  return (
+    <ListItemButton
+      to="#"
+      disableGutters
+      component={RouterLink}
+      sx={{
+        py: 1.5,
+        px: 2.5,
+        mt: '1px',
+        ...(newchat.isUnRead && {
+          bgcolor: 'action.selected'
+        })
+      }}
+    >
+      <ListItemAvatar>
+        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+      </ListItemAvatar>
+      <ListItemText
+        primary={title}
+        secondary={
+          <Typography
+            variant="caption"
+            sx={{
+              mt: 0.5, 
+              display: 'flex',
+              alignItems: 'center',
+              color: 'text.disabled'
+            }}
+          >
+            <Box component={Icon} icon={clockFill} sx={{ mr: 0.5, width: 16, height: 16 }} />
+            {/* //{date} */}
+          </Typography>
+        }
+      />
+    </ListItemButton>
+  );
+  }
