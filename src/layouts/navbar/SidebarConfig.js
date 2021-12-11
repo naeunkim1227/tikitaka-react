@@ -30,11 +30,6 @@ const sidebarConfig = [
     icon: getIcon(lockFill)
   },
   {
-    title: 'importantNotice',
-    path: '/tikitaka/importantNotice',
-    icon: getIcon(lockFill)
-  },
-  {
     title: 'register',
     path: '/register',
     icon: getIcon(personAddFill)
