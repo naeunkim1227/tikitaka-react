@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -11,6 +11,10 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { styled } from '@mui/material/styles';
+import { useAuthState } from 'src/Context';
+import { getFileInfo } from 'prettier';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -46,39 +50,51 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 
 const Profile = () => {
-
-    
-    
-    const user = {
-        no: "1",
-        profile: "",
-        name: "김티키",
-        company: "부산 본부",
-        dept: "플랫폼 개발 사업본부",
-        position: "신입사원",
-        email:"jinwoo@gmail.com",
-        phone: "010-1234-2345"
+    //const [info, setInfo] = useState([]);
+    // const userInfo = async() => {
+    //     try {
+    //         const res = await axios.get(`/TT/getInfo/${user.no}`)
+    //                                 .then((res) => {
+    //                                     console.log(res.data);
+    //                                 })
+    //     } catch (error) {
+            
+    //     }
+    // }
+    const auth = useAuthState();
+    const [userInfo, setUserInfo] = useState();
+    const navigate = useNavigate();
+    const getInfo = async () => {
+        
+        try {
+            const res = await axios.get(`/TT/getInfo/${auth.token}`)
+                                .then((res) => {
+                                    const result = JSON.parse(JSON.stringify(res.data))
+                                    console.log("result:" + result);
+                                    setUserInfo(result);
+                                })
+        } catch (error) {
+            
+        }
+                                    
     }
-
-    localStorage.setItem('user', JSON.stringify(user));
 
     const move = (e) => {
         e.preventDefault();
 
-        window.location.href="/tikitaka/updateProfile"
+        navigate('/tikitaka/updateProfile', { replace: true });
     };
-
     return (
         <div align="center">
         <Container >
-            <Card sx={{ minWidth: 500 }} align="center">
+            <Card sx={{ minWidth: 500 }} align="center" >
             <CardContent>
                 <StyledBadge
                     overlap="circular"
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                     variant="dot"
       >
-                    <Avatar alt="" src="" sx={{ width: 100, height: 100 }} />
+                <Avatar alt="" src={`/TT${auth.profile}`} sx={{ width: 100, height: 100 }} />
                 </StyledBadge>
                 <br />
                 <br />
@@ -94,7 +110,7 @@ const Profile = () => {
                     id="inline"
                     label="이름:"
                     color="warning"
-                    value={sessionStorage.getItem("name")}
+                    value={auth.name}
                     InputProps={{
                     readOnly: true
                     }}
@@ -107,7 +123,7 @@ const Profile = () => {
                     id="inline"
                     label="근무지사:"
                     color="warning"
-                    value={user.company}
+                    value={auth.token}
                     InputProps={{
                     readOnly: true
                     }}
@@ -120,7 +136,7 @@ const Profile = () => {
                     id="inline"
                     label="부서:"
                     color="warning"
-                    value={user.dept}
+                    value={auth.token}
                     InputProps={{
                     readOnly: true
                     }}
@@ -133,7 +149,7 @@ const Profile = () => {
                     id="inline"
                     label="직책:"
                     color="warning"
-                    value={user.position}
+                    value={auth.token}
                     InputProps={{
                     readOnly: true
                     }}
@@ -146,7 +162,7 @@ const Profile = () => {
                     id="inline"
                     label="이메일:"
                     color="warning"
-                    value={user.email}
+                    value={auth.email}
                     InputProps={{
                     readOnly: true
                     }}
@@ -159,7 +175,7 @@ const Profile = () => {
                     id="inline"
                     label="연락처:"
                     color="warning"
-                    value={sessionStorage.getItem("phone")}
+                    value={auth.phone}
                     InputProps={{
                     readOnly: true
                     }}
