@@ -16,7 +16,15 @@ import moment from 'moment';
 
 
 
-export default function NoticeListItem({key,title, contents, reg_date,chatTitle}) {
+export default function NoticeListItem({key,title, contents, reg_date,chatTitle,writer}) {
+
+  const test = async(e) => {
+    e.preventDefault;
+    console.log("ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ")
+
+
+  }
+
     
     const date = moment(reg_date).format('YY/MM/DD HH:mm');
     return (
@@ -28,7 +36,7 @@ export default function NoticeListItem({key,title, contents, reg_date,chatTitle}
             sx={{ width: 48, height: 48, borderRadius: 1.5 }}
           /> */}
           <Box sx={{ minWidth: 240 }}>
-            <Link to="#" color="inherit" underline="hover" component={RouterLink}>
+            <Link color="inherit" underline="hover" onClick={ test }>
               <Typography variant="subtitle2" noWrap>
                 {title}
               </Typography>
@@ -40,6 +48,9 @@ export default function NoticeListItem({key,title, contents, reg_date,chatTitle}
               {chatTitle}
             </Typography>
           </Box>
+          <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
+            작성자 : {writer}
+          </Typography>
           <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
             등록 시간 : {date}
           </Typography>
