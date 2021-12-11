@@ -69,7 +69,7 @@ const getAlertData =  async () => {
   return (
     <Card>
       <CardHeader title="중요 공지" />
-      <Scrollbar>
+      <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
         <Stack spacing={7} sx={{ p: 5, pr: 0 }}>
           <NoticeList notice={notice} />
         </Stack>
