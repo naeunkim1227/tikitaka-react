@@ -29,7 +29,6 @@ const sidebarConfig = [
     path: '/tikitaka/chat',
     icon: getIcon(lockFill)
   },
-
   {
     title: 'importantNotice',
     path: '/tikitaka/importantNotice',

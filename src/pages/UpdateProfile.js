@@ -11,32 +11,45 @@ import TextField from '@mui/material/TextField';
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import axios from 'axios';
+import { useAuthState } from 'src/Context';
+import { useNavigate } from 'react-router-dom';
 
 const user = JSON.parse(localStorage.getItem('user'));
 
 const UpdateProfile = () => {
 
-    const [userPassword, setUserPassword] = useState('');
-    const [userEmail, setUserEmail] = useState(user.email);
-    const [userPhone, setUserPhone] = useState(user.phone);
+    const navigate = useNavigate();
+    const auth = useAuthState();
+    const [userInfo, setUserInfo] = useState();
     const [userImage, setUserImage] = useState();
     const [imgData, setImageData] = useState(null);
     const [urlData, setUrlData] = useState(null);
+    const [changeImg, setChangeImg] = useState('');
+    // update form data
+    const [userEmail, setUserEmail] = useState('');
+    const [userPhone, setUserPhone] = useState('');
 
-    const passwordChange = (e) => {
-        e.preventDefault();
-        
-        setUserPassword(e.target.value);
+    const getInfo = async () => {
+        const res = await axios.get(`/TT/getInfo/${auth.token}`)
+                                .then((res) => {
+                                    
+                                    setUserInfo(res.data);
+                                })
     }
+
+    const change = (e) => {
+        setChangeImg(userInfo.profile);
+    }
+
     const emailChange = (e) => {
         e.preventDefault();
         
-        setUserCompany(e.target.value);
+        setUserEmail(e.target.value);
     }
     const phoneChange = (e) => {
         e.preventDefault();
 
-        setUserCompany(e.target.value);
+        setUserPhone(e.target.value);
     }
 
     // change event
@@ -50,45 +63,49 @@ const UpdateProfile = () => {
         const formData = new FormData();
         formData.append('file', userImage);
 
-        const response = await axios.post('/TT/updateImage', formData, {headers:{"Content-Type":"multipart/form-data"}})
+        const response = await axios.post(`/TT/updateImage/${auth.token}`, formData, {headers:{"Content-Type":"multipart/form-data"}})
                                     .then((res) => {
                                         setUserImage(res.data);
+                                        getImage();
                                     })
                                     .catch((err) => {
                                         console.log(err);
                                     })             
     }
 
-
+    // 회원정보 수정
     const updateProfile = async (e) => {
         e.preventDefault();
 
-        let profileData = {
-            no: '1',
-            name: user.name,
-            password: userPassword,
+        const userFormData = {
+            no: auth.token,
+            name: auth.name,
             email: userEmail,
             phone: userPhone
-        }
-        console.log(profileData);
+        }        
 
-        const response = await axios.post('/TT/updateProfile', JSON.stringify(profileData), {headers:{"Content-Type":"application/json"}})
+        const response = await axios.post('/TT/updateProfile', JSON.stringify(userFormData), {headers:{"Content-Type":"application/json"}})
                                     .then((res) => {
                                         console.log(res);
+                                        navigate('/tikitaka/profile', { replace: true });
                                     })
                                     .catch((err) => {
                                         console.log(err);
                                     })
+                                    //return response;
+    }
 
-                                    
-                                    return response;
+    // 비밀번호 변경 페이지
+    const changePassword = (e) => {
+        navigate('/tikitaka/changePassword', { replace: true });
     }
     
     const getImage = async () => {
         try {
-            const response = await axios.get(`/TT/getImage/${user.no}`)
+            const response = await axios.get(`/TT/getImage/${auth.token}`)
                                         .then((res) => {
-                                            setUrlData(res.data);
+                                            setChangeImg(res.data);
+                                            
                                         })
         } catch (error) {
             console.log(error);
@@ -111,7 +128,7 @@ const UpdateProfile = () => {
             <CardContent>
                 <form encType="multipart/form-data">
                     <Badge color="success" overlap="circular" badgeContent=" ">
-                    <Avatar id='avatar' alt="" src={`/TT${urlData}`} sx={{ width: 100, height: 100 }} />
+                    <Avatar id='avatar' alt="" src={`/TT${changeImg}`} sx={{ width: 100, height: 100 }} onChange={change}/>
                     </Badge>
                     <br />
                     <br />
@@ -122,7 +139,7 @@ const UpdateProfile = () => {
                 <TextField
                     id="outlined-required"
                     label="이름:"
-                    defaultValue={user.name}
+                    defaultValue={auth.name}
                     InputProps={{
                         readOnly: true
                     }}
@@ -134,7 +151,7 @@ const UpdateProfile = () => {
                 <TextField
                     id="inline"
                     label="사원번호:"
-                    defaultValue={`${user.company}-${user.dept}-${user.position}-1`}
+                    defaultValue={`${auth.no}-${auth.dept}-${auth.position}-1`}
                     InputProps={{
                         readOnly: true
                     }}
@@ -143,19 +160,11 @@ const UpdateProfile = () => {
                     style={{minWidth: 350, marginBottom:10}}
                 />
                 <br />
-                <TextField
-                    id="inline"
-                    label="비밀번호:"
-                    defaultValue=''
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                    onChange={passwordChange}
-                />
                 <br />
                 <TextField
                     id="inline"
                     label="이메일:"
-                    defaultValue={user.email}
+                    defaultValue={auth.email}
                     focused
                     style={{minWidth: 350, marginBottom:10}}
                     onChange={emailChange}
@@ -164,7 +173,7 @@ const UpdateProfile = () => {
                 <TextField
                     id="inline"
                     label="연락처:"
-                    defaultValue={user.phone}
+                    defaultValue={auth.phone}
                     focused
                     style={{minWidth: 350, marginBottom:10}}
                     onChange={phoneChange}
@@ -174,8 +183,8 @@ const UpdateProfile = () => {
             </CardContent>
             <CardActions>
                 <Button variant="contained" 
-                        style={{position: 'absolute', right:400, marginRight: "10px", marginBottom: "10px"}} 
-                        size="large"
+                        style={{position: 'absolute', right:300, marginRight: "10px", marginBottom: "10px"}} 
+                        size="small"
                         onClick={updateProfile}>수정하기</Button>
             </CardActions><br/>
             </Card>

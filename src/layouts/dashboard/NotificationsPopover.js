@@ -32,8 +32,11 @@ import { mockImgAvatar } from '../../utils/mockImages';
 // components
 import Scrollbar from '../../components/Scrollbar';
 import MenuPopover from '../../components/MenuPopover';
+import { useAuthState } from '../../Context';
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
+
 
 const NOTIFICATIONS = [
   {
@@ -43,15 +46,6 @@ const NOTIFICATIONS = [
     avatar: null,
     type: 'order_placed',
     createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-    isUnRead: true
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: faker.name.findName(),
-    description: 'answered to your comment on the Minimal',
-    avatar: mockImgAvatar(2),
-    type: 'friend_interactive',
-    createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
     isUnRead: true
   },
   {
@@ -85,6 +79,19 @@ const NOTIFICATIONS = [
 
 
 function renderContent(notification) {
+    const Auth = useAuthState();
+
+  const data = {
+    token : Auth.token
+  }
+
+  const getAlertData =  async() => {
+      const res = await axios.post('/TT/getAData', data)
+        
+  }
+
+
+
   const title = (
     <Typography variant="subtitle2">
       {notification.title}누가누가 채팅 방을 만들었습니다
