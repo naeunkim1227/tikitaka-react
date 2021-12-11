@@ -186,10 +186,6 @@ const UpdateProfile = () => {
                         style={{position: 'absolute', right:300, marginRight: "10px", marginBottom: "10px"}} 
                         size="small"
                         onClick={updateProfile}>수정하기</Button>
-                <Button variant="contained" 
-                        style={{position: 'absolute', right:385, marginRight: "10px", marginBottom: "10px"}} 
-                        size="small"
-                        onClick={changePassword}>비밀번호 변경하기</Button>
             </CardActions><br/>
             </Card>
             </Box>
