@@ -122,7 +122,6 @@ export default function NotificationsPopover() {
           size="large"
           color={open ? 'primary' : 'default'}
           onClick={handleOpen}
-          onScroll={ e => }
           sx={{
             ...(open && {
               bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.focusOpacity)
