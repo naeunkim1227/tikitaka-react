@@ -8,7 +8,7 @@ let email = sessionStorage.getItem('currentUser')? sessionStorage.getItem('curre
 let profile = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').profile : '';
 let phone = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').phone : '';
 let status = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').status : '';
-
+let message = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').message : '';
 export const initialState ={ //초기값 설정
     token:""||token,
     name:""||name,
@@ -16,7 +16,8 @@ export const initialState ={ //초기값 설정
     email:""||email,
     profile:""||profile,
     phone:""||phone,
-    status:""||status
+    status:""||status,
+    message:""||message
     // loading:false,
     // errorMessage:null
 }
@@ -57,6 +58,11 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 ...initialState,
                 loading: false,
                 errorMessage: action.error
+            }
+        case 'SEND_MESSAGE':
+            return{
+                ...initialState,
+                message: action.target.value
             }
         default:
             throw new Error( `Unhandled action type: ${action.type}`)
