@@ -118,7 +118,6 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           >
             Upgrade to Pro
           </Button> */}
-          <h1>test</h1>
         </Stack>
       </Box>
     </Scrollbar>

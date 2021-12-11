@@ -1,7 +1,8 @@
 /* eslint-disable */
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
-import DashboardLayout from './layouts/dashboard';
+import DashboardLayout from './layouts/navbar';
+import UserLayout from './layouts/navbar/userindex';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
 import Login from './pages/Login';
@@ -40,7 +41,7 @@ export default function Router() {
   return useRoutes([
     {
       path: '/tikitaka',
-      element: !Boolean(loginUser.token) ? (<Navigate to='/login' />):(<DashboardLayout />),  //loginUser.token == 로그인된 userno
+      element: !Boolean(loginUser.token) ? (<Navigate to='/login' />):(<UserLayout />),  //loginUser.token == 로그인된 userno
       children: [
         { element: <Navigate to="/tikitaka/main" replace /> },
         { path: 'main', element: <Main /> },

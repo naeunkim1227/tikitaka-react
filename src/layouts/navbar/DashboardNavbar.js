@@ -14,6 +14,9 @@ import LanguagePopover from './LanguagePopover';
 import NotificationsPopover from './NotificationsPopover';
 import MessagePopover from './MessagePopover';
 
+
+import { useAuthState } from '../../Context';
+
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 280;
@@ -37,21 +40,6 @@ const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
     padding: theme.spacing(0, 5)
   }
 }));
-
-// ----------------------------------------------------------------------
-
-
-const getAllAlertData =  (e) => {
-  e.preventDefault();
-  console.log("test 와라라라라ㅏ라");
-
-}
-
-
-
-
-
-
 // ----------------------------------------------------------------------
 
 
@@ -61,6 +49,8 @@ DashboardNavbar.propTypes = {
 };
 
 export default function DashboardNavbar({ onOpenSidebar }) {
+  const loginUser = useAuthState();
+
   return (
     <RootStyle>
       <ToolbarStyle>

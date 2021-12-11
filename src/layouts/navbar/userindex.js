@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // material
@@ -5,6 +6,10 @@ import { styled } from '@mui/material/styles';
 //
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
+
+
+
+import { useAuthState } from '../../Context';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +39,8 @@ const MainStyle = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const Auth = useAuthState();
+
 
   return (
     <RootStyle>
