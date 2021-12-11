@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import faker from 'faker';
 import { sample } from 'lodash';
 // utils
