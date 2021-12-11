@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import { Icon } from '@iconify/react';
 import pieChart2Fill from '@iconify/icons-eva/pie-chart-2-fill';
 import peopleFill from '@iconify/icons-eva/people-fill';
@@ -29,7 +30,6 @@ const sidebarConfig = [
     path: '/tikitaka/chat',
     icon: getIcon(lockFill)
   },
-
   {
     title: 'importantNotice',
     path: '/tikitaka/importantNotice',

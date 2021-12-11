@@ -1,3 +1,4 @@
+/* eslint-disable */ 
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
@@ -28,17 +29,17 @@ import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
-import USERLIST from '../_mocks_/user';
+import USERLIST from '../_mocks_/user'; // 임시 데이터
+import { useEffect } from 'react';
+import { map } from 'lodash-es';
+import { useAuthState } from 'src/Context';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
-  // { id: 'role', label: 'Role', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' }
+  { id: 'status', label: 'Status', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -132,6 +133,62 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  //-----------------------------------------------------------------------------------------------
+  const [messages, setMessages] = useState([]);
+
+  const auth = useAuthState();
+
+  let data= {
+    userNo: auth.token
+  };
+
+  console.log(auth.token)
+
+  const [user, setUser] = useState([]);
+
+  useEffect(() => {
+    getStatusData();
+  }, []);
+
+  const getStatusData = async() => {
+
+    console.log("test")
+
+    try {
+      const response = await fetch(`/TT/user/`, {
+        method: 'post',
+        headers: {
+          'Content-Type' : 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      console.log(data)
+      
+      if(!response.ok){
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+      
+
+      const json = await response.json();
+
+      setUser(json.data);
+      console.log('데이터',json.data)
+      
+      // if(json.result !== 'success') {
+      //   throw json.message;
+      // }
+
+      // setMessages([...messages, ...json.data]);
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+var index = 0;
+
   return (
     <Page title="User | Minimal-UI">
       <Container>
@@ -145,7 +202,7 @@ export default function User() {
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
-            New User
+            New User 
           </Button>
         </Stack>
 
@@ -168,14 +225,22 @@ export default function User() {
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
+
+
+
+
                 <TableBody>
+
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
                       const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                  
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
+                        // <Table data={user} />
+                        //  map.data => <TableItem key={data.no} 
                         <TableRow
                           hover
                           key={id}
@@ -184,35 +249,40 @@ export default function User() {
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
                         >
+
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
                               onChange={(event) => handleClick(event, name)}
                             />
                           </TableCell>
+
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
+                              {/* 사진 */}
                               <Avatar alt={name} src={avatarUrl} />
                               <Typography variant="subtitle2" noWrap>
-                                {name}
+                                {user[index++]?.name}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{company}</TableCell>
-                          {/* <TableCell align="left">{role}</TableCell> */}
-                          {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+
+                          <TableCell align="left">{user[index]?.role}</TableCell>
+
                           <TableCell align="left">
                             <Label
-                              variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
+                              // variant="ghost"
+                              color={(status === 'offline' && 'error') || 'success'}
                             >
-                              {sentenceCase(status)}
+                              {/* {sentenceCase(status)} */}
+                              {user[index]?.status}
                             </Label>
                           </TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu />
                           </TableCell>
+
                         </TableRow>
                       );
                     })}
@@ -221,7 +291,15 @@ export default function User() {
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}
+
+
+
+
+
                 </TableBody>
+
+
+                
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
