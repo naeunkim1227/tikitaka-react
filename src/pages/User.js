@@ -188,6 +188,11 @@ export default function User() {
     }
   };
 
+  const createTopic = (e) =>{
+    console.log(e.current.no);
+  }
+
+
 var index = 0;
 
   return (
@@ -278,6 +283,10 @@ var index = 0;
                               {/* {sentenceCase(status)} */}
                               {user[index]?.status}
                             </Label>
+                          </TableCell>
+
+                          <TableCell>
+                            <Button type="button" variant="contained" onClick={createTopic}>대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
