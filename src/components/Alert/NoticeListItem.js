@@ -20,8 +20,6 @@ export default function NoticeListItem({key,title, contents, reg_date,chatTitle,
 
   const test = async(e) => {
     e.preventDefault;
-    console.log("ㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠㅠ")
-
 
   }
 
