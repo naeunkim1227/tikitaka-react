@@ -24,11 +24,7 @@ const ChatRoom = () => {
     
 
     const messageHandle = (e) =>{
-      const {value, contents} = e.target;
-      setContents({
-        ...contents,
-        [contents]:value
-      });
+      setContents(e.target.value);
     }
 
     const sendMessage = async (e) => {
@@ -36,27 +32,49 @@ const ChatRoom = () => {
       const data= {
         userNo: auth.token,
         name: auth.name,
-        chatNo: '1',
-        contents: contents,
+        chatNo: '6',
+        message: contents,
         readCount: 1
       }
-      try {
-        const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-        .then((response) => {
-          console.log("ddd"+response.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-      } catch (error) {
-        
-      }
-      
-      // await axios.post(`/TT/talk/topic/${data.chatNo}`, JSON.stringify(data), {headers:{"Content-Type":"application/json"}})
-      // .then((res)=>{
-      //   console.log(res);
-      // })
 
+      //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력
+
+      //토픽(채널) 추가하는 axios
+      const res = await axios.put(`/TT/talk/topic/${data.chatNo}`, {headers:{"Content-Type":"application/json"}})
+      .then((res)=>{
+        console.log(res);
+        return res;
+      }).catch((err) => {
+        console.log(err);
+      })
+
+      // //메시지 보내기
+      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+      // .then((response) => {
+      //   console.log("msg send");
+      //   return response;
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // })
+      
+      // //사용자의 연결되어있는 채팅리스트를 출력
+      // const res = await axios.get(`/TT/talk/topic`)
+      //                   .then((res) => {
+      //                     const channellist = res.data;
+      //                     console.log("추후 채팅목록에 사용:"+ channellist);
+      //                   }).catch((err)=>{
+      //                     console.log(err);
+      //                   })
+      
+      // //채팅방 나가기
+      // const res = await axios.delete(`/TT/talk/topic/${data.chatNo}`)
+      //                   .then((res) => {
+      //                     console.log("사용자가 선택한chatno 채팅방 나가기"+res);
+      //                   }).catch((err) => {
+      //                     console.log(err);
+      //                   })
+              
     }
 
     
