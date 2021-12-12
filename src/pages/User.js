@@ -198,6 +198,7 @@ export default function User() {
     }
   };
 
+
   useEffect(() => {
     console.log('page >>> ',page)
     console.log('rowsPerPage >>> ',rowsPerPage)
@@ -205,6 +206,7 @@ export default function User() {
   },[page,rowsPerPage])
 
 // const [index, setIndex] = useState(0);
+
 var index = 0;
 
   return (
@@ -313,6 +315,10 @@ var index = 0;
                               
                               {status == 0 ? '오프라인' : '온라인' }
                             </Label>
+                          </TableCell>
+
+                          <TableCell>
+                            <Button type="button" variant="contained" onClick={createTopic}>대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
