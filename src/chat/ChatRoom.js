@@ -21,7 +21,34 @@ const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
 
-    
+    const chatinfo= {
+      userNo: auth.token,
+      chatNo: '6',
+    }
+
+
+    useEffect(()=>{
+      getmessage();
+    },[])
+
+
+    const getmessage = async() => {
+      try{
+        console.log('데이터 보내버렷',chatinfo.chatNo);
+        const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+        .then((res) => {
+          console.log('data test', res)
+          if(res.statusText !== "OK"){
+            throw `${res.status} ${res.statusText}`
+          }
+        })
+      }catch{
+
+      }
+    }
+
+
+
 
     const messageHandle = (e) =>{
       setContents(e.target.value);
