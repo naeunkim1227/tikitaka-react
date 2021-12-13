@@ -2,7 +2,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -30,7 +30,7 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 
-import USERLIST from '../_mocks_/user'; // 임시 데이터
+// import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
 import { useAuthState } from 'src/Context';
@@ -75,6 +75,10 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
+
+  const [user, setUser] = useState([]);
+  const [userList ,setUserList] = useState([]);
+  
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -90,7 +94,7 @@ export default function User() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = user.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -115,6 +119,7 @@ export default function User() {
     setSelected(newSelected);
   };
 
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -128,9 +133,9 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(user, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -139,22 +144,21 @@ export default function User() {
 
   const auth = useAuthState();
 
+  
+
   let data= {
     userNo: auth.token
   };
 
   console.log(auth.token)
 
-  const [user, setUser] = useState([]);
 
   useEffect(() => {
     getStatusData();
   }, []);
 
   const getStatusData = async() => {
-
     console.log("test")
-
     try {
       const response = await fetch(`/TT/user/`, {
         method: 'post',
@@ -165,7 +169,6 @@ export default function User() {
         body: JSON.stringify(data)
       });
 
-      console.log(data)
       
       if(!response.ok){
         throw new Error(`${response.status} ${response.statusText}`);
@@ -177,6 +180,13 @@ export default function User() {
       setUser(json.data);
       console.log('데이터',json.data)
       
+
+      console.log('길이', json.data.length)
+      setUserList(json.data.length);
+
+      // console.log('이름', user[].name)
+      
+
       // if(json.result !== 'success') {
       //   throw json.message;
       // }
@@ -188,10 +198,18 @@ export default function User() {
     }
   };
 
-  const createTopic = (e) =>{
-    console.log(e.current.no);
-  }
 
+  useEffect(() => {
+    console.log('page >>> ',page)
+    console.log('rowsPerPage >>> ',rowsPerPage)
+
+  },[page,rowsPerPage])
+
+// const [index, setIndex] = useState(0);
+  
+  const createTopic = function(no) {
+    console.log("topic:" + no);
+  }
 
 var index = 0;
 
@@ -226,7 +244,7 @@ var index = 0;
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={user.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -236,25 +254,43 @@ var index = 0;
 
 
                 <TableBody>
-
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                  
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                    .map((value) => {
+                      console.log('value >>>',value)
+                      // row 라고 지정해둔거 >>> 기존 템플릿에서 임시 지정
+                      const {no, name, role, status, profile} = value;
+                      // const { key, id, role, status, avatarUrl } = value;
+                      
+                      // const {
+                      //         key: {user.no},  
+                      //         role : {user.role}, 
+                      //         name: {user.name},
+                      //         status : {user.status},
+                      //         profile: {user.profile}
+                      //         } = row;
+
+                      // 체크박스
+                      const isItemSelected = selected.indexOf(no) !== -1;
 
                       return (
+                        // <UserListItem user={users} />
                         // <Table data={user} />
-                        //  map.data => <TableItem key={data.no} 
+                         //  map.data => <TableItem key={data.no} 
                         <TableRow
                           hover
-                          key={id}
+                          key={no}
                           tabIndex={-1}
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
+                          
                         >
+                         
+                         {/* 정렬 안맞는 거 임시로 해결 */}
+                         {/* <TableCell component="th" scope="row">
+                         {page * rowsPerPage + value + 1}
+                           </TableCell> */}
 
                           <TableCell padding="checkbox">
                             <Checkbox
@@ -264,29 +300,30 @@ var index = 0;
                           </TableCell>
 
                           <TableCell component="th" scope="row" padding="none">
+                          
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {/* 사진 */}
-                              <Avatar alt={name} src={avatarUrl} />
+                              <Avatar alt={name} src={profile} />
                               <Typography variant="subtitle2" noWrap>
-                                {user[index++]?.name}
+                                {name}
                               </Typography>
                             </Stack>
                           </TableCell>
 
-                          <TableCell align="left">{user[index]?.role}</TableCell>
+                          <TableCell align="left">{role}</TableCell>
 
                           <TableCell align="left">
                             <Label
                               // variant="ghost"
-                              color={(status === 'offline' && 'error') || 'success'}
+                              color={(status === '0' && 'error') || 'success'}
                             >
-                              {/* {sentenceCase(status)} */}
-                              {user[index]?.status}
+                              
+                              {status == 0 ? '오프라인' : '온라인' }
                             </Label>
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={createTopic}>대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no)}} >대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
@@ -301,14 +338,7 @@ var index = 0;
                       <TableCell colSpan={6} />
                     </TableRow>
                   )}
-
-
-
-
-
                 </TableBody>
-
-
                 
                 {isUserNotFound && (
                   <TableBody>
@@ -326,7 +356,7 @@ var index = 0;
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={user.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
