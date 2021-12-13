@@ -2,7 +2,7 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -207,6 +207,11 @@ export default function User() {
 
 // const [index, setIndex] = useState(0);
 
+  
+  const createTopic = function(no) {
+    console.log("topic:" + no);
+  }
+
 var index = 0;
 
   return (
@@ -280,6 +285,7 @@ var index = 0;
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
+                          
                         >
                          
                          {/* 정렬 안맞는 거 임시로 해결 */}
@@ -318,7 +324,7 @@ var index = 0;
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={createTopic}>대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no)}} >대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">

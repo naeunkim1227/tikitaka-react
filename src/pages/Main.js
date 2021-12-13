@@ -7,7 +7,7 @@ import {
   AppNewsUpdate
 } from '../components/_dashboard/app';
 
-import AppNoticeUpdate  from  '../components/Alert/AppNoticeUpdate';
+import AppNoticeUpdate  from  '../components/alert/AppNoticeUpdate';
 
 
 
