@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 
-import React, { useEffect, useRef, useState, useReducer } from 'react';
+import React, {useState, Fragment } from 'react';
 import './components.css';
 import './style.css';
 import Card from "@mui/material/Card";
@@ -14,11 +14,20 @@ import { green } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
 import { useAuthState } from 'src/Context';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Box from '@mui/material/Box';
+import ImageIcon from '@mui/icons-material/Image';
+import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
+import ArticleIcon from '@mui/icons-material/Article';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import RoomIcon from '@mui/icons-material/Room';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
-
+    const [state,setState] = useState(false)
     
 
     const messageHandle = (e) =>{
@@ -78,6 +87,8 @@ const ChatRoom = () => {
     }
 
     
+  
+    
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -86,49 +97,58 @@ const ChatRoom = () => {
       </CardContent>
       <CardContent sx={{ minWidth: 600 , minHeight:450}}>
 
-        {/* <Table colspan="5" sx={{ minWidth: 220 , minHeight:150}} aria-label="simple table">
-          <TableBody rowsPerPageOptions={[5]} align="center">
-            <tr>
-              <td colspan="1">hi</td>
-              <td colspan="4"></td>
-            </tr>
-            <tr>
-              <td colspan="1">bye</td>
-              <td colspan="4" rowspan="2">
-                bye
-              </td>
-            </tr>
-          </TableBody>
-        </Table> */}
-      </CardContent>
-      <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10, alignItems: 'start'}}>
-      <form>
-        <Button>
-            <Icon sx={{ color: green[500], 
-                  width: 50, 
-                  height: 50, 
-                  fontSize: 30, 
-                  border: '2px solid gray',
-                  borderRadius: '5px'}}>+</Icon>
-        </Button>
       
+        
+      </CardContent>
+      <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
+      <form style={{alignItems: "center"}}>
+      <Box
+        sx={{
+          display: 'flex',
+          position:'abslolute',
+          flexDirection: 'row',
+          alignItems: 'center',
+          '& > *': {
+            m: 1,
+          },
+        }}
+      >
+        <ButtonGroup variant='string'>
+          <Button>
+            <ArticleIcon sx={{ width: 40, height: 40}} />
+          </Button>
+          <Button>
+            <AssignmentIndIcon sx={{ width: 40, height: 40}} />
+          </Button>
+          <Button>
+            <ImageIcon sx={{ width: 40, height: 40}} />
+          </Button>
+          <Button>
+            <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
+          </Button>
+          <Button>
+            <RoomIcon sx={{ width: 40, height: 40}} />
+          </Button>
+        </ButtonGroup>
         <TextField
           inputMode
           hiddenLabel
           id="textWindow"
           placeholder='메시지를 입력하시오.'
           variant="outlined"
-          style={{align:"center", left:200 , marginRight: "10px" , minWidth: 750}}
+          style={{align:"center" , width: '50%'}}
           type='text'
           name="message"
-         
           onChange={messageHandle}
           
         />
-        
-        <Button type='submit' variant="contained" style={{position: 'absolute', right:100, marginRight: "10px"}} size="large" onClick={sendMessage}>
+        <Button>
+            <EmojiEmotionsIcon sx={{ width: 40, height: 40}} />
+          </Button>
+        <Button type='submit' variant="contained" style={{position: 'fixed', right:400}} size="large" onClick={sendMessage}>
           Send
         </Button>
+        </Box>
         </form>
       </CardContent>
     </Card>
