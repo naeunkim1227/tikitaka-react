@@ -217,18 +217,10 @@ var index = 0;
   return (
     <Page title="User | Minimal-UI">
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            New User 
-          </Button>
         </Stack>
 
         <Card>
@@ -261,23 +253,11 @@ var index = 0;
                       console.log('value >>>',value)
                       // row 라고 지정해둔거 >>> 기존 템플릿에서 임시 지정
                       const {no, name, role, status, profile} = value;
-                      // const { key, id, role, status, avatarUrl } = value;
-                      
-                      // const {
-                      //         key: {user.no},  
-                      //         role : {user.role}, 
-                      //         name: {user.name},
-                      //         status : {user.status},
-                      //         profile: {user.profile}
-                      //         } = row;
 
                       // 체크박스
                       const isItemSelected = selected.indexOf(no) !== -1;
 
                       return (
-                        // <UserListItem user={users} />
-                        // <Table data={user} />
-                         //  map.data => <TableItem key={data.no} 
                         <TableRow
                           hover
                           key={no}
@@ -287,16 +267,11 @@ var index = 0;
                           aria-checked={isItemSelected}
                           
                         >
-                         
-                         {/* 정렬 안맞는 거 임시로 해결 */}
-                         {/* <TableCell component="th" scope="row">
-                         {page * rowsPerPage + value + 1}
-                           </TableCell> */}
 
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
+                              onChange={(event) => handleClick(event, no)}
                             />
                           </TableCell>
 
