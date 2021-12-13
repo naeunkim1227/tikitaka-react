@@ -58,10 +58,10 @@ const NOTIFICATIONS =     [
 
 const NEWCHAT =  [
   {
-      c_title: '아아ㅏ악',
-      title: '악앙ㄱ악',
-      type: 'order_placed',
-      createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+      no: '',
+      title: '',
+      type: 'chat_message',
+      create_time: set(new Date(), { hours: 10, minutes: 30 }),
       isUnRead: true
     }
     
@@ -74,7 +74,6 @@ export default function NotificationsPopover() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [newchats,setNewchat] = useState(NEWCHAT);
   const [datalength, setDatalength] = useState(0);
-  const [type, setType] = useState();
   //const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
   const Auth = useAuthState();
   
@@ -97,15 +96,16 @@ export default function NotificationsPopover() {
 
                     setNotifications(res.data.data.Nlist);
                     setDatalength(res.data.data.Nlist.length + res.data.data.Clist.length);
-                    setType("notice");
                     
-                    console.log(res.data.data.Nlist)
+                    console.log('미치야 미친다!',res.data.data.Clist)
                     setNewchat(res.data.data.Clist);
-                    
+
+                    newchats.map((newchat) => (
+                      console.log(`뭐 어카라고!!!`, newchat.no)
+                      ))
+
                   }).catch((err) => {console.log(err)})
                 }
-              
-              // console.log(`나와악`,notifications);
 
   const handleOpen = () => {
     setOpen(true);
@@ -194,8 +194,8 @@ export default function NotificationsPopover() {
                   Chat
                 </ListSubheader>
               }>
-              {newchats.slice(0, datalength).map((newchat) => (
-                <NewChat newchat={newchat}/>
+              {newchats.map((newchat) => (
+                <NewChat key={newchat.no} newchat={newchat}/>
                 ))}
             </List>
           </Scrollbar>
@@ -203,10 +203,11 @@ export default function NotificationsPopover() {
         </MenuPopover>
         </>
     );
-}
+  }
+  
+  
+function renderContent(notification, newchat , type) {
 
-
-function renderContent(notification, newchat , type ) {
 
 const title = (
   <div>
@@ -216,19 +217,23 @@ const title = (
     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
     {notification.c_title}
     </Typography>
+    <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+    {/* {newchat.no} */}
+    </Typography>
   </div>
 );
 
-// const chattitle = (
-//   <div>
-//   <Typography variant="subtitle2">
-//     {notification.writer} 님이 공지를 등록했습니다.
-//   </Typography>
-//     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-//     {notification.c_title}
-//     </Typography>
-//   </div>
-// );
+
+const chattitle = (
+  <div>
+  <Typography variant="subtitle2">
+    왜!왜! 안나오는데!
+  </Typography>
+    <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
+    {/* {newchat.data}  */}
+    </Typography>
+  </div>
+);
 
 
 if (notification.type  = "notice") {
@@ -237,10 +242,10 @@ if (notification.type  = "notice") {
     title
   };
 }
-if (notification.type === 'chat_message') {
+if (newchat.type  === 'notice') {
   return {
     avatar: <img alt={notification.title} src="/static/icons/ic_notification_chat.svg" />,
-    title
+    chattitle
   };
 }
 return {
@@ -253,8 +258,14 @@ NotificationItem.propTypes = {
 notification: PropTypes.object.isRequired
 };
 
+
+NewChat.propTypes = {
+  newchats: PropTypes.object.isRequired
+  };
+  
+
 function NotificationItem({ notification }) {
-const { avatar, title } = renderContent(notification);
+const { title } = renderContent(notification);
 const date = moment(notification.createdAt).format('YY/MM/DD HH:mm');
 return (
   <ListItemButton
@@ -271,7 +282,7 @@ return (
     }}
   >
     <ListItemAvatar>
-      <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+      <Avatar sx={{ bgcolor: 'background.neutral' }}><img  src="/static/icons/ic_notification_mail.svg" /></Avatar>
     </ListItemAvatar>
     <ListItemText
       primary={title}
@@ -295,7 +306,7 @@ return (
 }
 
 function NewChat({ newchat }) {
-  const { avatar, title } = renderContent(newchat);
+  const { chattitle } = renderContent(newchat);
   //const date = moment(newchat.createdAt).format('YY/MM/DD HH:mm');
   return (
     <ListItemButton
@@ -312,10 +323,10 @@ function NewChat({ newchat }) {
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+        <Avatar sx={{ bgcolor: 'background.neutral' }}><img  src="/static/icons/ic_notification_chat.svg" /></Avatar>
       </ListItemAvatar>
       <ListItemText
-        primary={title}
+        primary={chattitle}
         secondary={
           <Typography
             variant="caption"
