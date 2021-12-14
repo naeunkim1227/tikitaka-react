@@ -35,6 +35,10 @@ import { useEffect } from 'react';
 import { map } from 'lodash-es';
 import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 import axios from 'axios'
+
+
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -207,9 +211,26 @@ export default function User() {
 
 // const [index, setIndex] = useState(0);
 
+// const opensocket =  () => {
+//   console.log('opensocket');
+//     var socket = new SockJS('http://localhost:8080/TT/websocket');
+//     var stompClient = Stomp.over(socket);
+//     // SockJS와 stomp client를 통해 연결을 시도.
+//     stompClient.connect({}, function () {
+//       console.log('Connected: ');
+//       stompClient.subscribe('/sub/greetings', function (data) {
+//         console.log(data);
+//         console.log('==============================')
+//         console.dir(data);
+//       });
+//     });
+
+// }
+
+
   
   const createTopic = async (no, auth) =>{
-
+    console.log('토픽 추가, 스톰프 실행!')
 
     //토픽(채널) 추가하는 axios
     const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
@@ -260,7 +281,23 @@ export default function User() {
     //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
     //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
     // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
+     
     
+    
+    //소켓 열기
+      console.log('opensocket');
+      var socket = new SockJS('http://localhost:8080/TT/websocket');
+      var stompClient = Stomp.over(socket);
+      // SockJS와 stomp client를 통해 연결을 시도.
+      stompClient.connect({}, function () {
+        console.log('Connected: ');
+        stompClient.subscribe('/sub/greetings', function (data) {
+          console.log(data);
+          console.log('==============================')
+          console.dir(data);
+        });
+      });
+  
     
   }
 
@@ -352,6 +389,7 @@ var index = 0;
 
                           <TableCell>
                             <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ opensocket()}} >소켓연결?</Button>
                           </TableCell>
 
                           <TableCell align="right">
