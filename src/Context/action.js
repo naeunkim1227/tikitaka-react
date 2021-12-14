@@ -1,6 +1,8 @@
 /* eslint-disable */
 
 import { Iron } from "@mui/icons-material";
+import axios from 'axios';
+
 
 export const loginUser=async (dispatch,loginPayload)=>{
     try{
@@ -69,4 +71,33 @@ export const logout = async (dispatch,data) =>  {
     }
 
 
+}
+
+
+export const maketopic=async (dispatch, no, auth)=>{
+    try{
+
+        const res = await axios.put(`/TT/talk/topic/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+        .then( (res) =>{
+            if (!res){
+              console.log("res값 없음")
+              return;
+            }
+            
+            const chatNo = JSON.stringify(res.data.chatNo);
+            console.log("채팅방번호확인" + chatNo);
+            
+            return chatNo;
+        }).catch((err) => {
+            console.log(err);
+        });
+
+        dispatch({type:'CREATE_TOPIC',payload: res})
+        sessionStorage.setItem('currentUser',res)
+        return res;
+        
+    }catch (error){
+        dispatch({type:'LOGIN_ERROR',error: error})
+        console.log(error);
+    }
 }
