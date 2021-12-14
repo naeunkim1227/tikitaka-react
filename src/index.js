@@ -12,15 +12,28 @@ import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
 //context
 import { Context } from './Context';
+
+//redux
+import { Provider, useSelector } from "react-redux";
+import { createStore } from "redux";
 // ----------------------------------------------------------------------
+
+
+//redux 세팅 방법 <React.StrictMode><Provider> 작성
+
+
 
 ReactDOM.render(
   <Context>
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
+    <React.StrictMode>
+      <Provider>
+        <HelmetProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </HelmetProvider>
+      </Provider>
+    </React.StrictMode>
   </Context>,
   document.getElementById('root')
 );
