@@ -24,9 +24,34 @@ import RoomIcon from '@mui/icons-material/Room';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
 
-const ChatRoom = () => {
+const ChatRoom = ({chatNo}) => {
     const [contents, setContents] = useState();
 
+    const chatinfo= {
+      userNo: auth.token,
+      chatNo: chatNo,
+    }
+
+
+    // useEffect(()=>{
+    //   getmessage();
+    // },[])
+
+
+    // const getmessage = async() => {
+    //   try{
+    //     console.log('데이터 보내버렷',chatinfo.chatNo);
+    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+    //     .then((res) => {
+    //       console.log('data test', res)
+    //       if(res.statusText !== "OK"){
+    //         throw `${res.status} ${res.statusText}`
+    //       }
+    //     })
+    //   }catch{
+
+    //   }
+    // }
 
 
     const [state,setState] = useState(false)
@@ -43,7 +68,7 @@ const ChatRoom = () => {
       const data= {
         userNo: auth.token,
         name: auth.token,
-        chatNo: '6',
+        chatNo: chatNo,
         message: contents,
         readCount: 1
       }
@@ -51,14 +76,7 @@ const ChatRoom = () => {
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
-      //토픽(채널) 추가하는 axios
-      // const res = await axios.put(`/TT/talk/topic/${data.chatNo}`, {headers:{"Content-Type":"application/json"}})
-      // .then((res)=>{
-      //     console.log(res);
-      //     return res;
-      // }).catch((err) => {
-      //     console.log(err);
-      // })
+      
 
       //메시지 보내기
       const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
@@ -160,10 +178,10 @@ const ChatRoom = () => {
           
         />
         <Button>
-            <EmojiEmotionsIcon sx={{ width: 40, height: 40}} />
+            <EmojiEmotionsIcon sx={{ position: 'absolute', width: 40, height: 40}} />
           </Button>
-        <Button type='submit' variant="contained" style={{position: 'fixed', right:400}} size="large" onClick={sendMessage}>
-          Send
+        <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
+          보내기
         </Button>
         </Box>
         </form>

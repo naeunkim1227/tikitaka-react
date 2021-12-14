@@ -13,9 +13,6 @@ import reportWebVitals from './reportWebVitals';
 //context
 import { Context } from './Context';
 
-//redux
-import { Provider, useSelector } from "react-redux";
-import { createStore } from "redux";
 // ----------------------------------------------------------------------
 
 

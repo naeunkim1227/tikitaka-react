@@ -159,6 +159,7 @@ export default function User() {
     getStatusData();
   }, []);
 
+  
   const getStatusData = async() => {
     try {
       const response = await fetch(`/TT/user/`, {
@@ -209,7 +210,7 @@ export default function User() {
 // const [index, setIndex] = useState(0);
 
   
-  const createTopic = function(no) {
+  const createTopic = function(no) {g
     console.log("topic:" + no);
   }
 
