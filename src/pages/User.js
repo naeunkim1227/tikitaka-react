@@ -210,6 +210,7 @@ export default function User() {
   
   const createTopic = async (no, auth) =>{
 
+
     try{
       let res = await maketopic(dispatch, no, auth);
       if(!res){
@@ -234,6 +235,7 @@ export default function User() {
     // }).catch((err) => {
     //     console.log(err);
     // })
+
 
     //react-router v5 -> react-router v6
     //useHistory -> useNavigate
