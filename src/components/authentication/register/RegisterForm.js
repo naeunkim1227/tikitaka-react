@@ -51,10 +51,13 @@ export default function RegisterForm() {
                       .then((response) => {
                         console.log(response);
                         if(response.statusText !== "OK") {
-                          console.log("들어오니? 쥐리제");
                           throw  `${response.status} ${response.statusText}`;
                         }
-                        //navigate('/login', { replace: true });
+                        if(!response.data){
+                          alert("중복된 이메일입니다");
+                          return;
+                        }
+                        navigate('/login', { replace: true });
                       })
                       .catch((error) => {
                         console.log(error);

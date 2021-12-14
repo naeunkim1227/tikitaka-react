@@ -171,10 +171,10 @@ const ChatRoom = () => {
           
         />
         <Button>
-            <EmojiEmotionsIcon sx={{ width: 40, height: 40}} />
+            <EmojiEmotionsIcon sx={{ position: 'absolute', width: 40, height: 40}} />
           </Button>
-        <Button type='submit' variant="contained" style={{position: 'fixed', right:400}} size="large" onClick={sendMessage}>
-          Send
+        <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
+          보내기
         </Button>
         </Box>
         </form>
