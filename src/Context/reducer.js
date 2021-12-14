@@ -9,6 +9,7 @@ let profile = sessionStorage.getItem('currentUser')? sessionStorage.getItem('cur
 let phone = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').phone : '';
 let status = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').status : '';
 let message = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').message : '';
+let chatNo = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').chatNo : '';
 export const initialState ={ //초기값 설정
     token:""||token,
     name:""||name,
@@ -17,7 +18,8 @@ export const initialState ={ //초기값 설정
     profile:""||profile,
     phone:""||phone,
     status:""||status,
-    message:""||message
+    message:""||message,
+    chatNo:""||chatNo
     // loading:false,
     // errorMessage:null
 }
@@ -63,6 +65,11 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
             return{
                 ...initialState,
                 message: action.target.value
+            }
+        case 'CREATE_TOPIC':
+            return{
+                ...initialState,
+                chatNo: action.payload
             }
         default:
             throw new Error( `Unhandled action type: ${action.type}`)
