@@ -210,6 +210,7 @@ export default function User() {
   
   const createTopic = async (no, auth) =>{
 
+
     //토픽(채널) 추가하는 axios
     const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
     .then((res)=>{
