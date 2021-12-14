@@ -28,16 +28,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Block } from '@mui/icons-material';
 import { Air } from '@mui/icons-material';
-import { Air } from '@mui/icons-material';
 
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
+    const auth = useAuthState();
 
-
-    const chatinfo= {
-      userNo: auth.token
-    }
+    // const chatinfo= {
+    //   userNo: auth.token
+    // }
 
     // useEffect(()=>{
     //   getmessage();
