@@ -35,6 +35,11 @@ import { useEffect } from 'react';
 import { map } from 'lodash-es';
 import { useAuthState } from 'src/Context';
 
+
+
+import socket from '../../src/socket/socket';
+import axios from 'axios';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -144,21 +149,17 @@ export default function User() {
 
   const auth = useAuthState();
 
-  
-
   let data= {
     userNo: auth.token
   };
 
   console.log(auth.token)
 
-
   useEffect(() => {
     getStatusData();
   }, []);
 
   const getStatusData = async() => {
-    console.log("test")
     try {
       const response = await fetch(`/TT/user/`, {
         method: 'post',
@@ -299,7 +300,7 @@ var index = 0;
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no)}} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no)}} >대화하기</Button> 
                           </TableCell>
 
                           <TableCell align="right">

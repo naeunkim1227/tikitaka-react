@@ -25,15 +25,11 @@ import { createStore } from "redux";
 
 ReactDOM.render(
   <Context>
-    <React.StrictMode>
-      <Provider>
         <HelmetProvider>
           <BrowserRouter>
             <App />
           </BrowserRouter>
         </HelmetProvider>
-      </Provider>
-    </React.StrictMode>
   </Context>,
   document.getElementById('root')
 );
