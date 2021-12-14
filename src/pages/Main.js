@@ -9,8 +9,6 @@ import {
 
 import AppNoticeUpdate  from  '../components/alert/AppNoticeUpdate';
 
-
-
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {

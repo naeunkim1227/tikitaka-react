@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
 import { useRef, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import {
   Card,
@@ -34,7 +34,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
 import { useAuthState } from 'src/Context';
-
+import axios from 'axios'
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -75,7 +75,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
-
+  const navigate = useNavigate();
   const [user, setUser] = useState([]);
   const [userList ,setUserList] = useState([]);
   
@@ -208,8 +208,31 @@ export default function User() {
 // const [index, setIndex] = useState(0);
 
   
-  const createTopic = function(no) {
-    console.log("topic:" + no);
+  const createTopic = async (no, auth) =>{
+    //토픽(채널) 추가하는 axios
+    const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
+    .then((res)=>{
+        if (!res){
+          console.log("res값 없음")
+          return;
+        }
+        console.log("auth의 no ",res.config.data);
+        return res.config.data;
+    }).catch((err) => {
+        console.log(err);
+    })
+
+    //react-router v5 -> react-router v6
+    //useHistory -> useNavigate
+    //history.push('/') ==> navigate('/') : Browser History에 페이지 이동 기록이 쌓인다. 
+    // 그래서 뒤로가기 클릭시 쌓였던 기록순서대로 돌아가게된다.
+    //ex) home > items(navigate('/login')실행)) > login > item 순으로 들어왔을때 뒤로가기하면 기록대로 되돌아간다.
+    
+    //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
+    //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
+    // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
+    navigate('/tikitaka/chat',  { replace: true });
+
   }
 
 var index = 0;
@@ -324,7 +347,7 @@ var index = 0;
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no)}} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
