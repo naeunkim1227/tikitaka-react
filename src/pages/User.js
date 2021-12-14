@@ -216,8 +216,8 @@ export default function User() {
           console.log("res값 없음")
           return;
         }
-        console.log("auth의 no ",res.config.data);
-        return res.config.data;
+        const chatNo = JSON.stringify(res.data.chatNo);
+        navigate('/tikitaka/chat',  { replace: true, chatNo:{chatNo} });
     }).catch((err) => {
         console.log(err);
     })
@@ -231,8 +231,8 @@ export default function User() {
     //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
     //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
     // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
-    navigate('/tikitaka/chat',  { replace: true });
-
+    
+    
   }
 
 var index = 0;

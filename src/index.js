@@ -13,9 +13,6 @@ import reportWebVitals from './reportWebVitals';
 //context
 import { Context } from './Context';
 
-//redux
-import { Provider, useSelector } from "react-redux";
-import { createStore } from "redux";
 // ----------------------------------------------------------------------
 
 
@@ -25,15 +22,11 @@ import { createStore } from "redux";
 
 ReactDOM.render(
   <Context>
-    <React.StrictMode>
-      <Provider>
         <HelmetProvider>
           <BrowserRouter>
             <App />
           </BrowserRouter>
         </HelmetProvider>
-      </Provider>
-    </React.StrictMode>
   </Context>,
   document.getElementById('root')
 );
