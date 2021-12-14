@@ -211,6 +211,20 @@ export default function User() {
   const createTopic = async (no, auth) =>{
 
 
+    //토픽(채널) 추가하는 axios
+    const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
+    .then((res)=>{
+        if (!res){
+          console.log("res값 없음")
+          return;
+        }
+        const chatNo = JSON.stringify(res.data.chatNo);
+        navigate('/tikitaka/chat',  { replace: true });
+    }).catch((err) => {
+        console.log(err);
+    })
+
+
     try{
       let res = await maketopic(dispatch, no, auth);
       if(!res){
