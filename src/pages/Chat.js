@@ -4,7 +4,7 @@ import React, {useEffect} from 'react';
 import ChatRoom from 'src/chat/ChatRoom';
 
 
-export default function chat({chatNo}){
+export default function chat(){
     
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export default function chat({chatNo}){
     return (
         <div>
             <h1>Chat</h1>
-            <ChatRoom chatNo={chatNo}/>
+            <ChatRoom />
         </div>
     );
 };

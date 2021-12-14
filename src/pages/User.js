@@ -217,7 +217,7 @@ export default function User() {
           return;
         }
         const chatNo = JSON.stringify(res.data.chatNo);
-        navigate('/tikitaka/chat',  { replace: true, chatNo:{chatNo} });
+        navigate('/tikitaka/chat',  { replace: true });
     }).catch((err) => {
         console.log(err);
     })
