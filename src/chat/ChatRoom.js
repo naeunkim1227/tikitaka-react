@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 
-import React, {useState, Fragment } from 'react';
+import React, {useState, useEffect } from 'react';
 import './components.css';
 import './style.css';
 import Card from "@mui/material/Card";
@@ -23,19 +23,26 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import RoomIcon from '@mui/icons-material/Room';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import { Block } from '@mui/icons-material';
+import { Air } from '@mui/icons-material';
+import { Air } from '@mui/icons-material';
 
-const ChatRoom = ({chatNo}) => {
+
+const ChatRoom = () => {
     const [contents, setContents] = useState();
 
-    const chatinfo= {
-      userNo: auth.token,
-      chatNo: chatNo,
-    }
 
+    const chatinfo= {
+      userNo: auth.token
+    }
 
     // useEffect(()=>{
     //   getmessage();
     // },[])
+
 
 
     // const getmessage = async() => {
@@ -68,7 +75,9 @@ const ChatRoom = ({chatNo}) => {
       const data= {
         userNo: auth.token,
         name: auth.token,
-        chatNo: chatNo,
+
+        chatNo: auth.chatNo,
+
         message: contents,
         readCount: 1
       }
@@ -81,7 +90,7 @@ const ChatRoom = ({chatNo}) => {
       //메시지 보내기
       const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
       .then((response) => {
-        console.log("msg send");
+        console.log("msg send: ", response);
         return response;
       })
       .catch((err) => {
@@ -122,16 +131,51 @@ const ChatRoom = ({chatNo}) => {
   
     //   }
     // }
+    const chatList =  (no) =>{
+      // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
+      // try {
+      //   const res = await axios.get(`/TT/talk/chatList/${chatNo}`)
+      //                          .then((res)=>{
+      //                            console.log(res);
+      //                          })
+      // } catch (error) {
+      //   console.log(error);
+      // }
+      const authNo = no;
+      //const userNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+                                      // 화면에 채팅창을 나눠서 표시
+      return(
+            <div>
+            {
+              authNo === 6 
+              ? 
+              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'greenyellow'}}>
+                <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
+              </ListItem> 
+              :
+              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'skyblue'}}>
+                <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
+              </ListItem> 
+            }
+            </div>
+          
+      )
+    }
   
     
+    useEffect(()=>{
+      chatList(auth.token);
+    },[])
 
     return (
       <Card sx={{ minWidth: 275 }}>
       <CardContent style={{borderBottom: "2px solid gray"}}>
         <h1>채팅방 이름, 검색창</h1>
       </CardContent>
-      <CardContent sx={{ minWidth: 600 , minHeight:450}}>
-
+      <CardContent sx={{ width: 600 , height:450}}>
+        <List>
+          {chatList()}
+        </List>
       
         
       </CardContent>

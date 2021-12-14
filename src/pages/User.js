@@ -33,7 +33,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
-import { useAuthState } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 import axios from 'axios'
 
 
@@ -147,14 +147,14 @@ export default function User() {
   const [messages, setMessages] = useState([]);
 
   const auth = useAuthState();
-
+  const dispatch = useAuthDispatch();
   
 
   let data= {
     userNo: auth.token
   };
 
-  console.log(auth.token)
+
 
 
   useEffect(() => {
@@ -231,6 +231,7 @@ export default function User() {
   
   const createTopic = async (no, auth) =>{
     console.log('토픽 추가, 스톰프 실행!')
+
     //토픽(채널) 추가하는 axios
     const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
     .then((res)=>{
@@ -239,10 +240,37 @@ export default function User() {
           return;
         }
         const chatNo = JSON.stringify(res.data.chatNo);
-        navigate('/tikitaka/chat',  { replace: true, chatNo:{chatNo} });
+        navigate('/tikitaka/chat',  { replace: true });
     }).catch((err) => {
         console.log(err);
     })
+
+
+    try{
+      let res = await maketopic(dispatch, no, auth);
+      if(!res){
+        console.log("실패");
+        return;
+      }
+      navigate('/tikitaka/chat', { replace: true});
+    }catch(error){
+      console.log(error);
+    }
+    
+
+    // const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
+    // .then((res)=>{
+    //     if (!res){
+    //       console.log("res값 없음")
+    //       return;
+    //     }
+    //     const chatNo = JSON.stringify(res.data.chatNo);
+    //     navigate('/tikitaka/chat', { replace: true});
+    //     return chatNo;
+    // }).catch((err) => {
+    //     console.log(err);
+    // })
+
 
     //react-router v5 -> react-router v6
     //useHistory -> useNavigate
