@@ -77,23 +77,23 @@ const ChatRoom = () => {
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
       //토픽(채널) 추가하는 axios
-      // const res = await axios.put(`/TT/talk/topic/${data.chatNo}`, {headers:{"Content-Type":"application/json"}})
-      // .then((res)=>{
-      //     console.log(res);
-      //     return res;
-      // }).catch((err) => {
-      //     console.log(err);
-      // })
+      const res = await axios.put(`/TT/talk/topic/${data.chatNo}`, {headers:{"Content-Type":"application/json"}})
+      .then((res)=>{
+          console.log(res);
+          return res;
+      }).catch((err) => {
+          console.log(err);
+      })
 
-      //메시지 보내기
-      const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      .then((response) => {
-        console.log("msg send");
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      // //메시지 보내기
+      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+      // .then((response) => {
+      //   console.log("msg send");
+      //   return response;
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // })
       
       // //사용자의 연결되어있는 채팅리스트를 출력
       // const res = await axios.get(`/TT/talk/topic`)
