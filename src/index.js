@@ -22,11 +22,11 @@ import { Context } from './Context';
 
 ReactDOM.render(
   <Context>
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
+        <HelmetProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </HelmetProvider>
   </Context>,
   document.getElementById('root')
 );

@@ -33,7 +33,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
-import { useAuthState } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 import axios from 'axios'
 // ----------------------------------------------------------------------
 
@@ -143,14 +143,14 @@ export default function User() {
   const [messages, setMessages] = useState([]);
 
   const auth = useAuthState();
-
+  const dispatch = useAuthDispatch();
   
 
   let data= {
     userNo: auth.token
   };
 
-  console.log(auth.token)
+
 
 
   useEffect(() => {
@@ -209,18 +209,31 @@ export default function User() {
 
   
   const createTopic = async (no, auth) =>{
-    //토픽(채널) 추가하는 axios
-    const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
-    .then((res)=>{
-        if (!res){
-          console.log("res값 없음")
-          return;
-        }
-        console.log("auth의 no ",res.config.data);
-        return res.config.data;
-    }).catch((err) => {
-        console.log(err);
-    })
+
+    try{
+      let res = await maketopic(dispatch, no, auth);
+      if(!res){
+        console.log("실패");
+        return;
+      }
+      navigate('/tikitaka/chat', { replace: true});
+    }catch(error){
+      console.log(error);
+    }
+    
+
+    // const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
+    // .then((res)=>{
+    //     if (!res){
+    //       console.log("res값 없음")
+    //       return;
+    //     }
+    //     const chatNo = JSON.stringify(res.data.chatNo);
+    //     navigate('/tikitaka/chat', { replace: true});
+    //     return chatNo;
+    // }).catch((err) => {
+    //     console.log(err);
+    // })
 
     //react-router v5 -> react-router v6
     //useHistory -> useNavigate
@@ -231,8 +244,8 @@ export default function User() {
     //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
     //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
     // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
-    navigate('/tikitaka/chat',  { replace: true });
-
+    
+    
   }
 
 var index = 0;
