@@ -107,21 +107,21 @@ const ChatRoom = ({chatNo}) => {
               
     }
 
-    //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
-    const getmessage = async(e) => {
-      try{
-        console.log('데이터 보내버렷',chatinfo.chatNo);
-        const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-        .then((res) => {
-          console.log('data test', res)
-          if(res.statusText !== "OK"){
-            throw `${res.status} ${res.statusText}`
-          }
-        })
-      }catch{
+    // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
+    // const getmessage = async(e) => {
+    //   try{
+    //     console.log('데이터 보내버렷',chatinfo.chatNo);
+    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+    //     .then((res) => {
+    //       console.log('data test', res)
+    //       if(res.statusText !== "OK"){
+    //         throw `${res.status} ${res.statusText}`
+    //       }
+    //     })
+    //   }catch{
   
-      }
-    }
+    //   }
+    // }
   
     
 
