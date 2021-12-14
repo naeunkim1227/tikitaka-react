@@ -22,19 +22,31 @@ import ArticleIcon from '@mui/icons-material/Article';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import RoomIcon from '@mui/icons-material/Room';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Block } from '@mui/icons-material';
 
 
+
+import { Air } from '@mui/icons-material';
+
+
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
 
+
     const chatinfo= {
       userNo: auth.token
     }
+
+    // useEffect(()=>{
+    //   getmessage();
+    // },[])
+
+
 
     // const getmessage = async() => {
     //   try{
@@ -66,7 +78,9 @@ const ChatRoom = () => {
       const data= {
         userNo: auth.token,
         name: auth.token,
-        chatNo: '142',
+
+        chatNo: auth.chatNo,
+
         message: contents,
         readCount: 1
       }
@@ -78,7 +92,7 @@ const ChatRoom = () => {
       //메시지 보내기
       const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
       .then((response) => {
-        console.log("msg send");
+        console.log("msg send: ", response);
         return response;
       })
       .catch((err) => {
