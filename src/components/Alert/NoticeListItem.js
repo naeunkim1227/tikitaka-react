@@ -19,7 +19,9 @@ import moment from 'moment';
 export default function NoticeListItem({key,title, contents, reg_date,chatTitle,writer}) {
 
   const test = async(e) => {
-    e.preventDefault;
+    console.log(`test호츌`);
+    console.log(key);
+
 
   }
 
@@ -34,7 +36,7 @@ export default function NoticeListItem({key,title, contents, reg_date,chatTitle,
             sx={{ width: 48, height: 48, borderRadius: 1.5 }}
           /> */}
           <Box sx={{ minWidth: 240 }}>
-            <Link color="inherit" underline="hover" onClick={ test }>
+            <Link color="inherit" underline="hover" onClick={ {key} }>
               <Typography variant="subtitle2" noWrap>
                 {title}
               </Typography>

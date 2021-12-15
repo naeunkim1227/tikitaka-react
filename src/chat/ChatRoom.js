@@ -34,31 +34,13 @@ const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
 
-
-    const chatinfo= {
-      userNo: auth.token
-    }
+    // const chatinfo= {
+    //   userNo: auth.token
+    // }
 
     // useEffect(()=>{
     //   getmessage();
     // },[])
-
-
-
-    // const getmessage = async() => {
-    //   try{
-    //     console.log('데이터 보내버렷',chatinfo.chatNo);
-    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-    //     .then((res) => {
-    //       console.log('data test', res)
-    //       if(res.statusText !== "OK"){
-    //         throw `${res.status} ${res.statusText}`
-    //       }
-    //     })
-    //   }catch{
-
-    //   }
-    // }
 
 
     const [state,setState] = useState(false)
@@ -81,6 +63,7 @@ const ChatRoom = () => {
         message: contents,
         readCount: 1
       }
+
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
@@ -115,6 +98,21 @@ const ChatRoom = () => {
               
     }
 
+    // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
+    // const getmessage = async(e) => {
+    //   try{
+    //     console.log('데이터 보내버렷',chatinfo.chatNo);
+    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+    //     .then((res) => {
+    //       console.log('data test', res)
+    //       if(res.statusText !== "OK"){
+    //         throw `${res.status} ${res.statusText}`
+    //       }
+    //     })
+    //   }catch{
+  
+    //   }
+    // }
     const chatList =  (no) =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
       // try {
@@ -133,11 +131,11 @@ const ChatRoom = () => {
             {
               authNo === 6 
               ? 
-              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'greenyellow'}}>
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
                 <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
               </ListItem> 
               :
-              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'skyblue'}}>
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
                 <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
               </ListItem> 
             }
