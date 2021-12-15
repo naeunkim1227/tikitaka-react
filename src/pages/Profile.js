@@ -62,7 +62,7 @@ const Profile = () => {
     //     }
     // }
     const auth = useAuthState();
-    const [userInfo, setUserInfo] = useState();
+    const [userInfo, setUserInfo] = useState([]);
     const navigate = useNavigate();
     const getInfo = async () => {
         
@@ -70,7 +70,6 @@ const Profile = () => {
             const res = await axios.get(`/TT/getInfo/${auth.token}`)
                                 .then((res) => {
                                     const result = JSON.parse(JSON.stringify(res.data))
-                                    console.log("result:" + result);
                                     setUserInfo(result);
                                 })
         } catch (error) {
@@ -84,6 +83,10 @@ const Profile = () => {
 
         navigate('/tikitaka/updateProfile', { replace: true });
     };
+
+    useEffect(() => {
+        getInfo();
+    })
     return (
         <div align="center">
         <Container >
@@ -123,7 +126,7 @@ const Profile = () => {
                     id="inline"
                     label="근무지사:"
                     color="warning"
-                    value={auth.token}
+                    value={userInfo[0]}
                     InputProps={{
                     readOnly: true
                     }}
@@ -136,7 +139,7 @@ const Profile = () => {
                     id="inline"
                     label="부서:"
                     color="warning"
-                    value={auth.token}
+                    value={userInfo[1]}
                     InputProps={{
                     readOnly: true
                     }}
@@ -149,7 +152,7 @@ const Profile = () => {
                     id="inline"
                     label="직책:"
                     color="warning"
-                    value={auth.token}
+                    value={userInfo[2]}
                     InputProps={{
                     readOnly: true
                     }}
