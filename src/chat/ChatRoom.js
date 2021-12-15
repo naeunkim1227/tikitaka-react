@@ -43,23 +43,6 @@ const ChatRoom = () => {
     // },[])
 
 
-
-    // const getmessage = async() => {
-    //   try{
-    //     console.log('데이터 보내버렷',chatinfo.chatNo);
-    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-    //     .then((res) => {
-    //       console.log('data test', res)
-    //       if(res.statusText !== "OK"){
-    //         throw `${res.status} ${res.statusText}`
-    //       }
-    //     })
-    //   }catch{
-
-    //   }
-    // }
-
-
     const [state,setState] = useState(false)
   
 
@@ -148,11 +131,11 @@ const ChatRoom = () => {
             {
               authNo === 6 
               ? 
-              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'greenyellow'}}>
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
                 <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
               </ListItem> 
               :
-              <ListItem style={{width: 400, border: '1px solid black', borderRadius: '10px', backgroundColor: 'skyblue'}}>
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
                 <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
               </ListItem> 
             }
