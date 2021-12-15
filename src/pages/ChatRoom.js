@@ -1,8 +1,8 @@
 /* eslint-disable */ 
 
 import React, {useState, useEffect } from 'react';
-import './components.css';
-import './style.css';
+import './assets/css/components.css';
+import './assets/css/style.css';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from '@mui/material/Button';
@@ -115,16 +115,18 @@ const ChatRoom = () => {
     // }
     const chatList =  (no) =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
+      // const chatNo = auth.chatNo
+      
       // try {
-      //   const res = await axios.get(`/TT/talk/chatList/${chatNo}`)
+      //   const res = await axios.get(`/TT/talk/chatList/${chatNo}`, {userNo:no})
       //                          .then((res)=>{
       //                            console.log(res);
       //                          })
       // } catch (error) {
       //   console.log(error);
       // }
-      const authNo = no;
-      //const userNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+       const authNo = no;
+      //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
                                       // 화면에 채팅창을 나눠서 표시
       return(
             <div>
@@ -140,14 +142,13 @@ const ChatRoom = () => {
               </ListItem> 
             }
             </div>
-          
       )
     }
   
     
-    useEffect(()=>{
-      chatList(auth.token);
-    },[])
+    // useEffect(()=>{
+    //   chatList(auth.token);
+    // },[])
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -155,10 +156,10 @@ const ChatRoom = () => {
         <h1>채팅방 이름, 검색창</h1>
       </CardContent>
       <CardContent sx={{ width: 600 , height:450}}>
-        <List>
+        {/* <List>
           {chatList()}
-        </List>
-      
+        </List> */}
+        {chatList()}
         
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>

@@ -11,7 +11,6 @@ import DashboardApp from './pages/DashboardApp';
 import Products from './pages/Products';
 import Blog from './pages/Blog';
 import User from './pages/User';
-import Chat from './pages/Chat';
 import NotFound from './pages/Page404';
 import Main from './pages/Main';
 import ForgotPassword from './pages/ForgotPassword';
@@ -22,6 +21,7 @@ import UpdateProfile from './pages/UpdateProfile';
 import { useAuthState } from './Context';
 import { useEffect, useState } from 'react';
 import {Routes, Route} from 'react-router';
+import ChatRoom from './pages/ChatRoom';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -45,7 +45,7 @@ export default function Router() {
         { element: <Navigate to="/tikitaka/main" replace /> },
         { path: 'main', element: <Main /> },
         { path: 'user', element: <User /> },
-        { path: 'chat', element: <Chat /> },
+        { path: 'chat', element: <ChatRoom /> },
         { path: 'importantNotice', element: <ImportantNotice /> },
         { path: 'profile', element: <Profile /> },
         { path: 'updateProfile', element: <UpdateProfile />}
