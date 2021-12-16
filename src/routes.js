@@ -72,3 +72,13 @@ export default function Router() {
     }
   ]);
 }
+
+    //react-router v5 -> react-router v6
+    //useHistory -> useNavigate
+    //history.push('/') ==> navigate('/') : Browser History에 페이지 이동 기록이 쌓인다. 
+    // 그래서 뒤로가기 클릭시 쌓였던 기록순서대로 돌아가게된다.
+    //ex) home > items(navigate('/login')실행)) > login > item 순으로 들어왔을때 뒤로가기하면 기록대로 되돌아간다.
+    
+    //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
+    //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
+    // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
