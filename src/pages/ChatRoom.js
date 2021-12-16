@@ -165,7 +165,36 @@ const ChatRoom = () => {
      
     }
     
-    
+    const list = () => {
+      return(
+        <div>
+            {
+
+                auth.token === anotherUserNo 
+                ?
+                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow'}}>
+                  <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
+                </ListItem> 
+                :
+                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
+                  <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
+                </ListItem> 
+
+              authNo === 6 
+              ? 
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
+                <ListItemText>{msgcontents}</ListItemText> 
+              </ListItem> 
+              :
+              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
+                <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
+              </ListItem> 
+
+            }
+        </div>
+            
+      )
+    }
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
     //                                 // 화면에 채팅창을 나눠서 표시
