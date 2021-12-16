@@ -175,7 +175,6 @@ const ChatRoom = () => {
                 <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
                   <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
                 </ListItem> 
-
             }
         </div>
             
