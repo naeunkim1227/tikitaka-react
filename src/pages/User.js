@@ -31,10 +31,10 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
-import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic, opensocket } from 'src/Context';
 import axios from 'axios'
 
-
+// Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 // ----------------------------------------------------------------------
@@ -150,6 +150,9 @@ export default function User() {
   const dispatch = useAuthDispatch();
 
 
+ 
+
+
   let data= {
     userNo: auth.token,
   };
@@ -186,14 +189,6 @@ export default function User() {
       console.log('길이', json.data.length)
       setUserList(json.data.length); // 길이
 
-      // console.log('이름', user[].name)
-      
-
-      // if(json.result !== 'success') {
-      //   throw json.message;
-      // }
-
-      // setMessages([...messages, ...json.data]);
 
     } catch (err) {
       console.error(err);
@@ -207,85 +202,18 @@ export default function User() {
 
   },[page,rowsPerPage])
 
-// const [index, setIndex] = useState(0);
-
-// const opensocket =  () => {
-//   console.log('opensocket');
-//     var socket = new SockJS('http://localhost:8080/TT/websocket');
-//     var stompClient = Stomp.over(socket);
-//     // SockJS와 stomp client를 통해 연결을 시도.
-//     stompClient.connect({}, function () {
-//       console.log('Connected: ');
-//       stompClient.subscribe('/sub/greetings', function (data) {
-//         console.log(data);
-//         console.log('==============================')
-//         console.dir(data);
-//       });
-//     });
-
-// }
-
-const sockettest = async() => {
-  console.log('opensocket test');
-  console.log(`333333`,chatNo);
-  var socket = new SockJS('http://localhost:8080/TT/websocket');
-  var stompClient = Stomp.over(socket);
-  // SockJS와 stomp client를 통해 연결을 시도.
-  stompClient.connect({}, function () {
-    console.log('Connected: ');
-    stompClient.subscribe(`/topic/240`, function (data) {
-      console.log(data);
-      console.log('==============================')
-      console.dir(data);
-
-      
-    });
-  });
-
-
-}
-
-
-
-
+/////////
   
   const createTopic = async (no, auth) =>{
     console.log('토픽 추가, 스톰프 실행!')
 
-    //토픽(채널) 추가하는 axios
-    const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
-    .then((res)=>{
-        if (!res){
-          console.log("res값 없음")
-          return;
-        }
-        const chatNo = JSON.stringify(res.data.chatNo);
-       
-        navigate('/tikitaka/chat',  { replace: true });
-    }).catch((err) => {
-        console.log(err);
-    })
-
-
-    try{
+      // chatNo 반환 + topic 생성
       let res = await maketopic(dispatch, no, auth);
 
-          //소켓 열기
-          console.log('opensocket');
-          console.log(`333333`,chatNo);
-          var socket = new SockJS('http://localhost:8080/TT/websocket');
-          var stompClient = Stomp.over(socket);
-          // SockJS와 stomp client를 통해 연결을 시도.
-          stompClient.connect({}, function () {
-            console.log('Connected: ');
-            stompClient.subscribe(`/topic/${res.replace(/"/g,"")}`, function (data) {
-              console.log(data);
-              console.log('==============================')
-              console.dir(data);
-            });
-          });
-
-
+      //chatNo 가지고 socket연결
+      const cno = res.replace(/"/g,"");
+      await opensocket(cno);
+        
 
       if(!res){
         console.log("실패");
@@ -293,38 +221,7 @@ const sockettest = async() => {
       }
 
       navigate('/tikitaka/chat', { replace: true});
-    }catch(error){
-      console.log(error);
-    }
-    
-
-    // const res = await axios.put(`/TT/talk/topic/${no}`, auth.token, {headers:{"Content-Type":"application/json"}})
-    // .then((res)=>{
-    //     if (!res){
-    //       console.log("res값 없음")
-    //       return;
-    //     }
-    //     const chatNo = JSON.stringify(res.data.chatNo);
-    //     navigate('/tikitaka/chat', { replace: true});
-    //     return chatNo;
-    // }).catch((err) => {
-    //     console.log(err);
-    // })
-
-
-    //react-router v5 -> react-router v6
-    //useHistory -> useNavigate
-    //history.push('/') ==> navigate('/') : Browser History에 페이지 이동 기록이 쌓인다. 
-    // 그래서 뒤로가기 클릭시 쌓였던 기록순서대로 돌아가게된다.
-    //ex) home > items(navigate('/login')실행)) > login > item 순으로 들어왔을때 뒤로가기하면 기록대로 되돌아간다.
-    
-    //history.replace('/') ==> navigate('/', {replace:true}) : 새로운 히스토리를 하나 생성하는 대신에 현재의 히스토리 엔트리를 변경한다.
-    //ex) home > items(navigate('/login', {replace:true})) > login > items 순서에서 replace사용할경우
-    // home > login > items 으로 바뀐다. (items이 login으로 대체되었다.)
-   
-
-  
-    
+       
   }
 
 var index = 0;
@@ -411,7 +308,6 @@ var index = 0;
 
                           <TableCell>
                             <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
-                            <Button type="button" variant="contained" onClick={(e) =>{ sockettest()}} > 소켓 테스트</Button>
                           </TableCell>
 
                           <TableCell align="right">
