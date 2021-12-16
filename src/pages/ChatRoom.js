@@ -33,7 +33,7 @@ import { Air } from '@mui/icons-material';
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
-
+    const [anotherUserNo, setAnotherUserNo] = useState(); // 대화 상대방의 userNo
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -113,42 +113,48 @@ const ChatRoom = () => {
   
     //   }
     // }
-    const chatList =  (no) =>{
+    const chatList =  async (no) =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
-      // const chatNo = auth.chatNo
-      
-      // try {
-      //   const res = await axios.get(`/TT/talk/chatList/${chatNo}`, {userNo:no})
-      //                          .then((res)=>{
-      //                            console.log(res);
-      //                          })
-      // } catch (error) {
-      //   console.log(error);
-      // }
-       const authNo = no;
-      //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
-                                      // 화면에 채팅창을 나눠서 표시
+      const chatNo = JSON.parse(auth.chatNo);
+      const userNo = no;
+      try {
+        const res =  await axios.get(`/TT/talk/chatList/${userNo}&${chatNo}`)
+                               .then((res)=>{
+                                 console.log(res);
+                                 setAnotherUserNo(res.data);
+                               })
+      } catch (error) {
+        console.log(error);
+      }
+     
+    }
+    
+    const list = () => {
       return(
-            <div>
+        <div>
             {
-              authNo === 6 
-              ? 
-              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
-                <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
-              </ListItem> 
-              :
-              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
-                <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
-              </ListItem> 
+                auth.token === anotherUserNo 
+                ?
+                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow'}}>
+                  <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
+                </ListItem> 
+                :
+                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
+                  <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
+                </ListItem> 
             }
-            </div>
+        </div>
+            
       )
     }
-  
+    // const authNo = no;
+    // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+    //                                 // 화면에 채팅창을 나눠서 표시
     
-    // useEffect(()=>{
-    //   chatList(auth.token);
-    // },[])
+
+    useEffect(()=>{
+      list();
+    },[])
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -159,7 +165,7 @@ const ChatRoom = () => {
         {/* <List>
           {chatList()}
         </List> */}
-        {chatList()}
+        {list()}
         
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
