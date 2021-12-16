@@ -1,10 +1,8 @@
 /* eslint-disable */ 
 import { filter } from 'lodash';
-import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
-import { useRef, useState } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
+import { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
 // material
 import {
   Card,
@@ -44,7 +42,8 @@ import { Stomp } from '@stomp/stompjs';
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false }
+  { id: 'status', label: 'Status', alignRight: false }, 
+  { id: 'chat', label: 'Chat', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -155,6 +154,7 @@ export default function User() {
     userNo: auth.token,
   };
 
+  // 친구 목록 (no, role, name, status, profile 가져오기)	
   useEffect(() => {
     getStatusData();
   }, []);
@@ -184,7 +184,7 @@ export default function User() {
       
 
       console.log('길이', json.data.length)
-      setUserList(json.data.length);
+      setUserList(json.data.length); // 길이
 
       // console.log('이름', user[].name)
       
@@ -352,14 +352,11 @@ var index = 0;
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={user.length}
+                  rowCount={userList}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
-
-
-
 
                 <TableBody>
                   {filteredUsers
@@ -401,14 +398,13 @@ var index = 0;
                             </Stack>
                           </TableCell>
 
-                          <TableCell align="left">{role}</TableCell>
+                          <TableCell align="left">{role == 'CS' ? '고객' : '사원'}</TableCell>
 
                           <TableCell align="left">
                             <Label
-                              // variant="ghost"
-                              color={(status === '0' && 'error') || 'success'}
+                              variant="ghost"
+                              color={status == 0 ? 'error' : 'success'}
                             >
-                              
                               {status == 0 ? '오프라인' : '온라인' }
                             </Label>
                           </TableCell>
