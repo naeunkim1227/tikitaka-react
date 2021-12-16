@@ -60,7 +60,7 @@ const ChatRoom = () => {
       const data= {
         userNo: auth.token,
         name: auth.token,
-
+        type: "Text",
         chatNo: auth.chatNo,
 
         message: contents,
@@ -91,9 +91,7 @@ const ChatRoom = () => {
       const data= {
         userNo: auth.token,
         name: auth.token,
-
         chatNo: auth.chatNo,
-
         message: contents,
         readCount: 1
       }
@@ -107,8 +105,6 @@ const ChatRoom = () => {
       const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
       .then((response) => {
         console.log("msg send: ", response);
-        
-
         return response;
       })
       .catch((err) => {
@@ -179,17 +175,6 @@ const ChatRoom = () => {
                 <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
                   <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
                 </ListItem> 
-
-              authNo === 6 
-              ? 
-              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
-                <ListItemText>{msgcontents}</ListItemText> 
-              </ListItem> 
-              :
-              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
-                <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
-              </ListItem> 
-
             }
         </div>
             
