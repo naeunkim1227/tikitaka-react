@@ -1,11 +1,12 @@
 /* eslint-disable */ 
 import { filter } from 'lodash';
-import { useState } from 'react';
+import { Icon } from '@iconify/react';
+import { sentenceCase } from 'change-case';
+import { useRef, useState } from 'react';
+import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
 // material
 import {
-  Card,
   Table,
   Stack,
   Avatar,
@@ -14,39 +15,88 @@ import {
   TableRow,
   TableBody,
   TableCell,
-  Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  Badge,
+  styled
 } from '@mui/material';
 
 // components
-import Page from '../components/Page';
-import Label from '../components/Label';
-import Scrollbar from '../components/Scrollbar';
-import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
+import Page from '../../components/Page';
+import Scrollbar from '../../components/Scrollbar';
+import SearchNotFound from '../../components/SearchNotFound';
+import { UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user';
 //
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
-import { map } from 'lodash-es';
-import { useAuthState, useAuthDispatch, maketopic, opensocket } from 'src/Context';
-import axios from 'axios'
+import { useAuthState, useAuthDispatch } from 'src/Context';
 
-// Stomp
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
-// ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false }, 
-  { id: 'chat', label: 'Chat', alignRight: false }
-];
+
 
 // ----------------------------------------------------------------------
+
+//로그인 상태관리
+const StyledBadgeon = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
+
+const StyledBadgeoff = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#b71500',
+    color: '#b71500',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));
+//로그인 상태관리
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -77,7 +127,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function UserlistTable({type}) {
   const navigate = useNavigate();
   const [user, setUser] = useState([]);
   const [userList ,setUserList] = useState([]);
@@ -88,21 +138,21 @@ export default function User() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  let [isItemSelected, setIsItemSelected] = useState(false);
+  // const handleRequestSort = (event, property) => {
+  //   const isAsc = orderBy === property && order === 'asc';
+  //   setOrder(isAsc ? 'desc' : 'asc');
+  //   setOrderBy(property);
+  // };
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = user.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelecteds = user.map((n) => n.name);
+  //     setSelected(newSelecteds);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -136,9 +186,18 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - userList) : 0;
 
-  const filteredUsers = applySortFilter(user, getComparator(order, orderBy), filterName);
+  let userRoleFilter = user;
+  if(type == 'CS'){
+    userRoleFilter = user.filter((el) => {return el.role=='CS'})
+  }
+  else if(type == 'CP'){
+    userRoleFilter = user.filter((el) => {return el.role=='CP'})
+  }
+
+  const filteredUsers = applySortFilter(userRoleFilter, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -150,18 +209,11 @@ export default function User() {
   const dispatch = useAuthDispatch();
 
 
-
-  let data= {
-    userNo: auth.token
-  };
-
-  // 친구 목록 (no, role, name, status, profile 가져오기)	
   useEffect(() => {
     getStatusData();
   }, []);
 
   const getStatusData = async() => {
-    console.log("test")
     try {
       const response = await fetch(`/TT/user/`, {
         method: 'post',
@@ -169,14 +221,11 @@ export default function User() {
           'Content-Type' : 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(data)
-      });
-
-      
+        body: JSON.stringify(auth.token)
+      });     
       if(!response.ok){
         throw new Error(`${response.status} ${response.statusText}`);
-      }
-      
+      }     
 
       const json = await response.json();
 
@@ -185,8 +234,7 @@ export default function User() {
       
 
       console.log('길이', json.data.length)
-      setUserList(json.data.length); // 길이
-
+      setUserList(json.data.length);
 
     } catch (err) {
       console.error(err);
@@ -200,110 +248,36 @@ export default function User() {
 
   },[page,rowsPerPage])
 
-/////////
-const enterchat = async(dispatch,no,auth) => {
-    console.log('enterchat 실행')
-    const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
-    .then((res) => {
-      if(!res){
-        console.log('res값 x');
-        return;
-      }
-      // JSON.stringify()
-      console.log(res);
-      const chatNo = res.data
-
-      console.log("채팅방번호확인" + chatNo);
-      if(res.data){
-        console.log('chatno 있음 >> socket sub');
-        var socket = new SockJS('http://localhost:8080/TT/websocket');
-        var stompClient = Stomp.over(socket);
-        stompClient.connect({},function(){
-          console.log('link sub socket');
-          stompClient.subscribe(`/topic/${res.data}`, (message) =>{
-            const msg =  JSON.parse(message.body);
-            console.log('안나오냐규' ,msg);
-            console.log(msg.data);
-            
-          })
-        })
-        dispatch({type:'GET_TOPIC',payload: chatNo})
-        navigate('/tikitaka/chat', { replace: true});
-      }
-      else{
-        console.log('false >> create topic');
-        createTopic(no, auth);
-      }
-    }).catch((err) => {
-      console.log('enterchat axios err :' , err);
-    });
-    
-
-}  
-
-
-
-
-  const createTopic = async (no, auth) =>{
-    console.log('토픽 추가, 스톰프 실행!')
-      // chatNo 반환 + topic 생성
-      let res = await maketopic(dispatch, no, auth);
-      console.log('res 값 출력 :' ,res);
-
-      //chatNo 가지고 socket연결
-       const cno = res.replace(/"/g,"");
-       await opensocket(cno);
-        
-
-      if(!res){
-          console.log("실패");
-            return;
-      }else{
-          //chatNo 가지고 socket연결
-          const cno = res.replace(/"/g,"");
-          await opensocket(cno);
-          navigate('/tikitaka/chat', { replace: true});
-      }
- 
-
-}
-
-
-
-
- 
+  //채팅방생성 아이콘 클릭시 체크된아이템이 uncheck
+  const allUncheck = () => {
+    setSelected([]);
+  }
 
 
 var index = 0;
 
   return (
     <Page title="User | Minimal-UI">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4" gutterBottom>
-            User
-          </Typography>
-        </Stack>
-
-        <Card>
-          <UserListToolbar
+      <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-          />
+            talkNo={selected}
+            allUncheck={allUncheck}
+      />
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{ minWidth: 280 }}>
               <Table>
-                <UserListHead
+                {/* <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={userList}
+                  rowCount={user.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
-                />
+                /> */}
 
                 <TableBody>
                   {filteredUsers
@@ -314,7 +288,7 @@ var index = 0;
                       const {no, name, role, status, profile} = value;
 
                       // 체크박스
-                      const isItemSelected = selected.indexOf(no) !== -1;
+                      isItemSelected = selected.indexOf(no) !== -1;
 
                       return (
                         <TableRow
@@ -324,44 +298,58 @@ var index = 0;
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
-                          
+                          onClick={(event) => handleClick(event, no)}
                         >
 
-                          <TableCell padding="checkbox">
+                          {/* <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
                               onChange={(event) => handleClick(event, no)}
+                              style={{
+                                transform: "scale(0.5)",}}
                             />
-                          </TableCell>
+                          </TableCell> */}
 
                           <TableCell component="th" scope="row" padding="none">
                           
                             <Stack direction="row" alignItems="center" spacing={2}>
                               {/* 사진 */}
+                              {status == 1 ? 
+                                <StyledBadgeon
+                                overlap="circular"
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                variant="dot"
+                              >
+                                <Avatar alt={name} src={profile} />
+                              </StyledBadgeon> 
+                              :
+                              <StyledBadgeoff
+                              overlap="circular"
+                              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                              variant="dot"
+                              >
                               <Avatar alt={name} src={profile} />
+                              </StyledBadgeoff> 
+                              }
+
                               <Typography variant="subtitle2" noWrap>
                                 {name}
+                                <br/>
+                                {role}
                               </Typography>
                             </Stack>
                           </TableCell>
 
-                          <TableCell align="left">{role == 'CS' ? '고객' : '사원'}</TableCell>
+                          {/* <TableCell align="left">{role}</TableCell> */}
 
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={status == 0 ? 'error' : 'success'}
-                            >
-                              {status == 0 ? '오프라인' : '온라인' }
-                            </Label>
-                          </TableCell>
+                          {/* <TableCell>
+                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ sockettest()}} > 소켓 테스트</Button>
+                          </TableCell> */}
 
-                          <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ enterchat(dispatch,no,auth) }} >대화하기</Button>
-                          </TableCell>
-
+                          {/* ... click button(delete, edit) */}
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu /> 
                           </TableCell>
 
                         </TableRow>
@@ -374,6 +362,7 @@ var index = 0;
                   )}
                 </TableBody>
                 
+                {/* 검색창에서 일치하는 값이 없을때 */}
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
@@ -395,9 +384,9 @@ var index = 0;
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            //sx={{border:"1px solid magenta"}}
+            labelRowsPerPage={"Page:"}
           />
-        </Card>
-      </Container>
     </Page>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
@@ -13,9 +14,10 @@ import { MHidden } from '../../components/@material-extend';
 //
 import sidebarConfig from './SidebarConfig';
 import { useAuthState } from '../../Context';
+import UserlistTabbar from './UserlistTabbar';
 // ----------------------------------------------------------------------
 
-const DRAWER_WIDTH = 450;
+const DRAWER_WIDTH = 350;
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
@@ -56,17 +58,19 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         '& .simplebar-content': { height: '100%', display: 'flex', flexDirection: 'column' }
       }}
     >
+      {/* home으로 돌아가는 logo이미지 클릭 */}
       <Box sx={{ px: 2.5, py: 3 }}>
         <Box component={RouterLink} to="/" sx={{ display: 'inline-flex' }}>
           <Logo />
         </Box>
       </Box>
 
+      {/* 로그인된 AuthUser의 정보 */}
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
             <Avatar src={auth.profile} alt="photoURL" />
-            <Box sx={{ ml: 2 }}>
+            <Box sx={{ ml: 1 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {auth.name}
               </Typography>
@@ -80,10 +84,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
       {/* <User /> */}
       <NavSection navConfig={sidebarConfig} />
-
+      <UserlistTabbar/>
       <Box sx={{ flexGrow: 1 }} />
 
-      <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
+      {/* 쓸모없는거긴한데 필요한거 있으면 빼서 쓰기 */}
+      {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
         <Stack
           alignItems="center"
           spacing={3}
@@ -95,31 +100,31 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             bgcolor: 'grey.200'
           }}
         >
-          {/* <Box
+          <Box
             component="img"
             src="/static/illustrations/illustration_avatar.png"
             sx={{ width: 100, position: 'absolute', top: -50 }}
-          /> */}
+          />
 
-          {/* <Box sx={{ textAlign: 'center' }}>
+          <Box sx={{ textAlign: 'center' }}>
             <Typography gutterBottom variant="h6">
               Get more?
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               From only $69
             </Typography>
-          </Box> */}
+          </Box>
 
-          {/* <Button
+          <Button
             fullWidth
             href="https://material-ui.com/store/items/minimal-dashboard/"
             target="_blank"
             variant="contained"
           >
             Upgrade to Pro
-          </Button> */}
+          </Button>
         </Stack>
-      </Box>
+      </Box> */}
     </Scrollbar>
   );
 

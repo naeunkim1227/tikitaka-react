@@ -86,7 +86,7 @@ function NavItem({ item, active }) {
           <Box
             component={Icon}
             icon={open ? arrowIosDownwardFill : arrowIosForwardFill}
-            sx={{ width: 16, height: 16, ml: 1 }}
+            sx={{ width: 3, height: 16, ml: 1 }}
           />
         </ListItemStyle>
 

@@ -68,7 +68,7 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
             }
         case 'CREATE_TOPIC':
             return{
-                ...initialState,
+                ...initialState,  
                 chatNo: action.payload
             }
         case 'GET_TOPIC':
