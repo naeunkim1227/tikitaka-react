@@ -32,12 +32,14 @@ import { Air } from '@mui/icons-material';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { now } from 'lodash';
+import moment from 'moment';
 
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
-    const [anotherUserNo, setAnotherUserNo] = useState(); // 대화 상대방의 userNo
+
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -55,55 +57,26 @@ const ChatRoom = () => {
         setContents(e.target.value);
     }  
      
-    const sendMessagetest = async(e) => {
-      e.preventDefault();
-      const data= {
-        userNo: auth.token,
-        name: auth.token,
-
-        chatNo: auth.chatNo,
-
-        message: contents,
-        
-        readCount: 1
-      }
-
-
-      //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
-
-      
-
-      //메시지 보내기
-      const res = await axios.post(`/TT/Nredis/room/456`,  {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      .then((response) => {
-        console.log("msg send: ", response);
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-
-
-    }
-
+    
     const sendMessage = async (e) => {
+      
       e.preventDefault();
       const data= {
         userNo: auth.token,
         name: auth.token,
-
-        chatNo: auth.chatNo,
-
+        chatNo:  auth.chatNo,
         message: contents,
-        readCount: 1
+        type: "TEXT",
+        readCount: 1,
       }
 
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
-      
+ 
 
       //메시지 보내기
+      console.log('보내보록 할게용?' , data)
       const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
       .then((response) => {
         console.log("msg send: ", response);
@@ -149,37 +122,24 @@ const ChatRoom = () => {
   
     //   }
     // }
-    const chatList =  async (no) =>{
+    const chatList =  (no) =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
-      const chatNo = JSON.parse(auth.chatNo);
-      const userNo = no;
-      try {
-        const res =  await axios.get(`/TT/talk/chatList/${userNo}&${chatNo}`)
-                               .then((res)=>{
-                                 console.log(res);
-                                 setAnotherUserNo(res.data);
-                               })
-      } catch (error) {
-        console.log(error);
-      }
-     
-    }
-    
-    const list = () => {
+      // const chatNo = auth.chatNo
+      
+      // try {
+      //   const res = await axios.get(`/TT/talk/chatList/${chatNo}`, {userNo:no})
+      //                          .then((res)=>{
+      //                            console.log(res);
+      //                          })
+      // } catch (error) {
+      //   console.log(error);
+      // }
+       const authNo = no;
+      //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+                                      // 화면에 채팅창을 나눠서 표시
       return(
-        <div>
+            <div>
             {
-
-                auth.token === anotherUserNo 
-                ?
-                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow'}}>
-                  <ListItemText>내가보낸 메세지내가보낸 메세지</ListItemText> 
-                </ListItem> 
-                :
-                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
-                  <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
-                </ListItem> 
-
               authNo === 6 
               ? 
               <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow', after}}>
@@ -189,20 +149,15 @@ const ChatRoom = () => {
               <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}}>
                 <ListItemText>니가보낸 메세지내가보낸 메세지</ListItemText>
               </ListItem> 
-
             }
-        </div>
-            
+            </div>
       )
     }
-    // const authNo = no;
-    // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
-    //                                 // 화면에 채팅창을 나눠서 표시
+  
     
-
-    useEffect(()=>{
-      list();
-    },[])
+    // useEffect(()=>{
+    //   chatList(auth.token);
+    // },[])
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -213,7 +168,7 @@ const ChatRoom = () => {
         {/* <List>
           {chatList()}
         </List> */}
-        {list()}
+        {chatList()}
         
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>

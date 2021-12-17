@@ -150,11 +150,9 @@ export default function User() {
   const dispatch = useAuthDispatch();
 
 
- 
-
 
   let data= {
-    userNo: auth.token,
+    userNo: auth.token
   };
 
   // 친구 목록 (no, role, name, status, profile 가져오기)	
@@ -203,26 +201,75 @@ export default function User() {
   },[page,rowsPerPage])
 
 /////////
-  
-  const createTopic = async (no, auth) =>{
-    console.log('토픽 추가, 스톰프 실행!')
-
-      // chatNo 반환 + topic 생성
-      let res = await maketopic(dispatch, no, auth);
-
-      //chatNo 가지고 socket연결
-      const cno = res.replace(/"/g,"");
-      await opensocket(cno);
-        
-
+const enterchat = async(dispatch,no,auth) => {
+    console.log('enterchat 실행')
+    const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+    .then((res) => {
       if(!res){
-        console.log("실패");
+        console.log('res값 x');
         return;
       }
+      // JSON.stringify()
+      console.log(res);
+      const chatNo = res.data
 
-      navigate('/tikitaka/chat', { replace: true});
-       
-  }
+      console.log("채팅방번호확인" + chatNo);
+      if(res.data){
+        console.log('chatno 있음 >> socket sub');
+        var socket = new SockJS('http://localhost:8080/TT/websocket');
+        var stompClient = Stomp.over(socket);
+        stompClient.connect({},function(){
+          console.log('link sub socket');
+          stompClient.subscribe(`/topic/${res.data}`, (message) =>{
+            const msg =  JSON.parse(message.body);
+            console.log('안나오냐규' ,msg);
+            console.log(msg.data);
+            
+          })
+        })
+        dispatch({type:'GET_TOPIC',payload: chatNo})
+        navigate('/tikitaka/chat', { replace: true});
+        
+
+      }
+      else{
+        console.log('false >> create topic');
+        createTopic(no, auth);
+      }
+    }).catch((err) => {
+      console.log('enterchat axios err :' , err);
+    });
+    
+
+}  
+
+
+
+
+  const createTopic = async (no, auth) =>{
+    console.log('토픽 추가, 스톰프 실행!')
+      // chatNo 반환 + topic 생성
+      let res = await maketopic(dispatch, no, auth);
+      console.log('res 값 출력 :' ,res);
+
+      if(!res){
+          console.log("실패");
+            return;
+      }else{
+          //chatNo 가지고 socket연결
+          const cno = res.replace(/"/g,"");
+          await opensocket(cno);
+          navigate('/tikitaka/chat', { replace: true});
+      }
+ 
+
+}
+
+
+
+
+ 
+
 
 var index = 0;
 
@@ -307,7 +354,7 @@ var index = 0;
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ enterchat(dispatch,no,auth) }} >대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
