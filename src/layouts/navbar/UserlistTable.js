@@ -283,7 +283,7 @@ var index = 0;
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((value) => {
-                      console.log('value >>>',value)
+                      //console.log('value >>>',value)
                       // row 라고 지정해둔거 >>> 기존 템플릿에서 임시 지정
                       const {no, name, role, status, profile} = value;
 

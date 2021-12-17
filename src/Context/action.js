@@ -109,6 +109,7 @@ export const maketopic=async (dispatch, no, auth)=>{
 }
 
 
+
 //소켓 열기
 export const opensocket = async(chatNo) => {
 
