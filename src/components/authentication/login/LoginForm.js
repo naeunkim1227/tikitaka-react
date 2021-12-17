@@ -27,9 +27,9 @@ export default function LoginForm() {
     email: Yup.string().email('Email must be a valid email address').required('Email is required'),
     password: Yup.string().required('Password is required')
   });
-
-  	const dispatch = useAuthDispatch();
-	  //const { loading, errorMessage } = useAuthState();
+ 
+  const dispatch = useAuthDispatch();
+	//const { loading, errorMessage } = useAuthState();
 
   const formik = useFormik({
     initialValues: {
@@ -70,6 +70,11 @@ export default function LoginForm() {
     formik.values.password = "";
     }
   };
+
+  const joinForm = (e) => {
+    e.preventDefault();
+    navigate('/register', { replace: true });
+  }
 
   useEffect(() => {
     handleShowAlert();
@@ -126,6 +131,14 @@ export default function LoginForm() {
           loading={isSubmitting}
         >
           로그인
+        </LoadingButton>
+        <br/><br/>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained" onClick={joinForm}>
+          회원가입
         </LoadingButton>
 
         

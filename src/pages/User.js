@@ -211,8 +211,8 @@ export default function User() {
       let res = await maketopic(dispatch, no, auth);
 
       //chatNo 가지고 socket연결
-      const cno = res.replace(/"/g,"");
-      await opensocket(cno);
+       const cno = res.replace(/"/g,"");
+       await opensocket(cno);
         
 
       if(!res){
