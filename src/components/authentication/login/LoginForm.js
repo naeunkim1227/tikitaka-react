@@ -119,8 +119,8 @@ export default function LoginForm() {
         </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <Link component={RouterLink} variant="subtitle2" to="/forgotPassword">
-            비밀번호를 잊으셨나요?
+          <Link component={RouterLink} variant="subtitle2" to="/register">
+            회원이 아니신가요?
           </Link>
         </Stack>
         <LoadingButton
@@ -140,6 +140,7 @@ export default function LoginForm() {
           variant="contained" onClick={joinForm}>
           회원가입
         </LoadingButton>
+
 
         
       </Form>

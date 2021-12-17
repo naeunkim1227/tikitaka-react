@@ -46,10 +46,8 @@ const getAlertData =  async () => {
       },
       body: JSON.stringify(data)
     });
-    console.log('원래는 이렇게 생김', res)
     const json = await res.json();
     setNotice(json.data);
-    console.log('어떻게생겻는지 보는중',json)
     
     if(!res.ok){ 
       throw new Error(`${res.status} ${res.statusText}`)}

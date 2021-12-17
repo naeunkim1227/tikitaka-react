@@ -79,6 +79,7 @@ export const logout = async (dispatch,data) =>  {
 }
 
 
+
 export const maketopic=async (dispatch, no, auth)=>{
     try{
 
@@ -107,6 +108,8 @@ export const maketopic=async (dispatch, no, auth)=>{
     }
 }
 
+
+//소켓 열기
 export const opensocket = async(chatNo) => {
 
 try{
@@ -119,12 +122,12 @@ try{
   stompClient.connect({}, function () {
     console.log('Connected: ');
     stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
-     const json =  JSON.parse(message.body);
-     console.log(json.contents);
+     const msg =  JSON.parse(message.body);
+     console.log(msg.contents);
     });
   });
 
-
+    console.log(msg);
     return null;
 
     }catch (error){
