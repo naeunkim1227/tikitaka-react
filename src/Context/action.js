@@ -79,6 +79,7 @@ export const logout = async (dispatch,data) =>  {
 }
 
 
+
 export const maketopic=async (dispatch, no, auth)=>{
     try{
 
@@ -107,30 +108,6 @@ export const maketopic=async (dispatch, no, auth)=>{
     }
 }
 
-export const opensocket = async(chatNo) => {
-
-try{
-  //소켓 열기
-  console.log('opensocket');
-  console.log(chatNo)
-  var socket = new SockJS('http://localhost:8080/TT/websocket');
-  var stompClient = Stomp.over(socket);
-  // SockJS와 stomp client를 통해 연결을 시도.
-  stompClient.connect({}, function () {
-    console.log('Connected: ');
-    stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
-     const json =  JSON.parse(message.body);
-     console.log(json.contents);
-    });
-  });
 
 
-    return null;
-
-    }catch (error){
-        console.log(error);
-    }
-
-
-}
 

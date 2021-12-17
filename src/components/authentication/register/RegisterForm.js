@@ -57,7 +57,7 @@ export default function RegisterForm() {
                           alert("중복된 이메일입니다");
                           return;
                         }
-                        navigate('/login', { replace: true });
+                        navigate('/tikitaka/login', { replace: true });
                       })
                       .catch((error) => {
                         console.log(error);

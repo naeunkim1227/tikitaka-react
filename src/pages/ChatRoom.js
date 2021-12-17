@@ -60,6 +60,7 @@ const ChatRoom = () => {
       setTypeState('TEXT');
     }  
 
+
     const sendMessage = async (e) => {
       e.preventDefault();
       
@@ -103,6 +104,7 @@ const ChatRoom = () => {
 
         default:
           return null;
+
       }
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
@@ -150,10 +152,11 @@ const ChatRoom = () => {
   
     //   }
     // }
-    const chatList =  async () =>{
-      // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
-      const chatNo = JSON.parse(auth.chatNo);
+    // const chatList =  async () =>{
+    //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
+    //   const chatNo = JSON.parse(auth.chatNo);
      
+
       try {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
@@ -176,9 +179,10 @@ const ChatRoom = () => {
       setImageMessage(image);
     }
 
+
     useEffect(() => {
       if(messageList === null){
-        chatList();
+        // chatList();
       } else {
         return;
       }
