@@ -32,11 +32,15 @@ import { Air } from '@mui/icons-material';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { now } from 'lodash';
+import moment from 'moment';
+import { useChatStateContext } from 'src/Context/context';
 
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const chatstate = useChatStateContext();
     const [messageList, setMessageList] = useState(null);
     // const chatinfo= {
     //   userNo: auth.token
@@ -55,6 +59,8 @@ const ChatRoom = () => {
         setContents(e.target.value);
     }  
 
+
+    const time = moment(now()).format('YY/MM/DD HH:mm');
     const sendMessage = async (e) => {
       e.preventDefault();
       const data= {
@@ -63,7 +69,8 @@ const ChatRoom = () => {
         type: "TEXT",
         chatNo: auth.chatNo,
         message: contents,
-        readCount: 1
+        readCount: 1,
+        regTime: time        
       }
 
 
