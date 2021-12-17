@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 
-import React, {useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef } from 'react';
 import './assets/css/components.css';
 import './assets/css/style.css';
 import Card from "@mui/material/Card";
@@ -32,6 +32,7 @@ import { Air } from '@mui/icons-material';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import moment, { now } from 'moment';
 
 
 const ChatRoom = () => {
@@ -41,7 +42,7 @@ const ChatRoom = () => {
     const [loadImg, setLoadImg] = useState();
     const [image, setImage] = useState();
     const [typeState, setTypeState] = useState();
-    const [imageMessage, setImageMessage] = useState();
+    const imgRef = useRef(null);
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -63,18 +64,19 @@ const ChatRoom = () => {
 
     const sendMessage = async (e) => {
       e.preventDefault();
-      
+      const time = moment(now()).format('YY/MM/DD HH:mm');
       switch(typeState){
         case 'TEXT':
           const messageData= {
             userNo: auth.token,
-            name: auth.token,
+            name: auth.name,
             chatNo: auth.chatNo,
             type: typeState,
             message: contents,
-            readCount: 1
+            readCount: 1,
+            regTime: time
           }
-          return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
                   console.log("msg send: ", response);
                   return response;
@@ -86,18 +88,38 @@ const ChatRoom = () => {
         case 'IMAGE':
           const formData = new FormData();
           formData.append('file', loadImg);
-          const chatNo = JSON.parse(auth.chatNo);
-          const userNo = auth.token;
-          return await axios.post(`/TT/talk/sendimage/${chatNo}&${userNo}`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
+          const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
                 .then((response) => {
-                  console.log("img send: ", response);
-                  setImage(auth.message);
-                  return acceptImage();
+                  console.log("img send: ", response.data);
+                  
+                    setImage(response.data);
+                  
+                  return response.data;
                 })
                 .catch((err) => {
                   console.log(err);
-                })
+                });
+          const ans = await result;
 
+          const imageData = {
+            chatNo : JSON.parse(auth.chatNo),
+            userNo : auth.token,
+            name: auth.name,
+            type: typeState,
+            message: result,
+            readCount: 1,
+            regTime: time
+          } 
+          const response = axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+                          .then((response) => {
+                            console.log("img send: ", response);
+                            return response;
+                          })
+                          .catch((err) => {
+                            console.log(err);
+                          })
+          console.log("11111111111111111111"+image);
+        
         
         case 'FILE':
           return
@@ -155,19 +177,22 @@ const ChatRoom = () => {
     // const chatList =  async () =>{
     //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
     //   const chatNo = JSON.parse(auth.chatNo);
-     
 
-      try {
-        const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
-                               .then((res)=>{
-                                 console.log(JSON.stringify(res.data.list.no));
-                                 setMessageList(JSON.stringify(res.data));
-                               })
-      } catch (error) {
-        console.log(error);
-      }
      
+  const chatList = async() => {
+    try {
+      const res =  await axios.get(`/TT/talk/chatList/${auth.chatNo}`)
+                             .then((res)=>{
+                               console.log(JSON.stringify(res.data.list.no));
+                               setMessageList(JSON.stringify(res.data));
+                             })
+    } catch (error) {
+      console.log(error);
     }
+  }
+      
+     
+    
 
     const uploadImage = (e) => {
       setLoadImg(e.target.files[0]);
@@ -175,14 +200,11 @@ const ChatRoom = () => {
 
     }
 
-    const acceptImage = () =>{
-      setImageMessage(image);
-    }
-
+    
 
     useEffect(() => {
       if(messageList === null){
-        // chatList();
+         //chatList();
       } else {
         return;
       }
@@ -224,7 +246,7 @@ const ChatRoom = () => {
             </List>
           )
         }} */}
-        <img src={`/TT${imageMessage}`} width="100" height="100" />
+        <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
       <form style={{alignItems: "center"}}>
