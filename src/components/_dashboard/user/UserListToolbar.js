@@ -1,3 +1,5 @@
+/* eslint-disable */
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
@@ -12,46 +14,83 @@ import {
   IconButton,
   Typography,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
+  Button
 } from '@mui/material';
-
+import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
+import { useAuthState, useAuthDispatch, maketopic, opensocket } from 'src/Context';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
-  height: 96,
+  height: 60,
   display: 'flex',
   justifyContent: 'space-between',
   padding: theme.spacing(0, 1, 0, 3)
 }));
 
 const SearchStyle = styled(OutlinedInput)(({ theme }) => ({
-  width: 240,
+  width: 250,
   transition: theme.transitions.create(['box-shadow', 'width'], {
     easing: theme.transitions.easing.easeInOut,
     duration: theme.transitions.duration.shorter
   }),
-  '&.Mui-focused': { width: 320, boxShadow: theme.customShadows.z8 },
+  '&.Mui-focused': { width: 250, boxShadow: theme.customShadows.z8 },
   '& fieldset': {
     borderWidth: `1px !important`,
     borderColor: `${theme.palette.grey[500_32]} !important`
   }
 }));
 
+
+
+
 // ----------------------------------------------------------------------
 
 UserListToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
-  onFilterName: PropTypes.func
+  onFilterName: PropTypes.func,
+  talkNo: PropTypes.array
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
+  const navigate = useNavigate();
+  const auth = useAuthState();
+  const dispatch = useAuthDispatch();
+
+  const createTopic = async (no, auth) =>{
+    console.log('토픽 추가, 스톰프 실행!')
+    console.log("선택한 userno 배열값들 :  ",no)
+    console.log("배열 길이", no.length)
+    console.log("배열0번째인덱스출력", no[0])
+
+    //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
+    if(no.length == 1){
+      // chatNo 반환 + topic 생성
+      let res = await maketopic(dispatch, no[0], auth);
+  
+      //chatNo 가지고 socket연결
+      const cno = res.replace(/"/g,"");
+      await opensocket(cno);
+        
+  
+      if(!res){
+        console.log("실패");
+        return;
+      }
+  
+      navigate('/tikitaka/chat', { replace: true});
+    }
+
+       
+  }
+  
   return (
     <RootStyle
       sx={{
         ...(numSelected > 0 && {
-          color: 'primary.main',
-          bgcolor: 'primary.lighter'
+          color: 'text.disabled',
+          bgcolor: ''
         })
       }}
     >
@@ -63,7 +102,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         <SearchStyle
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search user..."
+          // placeholder="Search user..."
           startAdornment={
             <InputAdornment position="start">
               <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
@@ -72,7 +111,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         />
       )}
 
-      {numSelected > 0 ? (
+      {/* {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
             <Icon icon={trash2Fill} />
@@ -84,7 +123,23 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
             <Icon icon={roundFilterList} />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
+
+      {
+        numSelected > 0 ?
+        <Button
+        onClick={(e) =>{ 
+          createTopic(talkNo, auth);
+          allUncheck();
+        }}
+      >
+        <AddCommentOutlinedIcon color="action"  />
+      </Button>
+      :
+      null
+      }
+
+
     </RootStyle>
   );
 }
