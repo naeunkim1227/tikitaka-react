@@ -38,6 +38,10 @@ const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
     const [messageList, setMessageList] = useState(null);
+    const [loadImg, setLoadImg] = useState();
+    const [image, setImage] = useState();
+    const [typeState, setTypeState] = useState();
+    const [imageMessage, setImageMessage] = useState();
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -52,34 +56,67 @@ const ChatRoom = () => {
   
 
     const messageHandle = (e) =>{
-        setContents(e.target.value);
+      setContents(e.target.value);
+      setTypeState('TEXT');
     }  
+
 
     const sendMessage = async (e) => {
       e.preventDefault();
-      const data= {
-        userNo: auth.token,
-        name: auth.token,
-        type: "TEXT",
-        chatNo: auth.chatNo,
-        message: contents,
-        readCount: 1
+      
+      switch(typeState){
+        case 'TEXT':
+          const messageData= {
+            userNo: auth.token,
+            name: auth.token,
+            chatNo: auth.chatNo,
+            type: typeState,
+            message: contents,
+            readCount: 1
+          }
+          return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+                .then((response) => {
+                  console.log("msg send: ", response);
+                  return response;
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+
+        case 'IMAGE':
+          const formData = new FormData();
+          formData.append('file', loadImg);
+          const chatNo = JSON.parse(auth.chatNo);
+          const userNo = auth.token;
+          return await axios.post(`/TT/talk/sendimage/${chatNo}&${userNo}`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
+                .then((response) => {
+                  console.log("img send: ", response);
+                  setImage(auth.message);
+                  return acceptImage();
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+
+        
+        case 'FILE':
+          return
+
+        default:
+          return null;
+
       }
 
-
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
-
-      
-
       //메시지 보내기
-      const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      .then((response) => {
-        console.log("msg send: ", response);
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+      //     .then((response) => {
+      //       console.log("msg send: ", response);
+      //       return response;
+      //     })
+      //     .catch((err) => {
+      //       console.log(err);
+      //     })
       
       // //사용자의 연결되어있는 채팅리스트를 출력
       // const res = await axios.get(`/TT/talk/topic`)
@@ -119,19 +156,29 @@ const ChatRoom = () => {
     //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
     //   const chatNo = JSON.parse(auth.chatNo);
      
-    //   try {
-    //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
-    //                            .then((res)=>{
-    //                              console.log(JSON.stringify(res.data.list.no));
-    //                              setMessageList(JSON.stringify(res.data));
-    //                            })
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
+
+      try {
+        const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
+                               .then((res)=>{
+                                 console.log(JSON.stringify(res.data.list.no));
+                                 setMessageList(JSON.stringify(res.data));
+                               })
+      } catch (error) {
+        console.log(error);
+      }
      
-    // }
-    
-    
+    }
+
+    const uploadImage = (e) => {
+      setLoadImg(e.target.files[0]);
+      setTypeState('IMAGE');
+
+    }
+
+    const acceptImage = () =>{
+      setImageMessage(image);
+    }
+
 
     useEffect(() => {
       if(messageList === null){
@@ -143,13 +190,15 @@ const ChatRoom = () => {
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
     //                                 // 화면에 채팅창을 나눠서 표시
+
+
     return (
       <Card sx={{ minWidth: 275 }}>
       <CardContent style={{borderBottom: "2px solid gray"}}>
         <h1>채팅방 이름, 검색창</h1>
       </CardContent>
       <CardContent sx={{ width: 600 , height:450}}>
-        {() => {
+        {/* {() => {
           const datalist = messageList.map((message) => {
            
             return(
@@ -174,8 +223,8 @@ const ChatRoom = () => {
               {datalist}
             </List>
           )
-        }}
-        
+        }} */}
+        <img src={`/TT${imageMessage}`} width="100" height="100" />
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
       <form style={{alignItems: "center"}}>
@@ -198,6 +247,7 @@ const ChatRoom = () => {
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
           </Button>
           <Button>
+          <input type='file' accept='images/*' onChange={uploadImage}/>
             <ImageIcon sx={{ width: 40, height: 40}} />
           </Button>
           <Button>
