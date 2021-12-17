@@ -18,7 +18,17 @@ import {
   Button
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
-import { useAuthState, useAuthDispatch, maketopic, opensocket } from 'src/Context';
+
+
+// import USERLIST from '../_mocks_/user'; // 임시 데이터
+import { useEffect } from 'react';
+import { useAuthState, useAuthDispatch, maketopic, opensocket , gettopic } from 'src/Context';
+
+import axios from 'axios'
+
+// Stomp
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
@@ -58,6 +68,37 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
 
+    /////////////////소켓 연결
+const enterchat = async(dispatch,no,auth) => {
+  console.log('enterchat 실행')
+  const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+  .then((res) => {
+    if(!res){
+      console.log('res값 x');
+      return;
+    }
+    // JSON.stringify()
+    console.log(res);
+    const chatNo = res.data
+
+    console.log("채팅방번호확인" + chatNo);
+    if(res.data){
+      console.log('chatno 있음 >> socket sub');
+      gettopic(dispatch,chatNo);
+    }
+    else{
+      console.log('false >> create topic');
+      createTopic(no, auth);
+    }
+  }).catch((err) => {
+    console.log('enterchat axios err :' , err);
+  });
+  
+  
+  navigate('/tikitaka/chat', { replace: true});
+}  
+
+
   const createTopic = async (no, auth) =>{
     console.log('토픽 추가, 스톰프 실행!')
     console.log("선택한 userno 배열값들 :  ",no)
@@ -66,11 +107,12 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
 
     //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
       // chatNo 반환 + topic 생성
-      let res = await maketopic(dispatch, no, auth);
-  
-      // //chatNo 가지고 socket연결
-      // const cno = res.replace(/"/g,"");
-      // await opensocket(cno);
+
+      let res = await maketopic(dispatch, no[0], auth);
+      console.log(res)
+      //chatNo 가지고 socket연결
+      const cno = res.replace(/"/g,"");
+      await opensocket(cno);
         
   
       // if(!res){
@@ -82,6 +124,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
 
        
   }
+
   
   return (
     <RootStyle
@@ -127,7 +170,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         numSelected > 0 ?
         <Button
         onClick={(e) =>{ 
-          createTopic(talkNo, auth);
+          enterchat(dispatch,talkNo,auth) 
           allUncheck();
         }}
       >

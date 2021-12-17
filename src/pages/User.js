@@ -31,7 +31,8 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
-import { useAuthState, useAuthDispatch, maketopic, opensocket } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic, opensocket , enterchat } from 'src/Context';
+
 import axios from 'axios'
 
 // Stomp
@@ -201,48 +202,20 @@ export default function User() {
   },[page,rowsPerPage])
 
 /////////
-const enterchat = async(dispatch,no,auth) => {
-    console.log('enterchat 실행')
-    const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
-    .then((res) => {
-      if(!res){
-        console.log('res값 x');
-        return;
-      }
-      // JSON.stringify()
-      console.log(res);
-      const chatNo = res.data
+const enter = async(dispatch,no,auth) => {
 
-      console.log("채팅방번호확인" + chatNo);
-      if(res.data){
-        console.log('chatno 있음 >> socket sub');
-        var socket = new SockJS('http://localhost:8080/TT/websocket');
-        var stompClient = Stomp.over(socket);
-        stompClient.connect({},function(){
-          console.log('link sub socket');
-          stompClient.subscribe(`/topic/${res.data}`, (message) =>{
-            const msg =  JSON.parse(message.body);
-            console.log('안나오냐규' ,msg);
-            console.log(msg.data);
-            
-          })
-        })
-        dispatch({type:'GET_TOPIC',payload: chatNo})
-        navigate('/tikitaka/chat', { replace: true});
-      }
-      else{
-        console.log('false >> create topic');
-        createTopic(no, auth);
-      }
-    }).catch((err) => {
-      console.log('enterchat axios err :' , err);
-    });
-    
+  console.log('enterchat 실행')
+  
+  // let response = await enterchat(dispatch.no,auth);
+  //  console.log('리스 폰스 값',response);
+
+  //  if(response === "0"){
+  //       console.log('false >> create topic');
+  //       // createTopic(no, auth);
+
+  //  }
 
 }  
-
-
-
 
   const createTopic = async (no, auth) =>{
     console.log('토픽 추가, 스톰프 실행!')
@@ -357,7 +330,7 @@ var index = 0;
                           </TableCell>
 
                           <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ enterchat(dispatch,no,auth) }} >대화하기</Button>
+                            <Button type="button" variant="contained" onClick={(e) =>{ enter(dispatch,no,auth) }} >대화하기</Button>
                           </TableCell>
 
                           <TableCell align="right">
