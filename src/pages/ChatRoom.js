@@ -54,43 +54,13 @@ const ChatRoom = () => {
     const messageHandle = (e) =>{
         setContents(e.target.value);
     }  
-     
-    const sendMessagetest = async(e) => {
-      e.preventDefault();
-      const data= {
-        userNo: auth.token,
-        name: auth.token,
-        type: "TEXT",
-        chatNo: auth.chatNo,
-
-        message: contents,
-        
-        readCount: 1
-      }
-
-
-      //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
-
-      
-
-      //메시지 보내기
-      const res = await axios.post(`/TT/Nredis/room/456`,  {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      .then((response) => {
-        console.log("msg send: ", response);
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-
-
-    }
 
     const sendMessage = async (e) => {
       e.preventDefault();
       const data= {
         userNo: auth.token,
         name: auth.token,
+        type: "TEXT",
         chatNo: auth.chatNo,
         message: contents,
         readCount: 1
@@ -145,27 +115,27 @@ const ChatRoom = () => {
   
     //   }
     // }
-    const chatList =  async () =>{
-      // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
-      const chatNo = JSON.parse(auth.chatNo);
+    // const chatList =  async () =>{
+    //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
+    //   const chatNo = JSON.parse(auth.chatNo);
      
-      try {
-        const res =  await axios.get(`/TT/talk/chatList/chatNo`)
-                               .then((res)=>{
-                                 console.log(JSON.stringify(res.data.list.no));
-                                 setMessageList(JSON.stringify(res.data));
-                               })
-      } catch (error) {
-        console.log(error);
-      }
+    //   try {
+    //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
+    //                            .then((res)=>{
+    //                              console.log(JSON.stringify(res.data.list.no));
+    //                              setMessageList(JSON.stringify(res.data));
+    //                            })
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
      
-    }
+    // }
     
     
 
     useEffect(() => {
       if(messageList === null){
-        chatList();
+        // chatList();
       } else {
         return;
       }
