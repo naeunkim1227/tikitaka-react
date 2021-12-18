@@ -22,8 +22,8 @@ export const opensocket = async(chatNo) => {
          const msg =  JSON.parse(message.body);
          console.log(msg.contents);
          console.log('maketopic의 msg' ,msg);
-          dispatch({type: 'VIEW_MESSAGE', payload: msg})
-          sessionStorage.setItem('chatMessage', msg );
+          // dispatch({type: 'VIEW_MESSAGE', payload: msg})
+          // sessionStorage.setItem('chatMessage', msg );
           console.log(sessionStorage.getItem('chatMessage'));
         });
       });

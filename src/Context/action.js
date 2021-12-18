@@ -80,16 +80,16 @@ export const logout = async (dispatch,data) =>  {
 
 
 
-export const maketopic=async (dispatch, no, auth)=>{
+export const maketopic=async (dispatch, no, auth, type)=>{
     try{
-
-        const res = await axios.put(`/TT/talk/topic/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+        console.log('maketopic')
+        const res = await axios.put(`/TT/talk/topic/${no}/${type}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
         .then( (res) =>{
             if (!res){
               console.log("res값 없음")
               return;
             }
-            
+            console.log(res);
             const chatNo = JSON.stringify(res.data.chatNo);
             console.log("채팅방번호확인" + chatNo);
             
