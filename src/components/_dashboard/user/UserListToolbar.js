@@ -29,6 +29,7 @@ import axios from 'axios'
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { useChatContext, useChatStateContext } from 'src/Context/context'; 
 // ----------------------------------------------------------------------
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
@@ -67,9 +68,11 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
+  const chatstate = useChatStateContext();
+  const message = useChatContext();
 
     /////////////////소켓 연결
-const enterchat = async(dispatch,no,auth) => {
+const enterchat = async(chatstate,dispatch,no,auth) => {
   console.log('enterchat 실행')
   const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
   .then((res) => {
@@ -84,7 +87,7 @@ const enterchat = async(dispatch,no,auth) => {
     console.log("채팅방번호확인" + chatNo);
     if(res.data){
       console.log('chatno 있음 >> socket sub');
-      gettopic(dispatch,chatNo);
+      gettopic(chatstate,dispatch,chatNo);
     }
     else{
       console.log('false >> create topic');
@@ -121,9 +124,9 @@ const enterchat = async(dispatch,no,auth) => {
       // }
   
       navigate('/tikitaka/chat', { replace: true});
-
-       
   }
+
+
 
   
   return (
