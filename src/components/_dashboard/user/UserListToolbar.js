@@ -63,7 +63,6 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-
 export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
@@ -72,9 +71,10 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const message = useChatContext();
 
     /////////////////소켓 연결
-const enterchat = async(chatstate,dispatch,no,auth) => {
+const enterchat = async(chatstate,dispatch,talkno,auth,no) => {
   console.log('enterchat 실행')
-  const response = await axios.put(`/TT/talk/searchchat/${no}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+  
+  const response = await axios.put(`/TT/talk/searchchat/${talkNo[0]}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
   .then((res) => {
     if(!res){
       console.log('res값 x');
@@ -91,7 +91,7 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
     }
     else{
       console.log('false >> create topic');
-      createTopic(no, auth);
+      createTopic(talkNo[0], auth);
     }
   }).catch((err) => {
     console.log('enterchat axios err :' , err);
@@ -104,44 +104,24 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
 
   const createTopic = async (no, auth) =>{
     console.log('토픽 추가, 스톰프 실행!')
-    console.log("선택한 userno 배열값들 :  ",no)
-    console.log("배열 길이", no.length)
-    console.log("배열0번째인덱스출력", no[0])
+    // console.log("선택한 userno 배열값들 :  ",no)
+    // console.log("배열 길이", no.length)
+    // console.log("배열0번째인덱스출력", no[0])
 
     //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
       // chatNo 반환 + topic 생성
 
-      let res = await maketopic(dispatch, no[0], auth);
+      let res = await maketopic(dispatch, no, auth);
       console.log(res)
       //chatNo 가지고 socket연결
       const cno = res.replace(/"/g,"");
       await opensocket(cno);
-<<<<<<< HEAD
-<<<<<<< HEAD
       if(!res){
         console.log("실패");
         return;
       }
       navigate('/tikitaka/chat', { replace: true});
     }
-=======
-=======
->>>>>>> b02a3807a5d21e87846359e67720d478164eea38
-        
-  
-      // if(!res){
-      //   console.log("실패");
-      //   return;
-      // }
-  
-      navigate('/tikitaka/chat', { replace: true});
-<<<<<<< HEAD
-
-       
->>>>>>> cec794e7ba2ddbd732c33133e80eda9fe1c993c6
-=======
->>>>>>> b02a3807a5d21e87846359e67720d478164eea38
-  }
 
 
 
@@ -190,7 +170,7 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
         numSelected > 0 ?
         <Button
         onClick={(e) =>{ 
-          enterchat(dispatch,talkNo,auth) 
+          enterchat(chatstate,dispatch,talkNo,auth) 
           allUncheck();
         }}
       >

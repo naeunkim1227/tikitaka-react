@@ -64,10 +64,6 @@ const ChatRoom = () => {
     const time = moment(now()).format('YY/MM/DD HH:mm');
     const sendMessage = async (e) => {
       e.preventDefault();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b02a3807a5d21e87846359e67720d478164eea38
       const data= {
         userNo: auth.token,
         name: auth.token,
@@ -77,48 +73,6 @@ const ChatRoom = () => {
         readCount: 1,
         regTime: time        
       }
-<<<<<<< HEAD
-=======
->>>>>>> cec794e7ba2ddbd732c33133e80eda9fe1c993c6
-
-      const time = moment(now()).format('YY/MM/DD HH:mm');
-      switch(typeState){
-        case 'TEXT':
-          const messageData= {
-            userNo: auth.token,
-            name: auth.name,
-            chatNo: auth.chatNo,
-            type: typeState,
-            message: contents,
-            readCount: 1,
-            regTime: time
-          }
-          await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-                .then((response) => {
-                  console.log("msg send: ", response);
-                  return response;
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
-
-        case 'IMAGE':
-          const formData = new FormData();
-          formData.append('file', loadImg);
-          const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
-                .then((response) => {
-                  console.log("img send: ", response.data);
-                  
-                    setImage(response.data);
-                  
-                  return response.data;
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-          const ans = await result;
-=======
->>>>>>> b02a3807a5d21e87846359e67720d478164eea38
 
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
