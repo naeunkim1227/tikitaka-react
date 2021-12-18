@@ -15,13 +15,19 @@ import {
   Typography,
   OutlinedInput,
   InputAdornment,
-  Button
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState, useAuthDispatch, maketopic, opensocket , gettopic } from 'src/Context';
 
 import axios from 'axios'
@@ -63,12 +69,23 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
+
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, talkName, allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const message = useChatContext();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  /////////다이얼로그 관리
 
     /////////////////소켓 연결
 const enterchat = async(chatstate,dispatch,talkNo,auth) => {
@@ -178,20 +195,49 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
       )} */}
 
       {
+
         numSelected > 0 ?
-        <Button
-        onClick={(e) =>{ 
-          enterchat(chatstate,dispatch,talkNo,auth) 
-          allUncheck();
-        }}
-      >
-        <AddCommentOutlinedIcon color="action"  />
-      </Button>
-      :
-      null
+          numSelected > 1 ?
+          <Button
+          onClick={(e) =>{handleClickOpen()}}>
+            group
+          <AddCommentOutlinedIcon color="action"  />
+          </Button> 
+          : 
+          <Button
+          variant="text"
+          onClick={(e) =>{ 
+            enterchat(chatstate, dispatch,talkNo,auth) 
+            allUncheck();
+          }}>
+            personal
+          <AddCommentOutlinedIcon color="action"  />
+          </Button>
+        :
+        null
+
       }
-
-
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>그룹채팅방 Title 설정</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            원하는 그룹채팅방의 Title을 설정하세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label={talkName}
+            type="text"
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>취소</Button>
+          <Button onClick={handleClose}>확인</Button>
+        </DialogActions>
+      </Dialog>
     </RootStyle>
   );
 }
