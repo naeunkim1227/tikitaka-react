@@ -117,6 +117,7 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
       const cno = res.replace(/"/g,"");
       await opensocket(cno);
 <<<<<<< HEAD
+<<<<<<< HEAD
       if(!res){
         console.log("실패");
         return;
@@ -124,6 +125,8 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
       navigate('/tikitaka/chat', { replace: true});
     }
 =======
+=======
+>>>>>>> b02a3807a5d21e87846359e67720d478164eea38
         
   
       // if(!res){
@@ -132,9 +135,12 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
       // }
   
       navigate('/tikitaka/chat', { replace: true});
+<<<<<<< HEAD
 
        
 >>>>>>> cec794e7ba2ddbd732c33133e80eda9fe1c993c6
+=======
+>>>>>>> b02a3807a5d21e87846359e67720d478164eea38
   }
 
 
