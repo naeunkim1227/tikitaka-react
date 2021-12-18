@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect } from 'react';
 import './assets/css/components.css';
 import './assets/css/style.css';
 import Card from "@mui/material/Card";
@@ -34,25 +34,15 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { now } from 'lodash';
 import moment from 'moment';
-import { useChatStateContext } from 'src/Context/context';
 
-import moment, { now } from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
-
 
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
-    const chatstate = useChatStateContext();
     const [messageList, setMessageList] = useState(null);
-
-    const [loadImg, setLoadImg] = useState();
-    const [image, setImage] = useState();
-    const [typeState, setTypeState] = useState();
-    const imgRef = useRef(null);
-
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -84,65 +74,6 @@ const ChatRoom = () => {
         regTime: time        
       }
 
-      const time = moment(now()).format('YY/MM/DD HH:mm');
-      switch(typeState){
-        case 'TEXT':
-          const messageData= {
-            userNo: auth.token,
-            name: auth.name,
-            chatNo: auth.chatNo,
-            type: typeState,
-            message: contents,
-            readCount: 1,
-            regTime: time
-          }
-          await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-                .then((response) => {
-                  console.log("msg send: ", response);
-                  return response;
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
-
-        case 'IMAGE':
-          const formData = new FormData();
-          formData.append('file', loadImg);
-          const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
-                .then((response) => {
-                  console.log("img send: ", response.data);
-                  
-                    setImage(response.data);
-                  
-                  return response.data;
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-          const ans = await result;
-
-          const imageData = {
-            chatNo : JSON.parse(auth.chatNo),
-            userNo : auth.token,
-            name: auth.name,
-            type: typeState,
-            message: result,
-            readCount: 1,
-            regTime: time
-          } 
-          const response = axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-                          .then((response) => {
-                            console.log("img send: ", response);
-                            return response;
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                          })
-          console.log("11111111111111111111"+image);
-        
-        
-        case 'FILE':
-          return
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
@@ -195,34 +126,24 @@ const ChatRoom = () => {
     // const chatList =  async () =>{
     //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
     //   const chatNo = JSON.parse(auth.chatNo);
-
-
      
-  const chatList = async() => {
-    try {
-      const res =  await axios.get(`/TT/talk/chatList/${auth.chatNo}`)
-                             .then((res)=>{
-                               console.log(JSON.stringify(res.data.list.no));
-                               setMessageList(JSON.stringify(res.data));
-                             })
-    } catch (error) {
-      console.log(error);
-    }
-  }
-      
+    //   try {
+    //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
+    //                            .then((res)=>{
+    //                              console.log(JSON.stringify(res.data.list.no));
+    //                              setMessageList(JSON.stringify(res.data));
+    //                            })
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
      
+    // }
     
-
-    const uploadImage = (e) => {
-      setLoadImg(e.target.files[0]);
-      setTypeState('IMAGE');
-
-    }
     
 
     useEffect(() => {
       if(messageList === null){
-         //chatList();
+        // chatList();
       } else {
         return;
       }
@@ -262,7 +183,7 @@ const ChatRoom = () => {
     return (
       <Card sx={{ minWidth: 275 }}>
       <CardContent style={{borderBottom: "2px solid gray"}}>
-        <h1>채팅방 이름, 검색창</h1>
+        <h3>{auth.name}과의 채팅방</h3>
       </CardContent>
       <CardContent sx={{ width: 600 , height:450}}>
         {() => {
@@ -290,9 +211,8 @@ const ChatRoom = () => {
               {datalist}
             </List>
           )
-        }} */}
-        <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>
-
+        }}
+        
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
       <form style={{alignItems: "center"}}>
