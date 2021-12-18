@@ -109,19 +109,32 @@ const enterchat = async(chatstate,dispatch,no,auth) => {
     console.log("배열0번째인덱스출력", no[0])
 
     //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
-    if(no.length == 1){
       // chatNo 반환 + topic 생성
+
       let res = await maketopic(dispatch, no[0], auth);
       console.log(res)
       //chatNo 가지고 socket연결
       const cno = res.replace(/"/g,"");
       await opensocket(cno);
+<<<<<<< HEAD
       if(!res){
         console.log("실패");
         return;
       }
       navigate('/tikitaka/chat', { replace: true});
     }
+=======
+        
+  
+      // if(!res){
+      //   console.log("실패");
+      //   return;
+      // }
+  
+      navigate('/tikitaka/chat', { replace: true});
+
+       
+>>>>>>> cec794e7ba2ddbd732c33133e80eda9fe1c993c6
   }
 
 
