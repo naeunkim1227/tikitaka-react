@@ -130,7 +130,7 @@ const ChatRoom = () => {
         
         case 'FILE':
           return
-
+    }
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
       
@@ -277,7 +277,7 @@ const ChatRoom = () => {
               {datalist}
             </List>
           )
-        }} */}
+        }} 
         <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>
 
       </CardContent>
