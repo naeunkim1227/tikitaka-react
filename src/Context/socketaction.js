@@ -21,6 +21,10 @@ export const opensocket = async(chatNo) => {
         stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
          const msg =  JSON.parse(message.body);
          console.log(msg.contents);
+         console.log('maketopic의 msg' ,msg);
+          // dispatch({type: 'VIEW_MESSAGE', payload: msg})
+          // sessionStorage.setItem('chatMessage', msg );
+          console.log(sessionStorage.getItem('chatMessage'));
         });
       });
     
@@ -34,20 +38,24 @@ export const opensocket = async(chatNo) => {
     
     }
     
-
-export const gettopic = async(dispatch,chatNo) => {
+//이미 생성된 방일경우, topic가져와서 연결
+export const gettopic = async(chatstate,dispatch,chatNo) => {
     
     console.log('gettopic');
     var socket = new SockJS('http://localhost:8080/TT/websocket');
     var stompClient = Stomp.over(socket);
     stompClient.connect({},function(){
       console.log('link sub socket');
-      stompClient.subscribe(`/topic/${chatNo}`, (message) =>{
+      stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
         const msg =  JSON.parse(message.body);
-        console.log(msg);
         console.log(msg.contents);
+        console.log('gettopic의 msg',msg);
+
+        chatstate({type: 'VIEW_MESSAGE', chatdata: msg.contents})
+        sessionStorage.setItem('chatMessage', msg.contents)
+        console.log(sessionStorage.getItem('chatMessage'));
         
-      })
+       });
     })
     dispatch({type:'GET_TOPIC',payload: chatNo})
 

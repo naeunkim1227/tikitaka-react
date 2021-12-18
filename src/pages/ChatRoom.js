@@ -1,6 +1,6 @@
 /* eslint-disable */ 
 
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect } from 'react';
 import './assets/css/components.css';
 import './assets/css/style.css';
 import Card from "@mui/material/Card";
@@ -32,23 +32,17 @@ import { Air } from '@mui/icons-material';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { now } from 'lodash';
+import moment from 'moment';
 
-import moment, { now } from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
-
 
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
     const [messageList, setMessageList] = useState(null);
-
-    const [loadImg, setLoadImg] = useState();
-    const [image, setImage] = useState();
-    const [typeState, setTypeState] = useState();
-    const imgRef = useRef(null);
-
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -70,6 +64,16 @@ const ChatRoom = () => {
     const time = moment(now()).format('YY/MM/DD HH:mm');
     const sendMessage = async (e) => {
       e.preventDefault();
+      const data= {
+        userNo: auth.token,
+        name: auth.token,
+        type: "TEXT",
+        chatNo: auth.chatNo,
+        message: contents,
+        readCount: 1,
+        regTime: time        
+      }
+
 
       const time = moment(now()).format('YY/MM/DD HH:mm');
       switch(typeState){
@@ -131,6 +135,7 @@ const ChatRoom = () => {
         case 'FILE':
           return
     }
+
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
       
@@ -182,34 +187,24 @@ const ChatRoom = () => {
     // const chatList =  async () =>{
     //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
     //   const chatNo = JSON.parse(auth.chatNo);
-
-
      
-  const chatList = async() => {
-    try {
-      const res =  await axios.get(`/TT/talk/chatList/${auth.chatNo}`)
-                             .then((res)=>{
-                               console.log(JSON.stringify(res.data.list.no));
-                               setMessageList(JSON.stringify(res.data));
-                             })
-    } catch (error) {
-      console.log(error);
-    }
-  }
-      
+    //   try {
+    //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
+    //                            .then((res)=>{
+    //                              console.log(JSON.stringify(res.data.list.no));
+    //                              setMessageList(JSON.stringify(res.data));
+    //                            })
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
      
+    // }
     
-
-    const uploadImage = (e) => {
-      setLoadImg(e.target.files[0]);
-      setTypeState('IMAGE');
-
-    }
     
 
     useEffect(() => {
       if(messageList === null){
-         //chatList();
+        // chatList();
       } else {
         return;
       }
@@ -277,8 +272,10 @@ const ChatRoom = () => {
               {datalist}
             </List>
           )
+
         }} 
         <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>
+
 
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
