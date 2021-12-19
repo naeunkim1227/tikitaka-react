@@ -95,6 +95,7 @@ const ChatRoom = () => {
       //   readCount: 1,
       //   regTime: time        
       // }
+
       const time = moment(now()).format('YY/MM/DD HH:mm');
       switch(typeState){
         case 'TEXT':
@@ -157,6 +158,7 @@ const ChatRoom = () => {
         case 'FILE':
           return
     }
+
 
       //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
@@ -291,8 +293,13 @@ const ChatRoom = () => {
 
     return (
       <Card sx={{ minWidth: 275 }}>
+
       <CardContent id='room-top'>
         <h1>채팅방 이름, 검색창</h1>
+
+      <CardContent style={{borderBottom: "2px solid gray"}}>
+        <h3>{auth.name}과의 채팅방</h3>
+
       </CardContent>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
         <div id='chat-room'>
@@ -327,7 +334,6 @@ const ChatRoom = () => {
 
         }} 
         
-
 
       </CardContent>
       <CardContent id='room-bottom'>
