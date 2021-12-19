@@ -77,10 +77,15 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const chatstate = useChatStateContext();
   const message = useChatContext();
   const [open, setOpen] = useState(false);
+<<<<<<< Updated upstream
   //선택된 유저들의 이름관리
   const [useTalkname, setuseTalkname] = useState(talkName.toString());
   const basicTalkName = talkName.toString();
 
+=======
+
+  /////////다이얼로그 관리
+>>>>>>> Stashed changes
   const handleClickOpen = () => {
     setOpen(true);
   };
