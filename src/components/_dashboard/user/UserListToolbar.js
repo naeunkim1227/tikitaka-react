@@ -32,6 +32,8 @@ import { Stomp } from '@stomp/stompjs';
 import { useChatContext, useChatStateContext } from 'src/Context/context'; 
 // ----------------------------------------------------------------------
 
+
+
 const RootStyle = styled(Toolbar)(({ theme }) => ({
   height: 60,
   display: 'flex',
@@ -68,7 +70,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
-  const message = useChatContext();
+const sendmessge = useChatContext();
 
     /////////////////소켓 연결
 const enterchat = async(chatstate,dispatch,talkNo,auth) => {

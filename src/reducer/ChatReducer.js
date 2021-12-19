@@ -16,13 +16,18 @@ export const init = {
     type: "" || type,
     regTime: "" || regTime,
     readCount: "" || readCount
+ 
+
 }
+
+
 
 
 export const MessgeReducer = (init,action) => {
     switch (action.type){
         case 'VIEW_MESSAGE' :
-             return{
+            console.log('데이터 받아 오나요??' , action.chatdata);
+            return{
                  ...init,
                  userNo: action.chatdata.userNo ,
                  name: action.chatdata.name ,
@@ -31,6 +36,14 @@ export const MessgeReducer = (init,action) => {
                  type: action.chatdata.type ,
                  regTime: action.chatdata.regTime,
                  readCount: action.chatdata.readCount 
+                 
+             }
+        case 'CHATUSER__INFO' : 
+             return{
+
+
+
+
              }
             default : 
             throw new Error(`명시 되지 않은 Action :  ${action.type}`)
