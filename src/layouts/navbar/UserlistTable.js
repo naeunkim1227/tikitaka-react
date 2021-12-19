@@ -131,11 +131,14 @@ export default function UserlistTable({type}) {
   
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
-  const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [selected, setSelected] = useState([]);
+  const [selectedname, setSelectedname] = useState([]);
   let [isItemSelected, setIsItemSelected] = useState(false);
+  
+
   // const handleRequestSort = (event, property) => {
   //   const isAsc = orderBy === property && order === 'asc';
   //   setOrder(isAsc ? 'desc' : 'asc');
@@ -151,22 +154,37 @@ export default function UserlistTable({type}) {
   //   setSelected([]);
   // };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, no, name) => {
+    const selectedIndex = selected.indexOf(no);
+    const selectedNameIndex = selectedname.indexOf(name);
     let newSelected = [];
+    let newSelectedName = [];
+    //-1은 indexof로 했을때 값이 없을때
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected, no);
+      newSelectedName = newSelectedName.concat(selectedname, name);
+    } //indexof로 찾는 값이 첫값
+    else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
+      newSelectedName = newSelectedName.concat(selectedname.slice(1));
+    }//indexof로 찾는 값이 배열 제일 마지막에 있으면 
+    else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
+      newSelectedName = newSelectedName.concat(selectedname.slice(0, -1));
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1)
       );
+
+      newSelectedName = newSelectedName.concat(
+        selectedname.slice(0, selectedNameIndex),
+        selectedname.slice(selectedNameIndex + 1)
+      );
+
     }
     setSelected(newSelected);
+    setSelectedname(newSelectedName);
   };
 
 
@@ -249,6 +267,7 @@ export default function UserlistTable({type}) {
   //채팅방생성 아이콘 클릭시 체크된아이템이 uncheck
   const allUncheck = () => {
     setSelected([]);
+    setSelectedname([]);
   }
 
 
@@ -267,6 +286,7 @@ var index = 0;
             filterName={filterName}
             onFilterName={handleFilterByName}
             talkNo={selected}
+            talkName={selectedname}
             allUncheck={allUncheck}
       />
 
@@ -302,7 +322,7 @@ var index = 0;
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
-                          onClick={(event) => handleClick(event, no)}
+                          onClick={(event) => handleClick(event, no, name)}
                         >
 
                           {/* <TableCell padding="checkbox">
