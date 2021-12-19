@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 
 import React, {useState, useEffect, useRef } from 'react';
 import './assets/css/components.css';
@@ -8,10 +8,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from '@mui/material/Button';
 // import SendIcon from '@mui/icons-material/Send';
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import TextField from '@mui/material/TextField';
-import { green } from '@mui/material/colors';
+import { green, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
 import { useAuthState } from 'src/Context';
@@ -37,7 +37,10 @@ import moment from 'moment';
 
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
+import { useChatContext, useChatStateContext } from 'src/Context/context';
+import Scrollbar from 'src/components/Scrollbar';
 
+///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
@@ -53,15 +56,17 @@ const ChatRoom = () => {
     //   userNo: auth.token
     // }
 
-    // useEffect(()=>{
-    //   getmessage();
-    // },[])
+  //보낸 메세지 상태 관리,저장 context
+  const chatstate = useChatStateContext();
+  const sendmessge = useChatContext();
 
+  // const chatinfo= {
+  //   userNo: auth.token
+  // }
 
-    const [state,setState] = useState(false)
-    const [msgcontents, setmsgcontents] = useState('');
-  
-
+  // useEffect(()=>{
+  //   getmessage();
+  // },[])
     const messageHandle = (e) =>{
         setContents(e.target.value);
         setTypeState('TEXT');
@@ -160,10 +165,8 @@ const ChatRoom = () => {
     }
 
 
-      //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
-      
-
+    //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
       //메시지 보내기
       // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
       // .then((response) => {
@@ -261,34 +264,74 @@ const ChatRoom = () => {
     })
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
-    //                                 // 화면에 채팅창을 나눠서 표시
 
-    //--------------------------------------------------
-    // modal open
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-      setOpen(true);
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
+  // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
+  // const getmessage = async(e) => {
+  //   try{
+  //     console.log('데이터 보내버렷',chatinfo.chatNo);
+  //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+  //     .then((res) => {
+  //       console.log('data test', res)
+  //       if(res.statusText !== "OK"){
+  //         throw `${res.status} ${res.statusText}`
+  //       }
+  //     })
+  //   }catch{
 
-    // modal style
-    const style = {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 400,
-      bgcolor: "background.paper",
-      border: "2px solid #000",
-      boxShadow: 3,
-      pt: 2,
-      px: 4,
-      pb: 3
-    };
-    //--------------------------------------------------
+  //   }
+  // }
+  // const chatList =  async () =>{
+  //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기
+  //   const chatNo = JSON.parse(auth.chatNo);
 
+  //   try {
+  //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
+  //                            .then((res)=>{
+  //                              console.log(JSON.stringify(res.data.list.no));
+  //                              setMessageList(JSON.stringify(res.data));
+  //                            })
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  // }
+
+  useEffect(() => {
+    if (messageList === null) {
+      // chatList();
+    } else {
+      return;
+    }
+  });
+  // const authNo = no;
+  // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+  //                                 // 화면에 채팅창을 나눠서 표시
+
+  //--------------------------------------------------
+  // modal open
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // modal style
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 3,
+    pt: 2,
+    px: 4,
+    pb: 3
+  };
+  //--------------------------------------------------
 
 
     return (
@@ -296,11 +339,11 @@ const ChatRoom = () => {
 
       <CardContent id='room-top'>
         <h1>채팅방 이름, 검색창</h1>
-
       <CardContent style={{borderBottom: "2px solid gray"}}>
         <h3>{auth.name}과의 채팅방</h3>
 
       </CardContent>
+
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
         <div id='chat-room'>
           

@@ -78,6 +78,7 @@
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.3.5",
     "sockjs-client": "^1.5.2",
+    "styled-components": "^5.3.3",
     "web-vitals": "^2.1.0",
     "ws": "^8.3.0",
     "yarn": "^1.22.17",

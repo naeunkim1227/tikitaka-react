@@ -38,6 +38,8 @@ import { Stomp } from '@stomp/stompjs';
 import { useChatContext, useChatStateContext } from 'src/Context/context'; 
 // ----------------------------------------------------------------------
 
+
+
 const RootStyle = styled(Toolbar)(({ theme }) => ({
   height: 60,
   display: 'flex',
@@ -75,6 +77,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
+const sendmessge = useChatContext();
   const message = useChatContext();
   const [open, setOpen] = useState(false);
 
@@ -85,7 +88,6 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const handleClose = () => {
     setOpen(false);
   };
-  /////////다이얼로그 관리
 
     /////////////////소켓 연결
 const enterchat = async(chatstate,dispatch,talkNo,auth) => {
