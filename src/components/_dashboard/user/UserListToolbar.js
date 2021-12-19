@@ -77,6 +77,9 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const chatstate = useChatStateContext();
   const message = useChatContext();
   const [open, setOpen] = useState(false);
+  //선택된 유저들의 이름관리
+  const [useTalkname, setuseTalkname] = useState(talkName.toString());
+  const basicTalkName = talkName.toString();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -116,21 +119,18 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
-          createTopic(talkNo[0], auth , type);
+          createTopic(chatstate ,talkNo[0], auth , type);
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
-      }else{
-      
-      
       }
   
   navigate('/tikitaka/chat', { replace: true});
 }  
 
 
-  const createTopic = async (no, auth , type) =>{
+  const createTopic = async (chatstate ,no, auth , type) =>{
     console.log('>> 토픽 추가, 스톰프 실행!')
     // console.log("선택한 userno 배열값들 :  ",no)
     // console.log("배열 길이", no.length)
@@ -143,7 +143,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
       console.log(res)
       //chatNo 가지고 socket연결
       const cno = res.replace(/"/g,"");
-      await opensocket(cno);
+      await opensocket(chatstate, cno);
       if(!res){
         console.log("실패");
         return;
@@ -227,15 +227,39 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
             autoFocus
             margin="dense"
             id="name"
-            label={talkName}
+            label={basicTalkName}
             type="text"
             fullWidth
             variant="standard"
+            onChange = {(e) => {
+              setuseTalkname(e.target.value)
+              }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>취소</Button>
-          <Button onClick={handleClose}>확인</Button>
+          <Button onClick=
+          {(e)=> {
+            handleClose()
+            setuseTalkname(basicTalkName)
+            console.log("닫을떄", useTalkname)
+            allUncheck()
+          }}>
+            취소
+          </Button>
+
+          <Button onClick=
+            {(e) => {
+              handleClose()
+              const type = "GROUP"
+              createTopic(chatstate, talkNo, auth , type);
+
+              console.log("바뀌니??",useTalkname); 
+              setuseTalkname(basicTalkName);
+              console.log("초기화??",useTalkname); 
+              allUncheck()
+            }}>
+              확인
+          </Button>
         </DialogActions>
       </Dialog>
     </RootStyle>

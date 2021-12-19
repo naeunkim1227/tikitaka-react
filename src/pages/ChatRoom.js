@@ -276,7 +276,7 @@ const ChatRoom = () => {
           )
 
         }} 
-        <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>
+        {/* <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/> */}
 
       </CardContent>
       <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>

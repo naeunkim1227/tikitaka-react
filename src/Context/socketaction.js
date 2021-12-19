@@ -7,7 +7,7 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
 //소켓 열기
-export const opensocket = async(chatNo) => {
+export const opensocket = async(chatstate, chatNo) => {
 
     try{
       //소켓 열기
@@ -22,9 +22,10 @@ export const opensocket = async(chatNo) => {
          const msg =  JSON.parse(message.body);
          console.log(msg.contents);
          console.log('maketopic의 msg' ,msg);
-          // dispatch({type: 'VIEW_MESSAGE', payload: msg})
-          // sessionStorage.setItem('chatMessage', msg );
-          console.log(sessionStorage.getItem('chatMessage'));
+
+         chatstate({type: 'VIEW_MESSAGE', chatdata: msg.contents})
+         sessionStorage.setItem('chatMessage', msg.contents)
+         console.log(sessionStorage.getItem('chatMessage'));
         });
       });
     

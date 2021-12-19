@@ -19,11 +19,6 @@ const sidebarConfig = [
   //   path: '/tikitaka/main',
   //   icon: getIcon(pieChart2Fill)
   // },
-  // {
-  //   title: 'user',
-  //   path: '/tikitaka/user',
-  //   icon: getIcon(peopleFill)
-  // },
   {
     title: 'chat',
     path: '/tikitaka/chat',
