@@ -173,7 +173,7 @@ const ChatRoom = () => {
           return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
-                            showMessage(response);
+                            //showMessage(response);
                             return response;
                           })
                           .catch((err) => {
@@ -278,7 +278,7 @@ const ChatRoom = () => {
           if(msg.userNo === auth.token){
             return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
           }else{
-            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
           }
         case 'FILE':
       }
@@ -320,13 +320,13 @@ const ChatRoom = () => {
 
   // }
 
-  // useEffect(() => {
-  //   if (messageList === null) {
-  //     // chatList();
-  //   } else {
-  //     return;
-  //   }
-  // });
+  useEffect(() => {
+    if (messageList === null) {
+      chatList();
+    } else {
+      return;
+    }
+  });
   // const authNo = no;
   // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
   //                                 // 화면에 채팅창을 나눠서 표시
