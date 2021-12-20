@@ -14,7 +14,7 @@ import TextField from '@mui/material/TextField';
 import { green, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
-import { opensocket, useAuthState } from 'src/Context';
+import { useAuthState } from 'src/Context';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import ImageIcon from '@mui/icons-material/Image';
