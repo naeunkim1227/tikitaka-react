@@ -17,6 +17,19 @@ import Scrollbar from 'src/components/Scrollbar';
 import {  useAuthDispatch } from 'src/Context'; // gettopic 나중에 수정후 필요
 import { useChatStateContext } from 'src/Context/context';
 import { gettopic } from 'src/Context/action';
+import { Box, styled } from '@mui/system';
+import Badge from "@mui/material/Badge";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -10,
+    top: 3,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: "0 4px",
+    background: "#ff4d4f"
+  }
+}));
+
 
 export default function Chatlist() {
   const navigate = useNavigate();
@@ -60,13 +73,11 @@ export default function Chatlist() {
 
   return (
       <Page>
-          <List sx={{ width: '100%', maxWidth: 250, bgcolor: 'background.paper'}}>
+          <List sx={{ width: '100%', maxWidth: 300, bgcolor: 'background.paper'}}>
           {chatlist && chatlist.map((chatno) => {
-            return (                
+            return (             
             <ListItemButton alignItems="flex-start"
             onClick={(e) => {
-                console.log("선택한 채팅방의 chatno: ",chatno);
-                console.log("선택한 채팅방의 샤싣: ",chatroomMap.get(chatno));
                 gettopic(dispatch,chatno, chatroomMap.get(chatno));
                 navigate('/tikitaka/chat', { replace: true});
             }}
@@ -75,9 +86,42 @@ export default function Chatlist() {
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
             <ListItemText
-            primary={chatroomMap.get(chatno)}
+            primary={                
+            <Typography
+              sx={{ display: 'inline' }}
+              variant="overline"
+              fontSize= "15px"
+              color="text.secondary"
+            >
+
+              {chatroomMap.get(chatno)}
+              
+            </Typography>}
+            secondary=
+            {
+              <React.Fragment>
+                {/* 채팅메시지내용길면 ... 으로 표시되게하기 */}
+                <Box sx={{ "& > :not(style) + :not(style)": { ml: 4 } }}>
+                <Typography
+                    sx={{ display: 'inline' }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    seung wooa
+                  </Typography>
+                  <StyledBadge badgeContent={4} color="secondary">
+                  <Typography>
+                  </Typography>
+                  </StyledBadge>
+                </Box>
+              </React.Fragment>
+            }
+            
             />
+
             </ListItemButton>
+            
             )
           })}
 
@@ -88,19 +132,19 @@ export default function Chatlist() {
             </ListItemAvatar>
             <ListItemText 
              primary="Design수정"
-            //   secondary={
-            //     <React.Fragment>
-            //       <Typography
-            //         sx={{ display: 'inline' }}
-            //         component="span"
-            //         variant="body2"
-            //         color="text.primary"
-            //       >
-            //         Sandra Adams
-            //       </Typography>
-            //       {' — Do you have Paris recommendations? Have you ever…'}
-            //     </React.Fragment>
-            //   }
+              secondary={
+                <React.Fragment>
+                  <Typography
+                    sx={{ display: 'inline' }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+                  >
+                    seung woo
+                  </Typography>
+                  {' — Do you have Paris recommendations? Have you ever…'}
+                </React.Fragment>
+              }
             />
         </ListItem>
         </List>      
