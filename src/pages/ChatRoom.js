@@ -66,9 +66,13 @@ const ChatRoom = () => {
   const ttmessage = useChatContext();
   const [msg,setMsg] = useState({});
 
+  // 최근 공지 채팅방 상단에 띄우기
+  const [rcNotice, setRcNotice] = useState([]);
+
   useEffect(() => {
     console.log('1. OPEN SOCKET')
     opensocket();
+    recentNotice(); // 최근 공지 상단에 고정
 }, [auth.chatNo]);
  
     const messageHandle = (e) =>{
@@ -109,6 +113,21 @@ const ChatRoom = () => {
       })
       }
         
+    }
+
+    // 최근 공지 채팅방 상단에 띄우기
+    const recentNotice = async() => {
+      console.log('<<< recentNotice 들어옴 >>>', auth.chatNo);
+      const res = await axios.post(`/TT/talk/topic/recentNotice/${auth.chatNo}`,
+                                    {headers: {
+                                      'Content-Type' : 'application/json',
+                                      'Accept' : 'application/json'
+                                    }}
+      )
+      .then((res) => {
+        console.log("recentNotice >>>" + JSON.stringify(res.data.data));
+        setRcNotice(res.data.data);
+      })
     }
 
     const sendMessage = async (e) => {
@@ -303,6 +322,10 @@ const ChatRoom = () => {
   // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
   //                                 // 화면에 채팅창을 나눠서 표시
 
+
+  
+
+
   //--------------------------------------------------
   // modal open
   const [open, setOpen] = React.useState(false);
@@ -326,9 +349,25 @@ const ChatRoom = () => {
 
     return (
       <Card sx={{ minWidth: 275 }}>
-
       <CardContent id='room-top'>
         <h3>{auth.title}님의 채팅방</h3>
+      </CardContent>
+      <CardContent id='room-top'>
+        {/* chatNo에 해당하는 채팅방의 최근 공지 가져와서 채팅방 상단에 띄우기 
+            no (noticeNo), reg_date, contents, name, title*/}
+        {rcNotice.map((rclist)=> {
+          return(
+            <div>
+            <h4>공지 제목 : {rclist.title} </h4>  
+            <h5>내용 : {rclist.contents} </h5> 
+            <h5>작성자 : {rclist.name} / 작성일 : {rclist.reg_date} </h5>
+            </div>
+          ); 
+         
+        }
+        )
+      }
+        
       </CardContent>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
         <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
