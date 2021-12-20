@@ -21,7 +21,9 @@ import ImageIcon from '@mui/icons-material/Image';
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import ArticleIcon from '@mui/icons-material/Article';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import CalendarIcon from '@mui/icons-material/CalendarToday';
 import $ from 'jquery';
+import Calendar from './Calendar';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -53,6 +55,8 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
+    const [stateCalendar, setStateCalendar] = useState(new Date());
+
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -78,13 +82,11 @@ const ChatRoom = () => {
     }
 
     const messageReset = () =>{
-      console.log("메세지 입력창 초기화!!!");
       sendMsgRef.current.value='';
       setContents('');
     }
 
     const loadImgReset = ()=>{
-      console.log("이미지 업로드 초기화!!!");
       sendImgRef.current.value='';
       setLoadImg('');
     }
@@ -138,7 +140,6 @@ const ChatRoom = () => {
           }
           return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
-                  console.log("msg send: ", response);
                   // showMessage(response);
                   messageReset();
                   return response;
@@ -150,10 +151,8 @@ const ChatRoom = () => {
         case 'IMAGE':
           const formData = new FormData();
           formData.append('file', loadImg);
-          console.log(loadImg);
           const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
                 .then((response) => {
-                  console.log("img send: ", response.data);
                     setImage(response.data);
                     loadImgReset();
                   return response.data;
@@ -172,7 +171,6 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           } 
-          console.log("imageData!!!!!!!!!!!!!!!"+imageData.message);
           return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
@@ -238,12 +236,9 @@ const ChatRoom = () => {
     const chatList =  async () =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
       const chatNo = JSON.parse(auth.chatNo);
-      console.log("chatList 불러옴!!!!");
-  
       try {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
-                                 console.log("chatList: "+JSON.stringify(res.data));
                                  setMessageList(res.data);
                                })
       } catch (error) {
@@ -254,10 +249,6 @@ const ChatRoom = () => {
     
     const showList = () => {
       messageList.map((list) => {
-        console.log("showList map 들어옴!!!!!!!!!!!!!!!!!!!!!!");
-        console.log(list.type);
-        console.log(list.contents);
-        console.log(list.user_no);
         switch(list.type){
           case 'TEXT':
             if(list.user_no === auth.token){
@@ -278,25 +269,12 @@ const ChatRoom = () => {
 
     const showMessage = (msg) =>{
       // const result = JSON.parse(response.config.data);
-      
-      console.log(">>>>>>>>>>>>>>>>>>" ,msg.contents);
-      console.log(">>>>>>>>>>>>>>>>>>" ,typeof msg.userNo);
-      console.log(">>>>>>>>>>>>>>>>>>" ,msg.name);
-      console.log(">>>>>>>>>>>>>>>>>>" ,msg.regTime);
-      console.log(">>>>>>>>>>>>>>>>>>" ,msg.chatNo);
-      console.log(">>>>>>>>>>>>>>>>>>" ,msg.type);
-      console.log(">>>>>>>>>>>>>>>>>>>>auth",typeof auth.token);
-     
 
       switch(msg.type){
         case 'TEXT':
-          console.log("TEXT 실행됨!!");
-          console.log("4. VIEW MSG >>>>>" ,msg.contents);
            if(msg.userNo === auth.token){
-             console.log('>>>>>>>> 보내는 내용');
             return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "<p id='myMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>" );
           }else if(auth.token !== msg.userNo){
-            console.log('<<<<<<<<< 받아야 하는 내용');
             return $("#chat-room").append("<h3>"+msg.name+": </h3>" + "<p id='yourMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>");
           }
 
@@ -315,41 +293,9 @@ const ChatRoom = () => {
   
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
-
-  // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
-  // const getmessage = async(e) => {
-  //   try{
-  //     console.log('데이터 보내버렷',chatinfo.chatNo);
-  //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-  //     .then((res) => {
-  //       console.log('data test', res)
-  //       if(res.statusText !== "OK"){
-  //         throw `${res.status} ${res.statusText}`
-  //       }
-  //     })
-  //   }catch{
-
-  //   }
-  // }
-  // const chatList =  async () =>{
-  //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기
-  //   const chatNo = JSON.parse(auth.chatNo);
-
-  //   try {
-  //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
-  //                            .then((res)=>{
-  //                              console.log(JSON.stringify(res.data.list.no));
-  //                              setMessageList(JSON.stringify(res.data));
-  //                            })
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  // }
   
   useEffect(() => {
     if (roomCallState === false) {
-      console.log("chatList 들어옴!!!");
       chatList();
     } else {
       return;
@@ -369,22 +315,16 @@ const ChatRoom = () => {
     setOpen(false);
   };
 
-  // modal style
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 3,
-    pt: 2,
-    px: 4,
-    pb: 3
-  };
   //--------------------------------------------------
+  const [calState, setCalstate] = React.useState(false);
+  const calClose = () =>{
+    setCalstate(false);
+  }
+  const openCalendar = ()=>{
+    setCalstate(true);
+  }
 
+  // ========================
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -397,38 +337,6 @@ const ChatRoom = () => {
         <div id='chat-room'>
           
         </div>  
-        {/* <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>   */}
-        {/* {() => {
-          const datalist = messageList.map((message) => {
-           
-            return(
-              auth.token === message.list.no
-              ?
-              <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'greenyellow'}} key={index}>
-                <ListItemText>
-                  {message.contents}
-                </ListItemText> 
-                </ListItem> 
-                :
-                <ListItem style={{width: 400, borderRadius: '10px', backgroundColor: 'skyblue'}} key={index}>
-                  <ListItemText>
-                    {message.contents}
-                  </ListItemText>
-                </ListItem> 
-            )
-          })
-    
-          return(
-            <List>
-              {datalist}
-            </List>
-          )
-
-        }}  */}
-        
-
-
-      
         </Scrollbar>
       </CardContent>
       <CardContent id='room-bottom'>
@@ -470,7 +378,15 @@ const ChatRoom = () => {
           <Button>
             <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
           </Button>
-        
+          <div>
+            <Button onClick={openCalendar}>
+              <CalendarIcon sx={{ width: 40, height: 40}} />
+            </Button>
+            <Modal open={calState}
+                   onClose={calClose}>
+              <Calendar />
+            </Modal>
+          </div>
         </ButtonGroup>
         <TextField
           inputMode
