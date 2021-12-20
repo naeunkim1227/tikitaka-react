@@ -1,27 +1,27 @@
-/* eslint-disable */ 
+/* eslint-disable */
 
-import React, {useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef } from 'react';
 import './assets/css/components.css';
 import './assets/css/style.css';
+import './assets/css/chatroom.css';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from '@mui/material/Button';
 // import SendIcon from '@mui/icons-material/Send';
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
 import TextField from '@mui/material/TextField';
-import { green } from '@mui/material/colors';
+import { green, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
-import { useAuthState } from 'src/Context';
+import { opensocket, useAuthState } from 'src/Context';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import ImageIcon from '@mui/icons-material/Image';
 import UploadFileRoundedIcon from '@mui/icons-material/UploadFileRounded';
 import ArticleIcon from '@mui/icons-material/Article';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
-import RoomIcon from '@mui/icons-material/Room';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import $ from 'jquery';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -37,46 +37,92 @@ import moment from 'moment';
 
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
+import { useChatContext, useChatStateContext } from 'src/Context/context';
+import Scrollbar from 'src/components/Scrollbar';
 
+///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
     const [messageList, setMessageList] = useState(null);
+    const [image, setImage] = useState();
+    const [loadImg, setLoadImg] = useState();
+    const [typeState, setTypeState] = useState();
+    const imgRef = useRef(null);
+    const sendImgRef = useRef();
+    const sendMsgRef = useRef();
     // const chatinfo= {
     //   userNo: auth.token
     // }
 
-    // useEffect(()=>{
-    //   getmessage();
-    // },[])
+  //보낸 메세지 상태 관리,저장 context
+  const chatstate = useChatStateContext();
+  const ttmessage = useChatContext();
+  const [msg,setMsg] = useState({});
 
-
-    const [state,setState] = useState(false)
-    const [msgcontents, setmsgcontents] = useState('');
-  
-
+  useEffect(() => {
+    console.log('1. OPEN SOCKET')
+    opensocket();
+}, []);
+ 
     const messageHandle = (e) =>{
         setContents(e.target.value);
+        setTypeState('TEXT');
     }  
 
+    const uploadImage = (e) =>{
+      setLoadImg(e.target.files[0]);
+      setTypeState('IMAGE');
+    }
 
-    const time = moment(now()).format('YY/MM/DD HH:mm');
+    const messageReset = () =>{
+      console.log("메세지 입력창 초기화!!!");
+      sendMsgRef.current.value='';
+      setContents('');
+    }
+
+    const loadImgReset = ()=>{
+      console.log("이미지 업로드 초기화!!!");
+      sendImgRef.current.value='';
+      setLoadImg('');
+    }
+
+
+    const opensocket = async() => {
+      console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
+      
+      if(auth.chatNo){
+        var socket = new SockJS('http://localhost:8080/TT/websocket');
+        var stompClient = Stomp.over(socket);
+        stompClient.connect({},function(){
+          console.log('link sub socket');
+          stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
+            const msg =  JSON.parse(message.body);
+            
+            console.log("3. DATA >>" , msg);
+            showMessage(msg);
+          });
+
+      })
+      }
+        
+    }
+
     const sendMessage = async (e) => {
       e.preventDefault();
-      const data= {
-        userNo: auth.token,
-        name: auth.token,
-        type: "TEXT",
-        chatNo: auth.chatNo,
-        message: contents,
-        readCount: 1,
-        regTime: time        
-      }
-
-
-
+      // const data= {
+      //   userNo: auth.token,
+      //   name: auth.token,
+      //   type: typeState,
+      //   chatNo: auth.chatNo,
+      //   message: contents,
+      //   readCount: 1,
+      //   regTime: time        
+      // }
+      console.log('SEND MESSAGE TO ', auth.chatNo)
       const time = moment(now()).format('YY/MM/DD HH:mm');
+    
       switch(typeState){
         case 'TEXT':
           const messageData= {
@@ -88,9 +134,11 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           }
-          await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
                   console.log("msg send: ", response);
+                  // showMessage(response);
+                  messageReset();
                   return response;
                 })
                 .catch((err) => {
@@ -100,19 +148,19 @@ const ChatRoom = () => {
         case 'IMAGE':
           const formData = new FormData();
           formData.append('file', loadImg);
+          console.log(loadImg);
           const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
                 .then((response) => {
                   console.log("img send: ", response.data);
-                  
                     setImage(response.data);
-                  
+                    loadImgReset();
                   return response.data;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
           const ans = await result;
-
+          
           const imageData = {
             chatNo : JSON.parse(auth.chatNo),
             userNo : auth.token,
@@ -122,35 +170,32 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           } 
-          const response = axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
+                            showMessage(response);
                             return response;
                           })
                           .catch((err) => {
                             console.log(err);
                           })
-          console.log("11111111111111111111"+image);
-        
-        
+          
         case 'FILE':
           return
     }
 
 
-      //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
 
-      
-
+    //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
       //메시지 보내기
-      const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      .then((response) => {
-        console.log("msg send: ", response);
-        return response;
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+      // .then((response) => {
+      //   console.log("msg send: ", response);
+      //   return response;
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // })
       
       // //사용자의 연결되어있는 채팅리스트를 출력
       // const res = await axios.get(`/TT/talk/topic`)
@@ -186,70 +231,146 @@ const ChatRoom = () => {
   
     //   }
     // }
-    // const chatList =  async () =>{
-    //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
-    //   const chatNo = JSON.parse(auth.chatNo);
-     
-    //   try {
-    //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
-    //                            .then((res)=>{
-    //                              console.log(JSON.stringify(res.data.list.no));
-    //                              setMessageList(JSON.stringify(res.data));
-    //                            })
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-     
-    // }
-    
-    
 
-    useEffect(() => {
-      if(messageList === null){
-        // chatList();
-      } else {
-        return;
+    const chatList =  async () =>{
+      // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
+      const chatNo = JSON.parse(auth.chatNo);
+      console.log("chatList 불러옴!!!!");
+  
+      try {
+        const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
+                               .then((res)=>{
+                                 console.log("chatList: "+res.data);
+                                 setMessageList(JSON.stringify(res.data));
+                               })
+      } catch (error) {
+        console.log(error);
       }
-    })
+     
+    }
+    
+    const showMessage = (msg) =>{
+      // const result = JSON.parse(response.config.data);
+      
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.contents);
+      console.log(">>>>>>>>>>>>>>>>>>" ,typeof msg.userNo);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.name);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.regTime);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.chatNo);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.type);
+      console.log(">>>>>>>>>>>>>>>>>>>>auth",typeof auth.token);
+     
+
+      switch(msg.type){
+        case 'TEXT':
+          console.log("TEXT 실행됨!!");
+          console.log("4. VIEW MSG >>>>>" ,msg.contents);
+           if(msg.userNo === auth.token){
+             console.log('>>>>>>>> 보내는 내용');
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "<p id='myMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>" );
+          }else if(auth.token !== msg.userNo){
+            console.log('<<<<<<<<< 받아야 하는 내용');
+            return $("#chat-room").append("<h3>"+msg.name+": </h3>" + "<p id='yourMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>");
+          }
+
+        case 'IMAGE':
+          console.log("IMAGE 실행됨!!");
+          if(msg.userNo === auth.token){
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
+          }else{
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
+          }
+        case 'FILE':
+      }
+      
+      
+    }
+  
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
-    //                                 // 화면에 채팅창을 나눠서 표시
 
-    //--------------------------------------------------
-    // modal open
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-      setOpen(true);
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
+  // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
+  // const getmessage = async(e) => {
+  //   try{
+  //     console.log('데이터 보내버렷',chatinfo.chatNo);
+  //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
+  //     .then((res) => {
+  //       console.log('data test', res)
+  //       if(res.statusText !== "OK"){
+  //         throw `${res.status} ${res.statusText}`
+  //       }
+  //     })
+  //   }catch{
 
-    // modal style
-    const style = {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 400,
-      bgcolor: "background.paper",
-      border: "2px solid #000",
-      boxShadow: 3,
-      pt: 2,
-      px: 4,
-      pb: 3
-    };
-    //--------------------------------------------------
+  //   }
+  // }
+  // const chatList =  async () =>{
+  //   // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기
+  //   const chatNo = JSON.parse(auth.chatNo);
 
+  //   try {
+  //     const res =  await axios.get(`/TT/talk/chatList/chatNo`)
+  //                            .then((res)=>{
+  //                              console.log(JSON.stringify(res.data.list.no));
+  //                              setMessageList(JSON.stringify(res.data));
+  //                            })
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  // }
+
+  // useEffect(() => {
+  //   if (messageList === null) {
+  //     // chatList();
+  //   } else {
+  //     return;
+  //   }
+  // });
+  // const authNo = no;
+  // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
+  //                                 // 화면에 채팅창을 나눠서 표시
+
+  //--------------------------------------------------
+  // modal open
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // modal style
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 3,
+    pt: 2,
+    px: 4,
+    pb: 3
+  };
+  //--------------------------------------------------
 
 
     return (
       <Card sx={{ minWidth: 275 }}>
-      <CardContent style={{borderBottom: "2px solid gray"}}>
+
+      <CardContent id='room-top'>
         <h3>{auth.name}과의 채팅방</h3>
       </CardContent>
-      <CardContent sx={{ width: 600 , height:450}}>
-        {() => {
+
+      <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
+        <div id='chat-room'>
+          
+        </div>  
+        {/* <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>   */}
+        {/* {() => {
           const datalist = messageList.map((message) => {
            
             return(
@@ -275,11 +396,11 @@ const ChatRoom = () => {
             </List>
           )
 
-        }} 
-        {/* <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/> */}
+        }}  */}
+        
 
       </CardContent>
-      <CardContent style={{ borderTop: "2px solid gray", margin: 10, padding: 10}}>
+      <CardContent id='room-bottom'>
       <form style={{alignItems: "center"}}>
       <Box
         sx={{
@@ -311,15 +432,14 @@ const ChatRoom = () => {
           <Button>
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
           </Button>
-          <Button>
-            <ImageIcon sx={{ width: 40, height: 40}} />
+          <Button >
+            <label for='input-file'><ImageIcon sx={{ width: 40, height: 40}}/></label>
+            <input id='input-file' type='file' accept='images/*' onChange={uploadImage} ref={sendImgRef} style={{display:"none"}}/>
           </Button>
           <Button>
             <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
           </Button>
-          <Button>
-            <RoomIcon sx={{ width: 40, height: 40}} />
-          </Button>
+        
         </ButtonGroup>
         <TextField
           inputMode
@@ -330,12 +450,12 @@ const ChatRoom = () => {
           style={{align:"center" , width: '50%'}}
           type='text'
           name="message"
+          value={contents}
           onChange={messageHandle}
-          
+          ref = {sendMsgRef}
         />
-        <Button>
-            <EmojiEmotionsIcon sx={{ position: 'absolute', width: 40, height: 40}} />
-          </Button>
+        
+       
         <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
           보내기
         </Button>

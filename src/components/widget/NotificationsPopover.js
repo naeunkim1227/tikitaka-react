@@ -97,11 +97,11 @@ export default function NotificationsPopover() {
                     setNotifications(res.data.data.Nlist);
                     setDatalength(res.data.data.Nlist.length + res.data.data.Clist.length);
                     
-                    console.log('미치야 미친다!',res.data.data.Clist)
+                    console.log('공지리스트 >>>>>>',res.data.data.Clist)
                     setNewchat(res.data.data.Clist);
 
                     newchats.map((newchat) => (
-                      console.log(`뭐 어카라고!!!`, newchat.no)
+                      console.log(`새 채팅 리스트 >>>>>`, newchat.no)
                       ))
 
                   }).catch((err) => {console.log(err)})

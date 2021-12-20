@@ -15,19 +15,13 @@ import {
   Typography,
   OutlinedInput,
   InputAdornment,
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
+  Button
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuthState, useAuthDispatch, maketopic, opensocket , gettopic } from 'src/Context';
 
 import axios from 'axios'
@@ -69,8 +63,7 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-
-export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, talkName, allUncheck }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
@@ -97,8 +90,19 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
   console.log('enterchat 실행')
   console.log('길이' ,talkNo.length) 
 
+  //상대방 정보 저장
+  // const getinfo = await axios.post(`/TT/searchinfo/${talkNo[0]}`,{headers:{"Content-Type":"application/json"}})
+  //                 .then((res) => {
+  //                   console.log('GET INFO >>>')
 
-  //if(talkNo.length === 1){
+
+  //                 })
+
+
+
+
+  //group personal인지 
+  if(talkNo.length === 1){
     console.log('개인 톡방 들어가기')
     const type = "PERSONAL";
     console.log(type)
@@ -112,15 +116,21 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
         console.log(res);
         const chatNo = res.data
 
+
         console.log("채팅방번호확인" + chatNo);
         if(res.data !== 0){
           console.log('chatno 존재  >>>> socket sub');
-          gettopic(chatstate,dispatch,chatNo);
+          // chatstate({type: 'GET_CHATROOM', chatdata: res.data})
+          // sessionStorage.setItem('chatMessage', chatNo);
+          dispatch({type:'STORE_TOPIC',payload: chatNo})
+         sessionStorage.setItem('currentUser',chatNo)
         }
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
+          
           createTopic(chatstate ,talkNo[0], auth, type, title);
+
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
@@ -131,19 +141,10 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
 }  
 
 
-  const createTopic = async (chatstate ,no, auth , type, title) =>{
-    console.log('>> 토픽 추가, 스톰프 실행!')
-      // chatNo 반환 + topic 생성
-      let res = await maketopic(dispatch, no, auth, type, title);
-      console.log(res)
-      //chatNo 가지고 socket연결
-      const cno = res.replace(/"/g,"");
-      await opensocket(chatstate, cno);
-      if(!res){
-        console.log("실패");
-        return;
-      }
-      navigate('/tikitaka/chat', { replace: true});
+
+  const createTopic = async (no, auth , type, , title) =>{
+    console.log('CREATE TOPIC >> ')
+     await maketopic(dispatch, no, auth, type, title);
     }
 
 
@@ -190,7 +191,6 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       )} */}
 
       {
-
         numSelected > 0 ?
           numSelected > 1 ?
           <Button

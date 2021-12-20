@@ -5,9 +5,15 @@ import axios from 'axios';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { useChatContext, useChatStateContext } from "./context";
 
 //소켓 열기
 export const opensocket = async(chatstate, chatNo) => {
+
+   //보낸 메세지 상태 관리,저장 context
+   const chatstate =  useChatStateContext();
+   const sendmessge = useChatContext(); 
+
 
     try{
       //소켓 열기
@@ -23,9 +29,9 @@ export const opensocket = async(chatstate, chatNo) => {
          console.log(msg.contents);
          console.log('maketopic의 msg' ,msg);
 
-         chatstate({type: 'VIEW_MESSAGE', chatdata: msg.contents})
-         sessionStorage.setItem('chatMessage', msg.contents)
-         console.log(sessionStorage.getItem('chatMessage'));
+          dispatch({type: 'VIEW_MESSAGE', payload: msg})
+          sessionStorage.setItem('chatMessage', msg );
+          console.log(sessionStorage.getItem('chatMessage'));
         });
       });
     
@@ -49,15 +55,13 @@ export const gettopic = async(chatstate,dispatch,chatNo) => {
       console.log('link sub socket');
       stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
         const msg =  JSON.parse(message.body);
-        console.log(msg.contents);
-        console.log('gettopic의 msg',msg);
-
-        chatstate({type: 'VIEW_MESSAGE', chatdata: msg.contents})
-        sessionStorage.setItem('chatMessage', msg.contents)
-        console.log(sessionStorage.getItem('chatMessage'));
+        console.log("get topic에서의 데이터" , msg.contents);
+        chatstate({type: 'VIEW_MESSAGE', chatdata: msg});
+        sessionStorage.setItem('chatMessage',msg);
         
        });
     })
-    dispatch({type:'GET_TOPIC',payload: chatNo})
+    dispatch({type:'STORE_CHATNO',payload: chatNo})
+    sessionStorage.setItem('currentuser', chatNo)
 
 }

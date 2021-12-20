@@ -6,7 +6,9 @@ import axios from 'axios';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { red } from "@mui/material/colors";
 
+   //보낸 메세지 상태 관리,저장 context
 
 
 export const loginUser=async (dispatch,loginPayload)=>{
@@ -90,18 +92,13 @@ export const maketopic=async (dispatch, no, auth, type, title)=>{
               console.log("res값 없음")
               return;
             }
-            console.log(res);
-            const chatNo = JSON.stringify(res.data.chatNo);
-            console.log("채팅방번호확인" + chatNo);
+            console.log('MAKE TOPIC >>>>>>', res.data)
+            dispatch({type:'STORE_TOPIC',payload: res.data})
+            sessionStorage.setItem('currentUser',res.data)
             
-            return chatNo;
         }).catch((err) => {
             console.log(err);
         });
-
-        dispatch({type:'CREATE_TOPIC',payload: res})
-        sessionStorage.setItem('currentUser',res)
-        return res;
         
     }catch (error){
         dispatch({type:'LOGIN_ERROR',error: error})
