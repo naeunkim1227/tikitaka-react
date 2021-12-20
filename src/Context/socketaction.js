@@ -8,7 +8,7 @@ import { Stomp } from '@stomp/stompjs';
 import { useChatContext, useChatStateContext } from "./context";
 
 //소켓 열기
-export const opensocket = async(chatNo) => {
+export const opensocket = async(chatstate, chatNo) => {
 
    //보낸 메세지 상태 관리,저장 context
    const chatstate =  useChatStateContext();
@@ -28,10 +28,10 @@ export const opensocket = async(chatNo) => {
          const msg =  JSON.parse(message.body);
          console.log(msg.contents);
          console.log('maketopic의 msg' ,msg);
+
           dispatch({type: 'VIEW_MESSAGE', payload: msg})
           sessionStorage.setItem('chatMessage', msg );
           console.log(sessionStorage.getItem('chatMessage'));
-
         });
       });
     

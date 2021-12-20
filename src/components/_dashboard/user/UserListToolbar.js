@@ -69,12 +69,26 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const message = useChatContext();
+  const [open, setOpen] = useState(false);
+  //선택된 유저들의 이름관리
+  const basicTalkName = talkName.toString();
+  const [useTalkname, setuseTalkname] = useState(basicTalkName);
+
+
+  const handleClickOpen = () => {
+    setuseTalkname(basicTalkName);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  /////////다이얼로그 관리
 
     /////////////////소켓 연결
-const enterchat = async(chatstate,dispatch,talkNo,auth) => {
+const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
   console.log('enterchat 실행')
   console.log('길이' ,talkNo.length) 
-
 
   //상대방 정보 저장
   // const getinfo = await axios.post(`/TT/searchinfo/${talkNo[0]}`,{headers:{"Content-Type":"application/json"}})
@@ -114,24 +128,23 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
-          createTopic(talkNo[0], auth , type);
+          
+          createTopic(chatstate ,talkNo[0], auth, type, title);
 
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
-      }else{
-      
-      
-      }
+   //   }
   
   navigate('/tikitaka/chat', { replace: true});
 }  
 
 
-  const createTopic = async (no, auth , type) =>{
+
+  const createTopic = async (no, auth , type, , title) =>{
     console.log('CREATE TOPIC >> ')
-     await maketopic(dispatch, no, auth, type);
+     await maketopic(dispatch, no, auth, type, title);
     }
 
 
@@ -179,19 +192,67 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
 
       {
         numSelected > 0 ?
-        <Button
-        onClick={(e) =>{ 
-          enterchat(chatstate,dispatch,talkNo,auth) 
-          allUncheck();
-        }}
-      >
-        <AddCommentOutlinedIcon color="action"  />
-      </Button>
-      :
-      null
+          numSelected > 1 ?
+          <Button
+          onClick={(e) =>{handleClickOpen()}}>
+            group
+          <AddCommentOutlinedIcon color="action"  />
+          </Button> 
+          : 
+          <Button
+          variant="text"
+          onClick={(e) =>{
+            const title ="1대1채팅은 상대방이름을 title로 설정 아직 미구현"
+            enterchat(chatstate, dispatch,talkNo,auth, title) 
+            allUncheck();
+          }}>
+            personal
+          <AddCommentOutlinedIcon color="action"  />
+          </Button>
+        :
+        null
+
       }
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>그룹채팅방 Title 설정</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            원하는 그룹채팅방의 Title을 설정하세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label={basicTalkName}
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange = {(e) => {
+              setuseTalkname(e.target.value)
+              }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick=
+          {(e)=> {
+            handleClose();
+            allUncheck();
+          }}>
+            취소
+          </Button>
 
-
+          <Button onClick=
+            {(e) => {
+              handleClose();
+              const type = "GROUP";
+              createTopic(chatstate, talkNo, auth, type, useTalkname);
+              console.log("설정된 title::",useTalkname); 
+              allUncheck();
+            }}>
+              확인
+          </Button>
+        </DialogActions>
+      </Dialog>
     </RootStyle>
   );
 }
