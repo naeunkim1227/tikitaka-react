@@ -22,6 +22,7 @@ import { useAuthState } from './Context';
 import { useEffect, useState } from 'react';
 import {Routes, Route} from 'react-router';
 import ChatRoom from './pages/ChatRoom';
+import Chatlist from './pages/Chatlist';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -45,6 +46,7 @@ export default function Router() {
         { element: <Navigate to="/tikitaka/main" replace /> },
         { path: 'main', element: <Main /> },
         { path: 'user', element: <User /> },
+        { path: 'chatlist', element: <Chatlist /> },
         { path: 'chat', element: <ChatRoom /> },
         { path: 'importantNotice', element: <ImportantNotice /> },
         { path: 'profile', element: <Profile /> },

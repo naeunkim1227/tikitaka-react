@@ -80,10 +80,11 @@ export const logout = async (dispatch,data) =>  {
 
 
 
-export const maketopic=async (dispatch, no, auth, type)=>{
+export const maketopic=async (dispatch, no, auth, type, title)=>{
     try{
+        //type이 필요한가에 대한 고민해보기
         console.log('maketopic')
-        const res = await axios.put(`/TT/talk/topic/${no}/${type}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
+        const res = await axios.put(`/TT/talk/topic/${no}/${type}/${title}`, JSON.stringify(auth), {headers:{"Content-Type":"application/json"}})
         .then( (res) =>{
             if (!res){
               console.log("res값 없음")

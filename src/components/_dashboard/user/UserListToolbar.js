@@ -77,16 +77,13 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const chatstate = useChatStateContext();
   const message = useChatContext();
   const [open, setOpen] = useState(false);
-<<<<<<< Updated upstream
   //선택된 유저들의 이름관리
-  const [useTalkname, setuseTalkname] = useState(talkName.toString());
   const basicTalkName = talkName.toString();
+  const [useTalkname, setuseTalkname] = useState(basicTalkName);
 
-=======
 
-  /////////다이얼로그 관리
->>>>>>> Stashed changes
   const handleClickOpen = () => {
+    setuseTalkname(basicTalkName);
     setOpen(true);
   };
 
@@ -96,13 +93,12 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   /////////다이얼로그 관리
 
     /////////////////소켓 연결
-const enterchat = async(chatstate,dispatch,talkNo,auth) => {
+const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
   console.log('enterchat 실행')
   console.log('길이' ,talkNo.length) 
 
 
-  //group personal인지 
-  if(talkNo.length === 1){
+  //if(talkNo.length === 1){
     console.log('개인 톡방 들어가기')
     const type = "PERSONAL";
     console.log(type)
@@ -124,27 +120,21 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
-          createTopic(chatstate ,talkNo[0], auth , type);
+          createTopic(chatstate ,talkNo[0], auth, type, title);
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
-      }
+   //   }
   
   navigate('/tikitaka/chat', { replace: true});
 }  
 
 
-  const createTopic = async (chatstate ,no, auth , type) =>{
+  const createTopic = async (chatstate ,no, auth , type, title) =>{
     console.log('>> 토픽 추가, 스톰프 실행!')
-    // console.log("선택한 userno 배열값들 :  ",no)
-    // console.log("배열 길이", no.length)
-    // console.log("배열0번째인덱스출력", no[0])
-
-    //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
       // chatNo 반환 + topic 생성
-
-      let res = await maketopic(dispatch, no, auth, type);
+      let res = await maketopic(dispatch, no, auth, type, title);
       console.log(res)
       //chatNo 가지고 socket연결
       const cno = res.replace(/"/g,"");
@@ -211,8 +201,9 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
           : 
           <Button
           variant="text"
-          onClick={(e) =>{ 
-            enterchat(chatstate, dispatch,talkNo,auth) 
+          onClick={(e) =>{
+            const title ="1대1채팅은 상대방이름을 title로 설정 아직 미구현"
+            enterchat(chatstate, dispatch,talkNo,auth, title) 
             allUncheck();
           }}>
             personal
@@ -244,24 +235,19 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
         <DialogActions>
           <Button onClick=
           {(e)=> {
-            handleClose()
-            setuseTalkname(basicTalkName)
-            console.log("닫을떄", useTalkname)
-            allUncheck()
+            handleClose();
+            allUncheck();
           }}>
             취소
           </Button>
 
           <Button onClick=
             {(e) => {
-              handleClose()
-              const type = "GROUP"
-              createTopic(chatstate, talkNo, auth , type);
-
-              console.log("바뀌니??",useTalkname); 
-              setuseTalkname(basicTalkName);
-              console.log("초기화??",useTalkname); 
-              allUncheck()
+              handleClose();
+              const type = "GROUP";
+              createTopic(chatstate, talkNo, auth, type, useTalkname);
+              console.log("설정된 title::",useTalkname); 
+              allUncheck();
             }}>
               확인
           </Button>
