@@ -1,35 +1,85 @@
 /* eslint-disable */ 
-import * as React from "react";
+import * as Yup from 'yup';
+import { useState } from 'react';
+import { useFormik, Form, FormikProvider } from 'formik';
+import { useNavigate } from 'react-router-dom';
+// material
+import { Stack, TextField} from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import { pink } from "@mui/material/colors";
-import Checkbox from "@mui/material/Checkbox";
-import Stack from "@mui/material/Stack";
-
-import Button from '@mui/material/Button';
+import axios from 'axios';
 
 import { useAuthState } from 'src/Context';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
 
-
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 export default function NoticeForm({notice}) {
-
+  // 접속해있는 userNo, 들어와있는 chatNo
   const auth = useAuthState();
+
   
-  let data = {
-    userNo : auth.token
-  }
-  
-  console.log(notice);
-  console.log("userNo >>> " + data.userNo) // 작성자 userNo
+  // -------------------------------------------
 
-  const [value, setValue] = React.useState([]);
+  const navigate = useNavigate();
+  const [state, setState] = useState(''); // 공지 중요도 
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  // 입력칸이 빈 칸일 때 에러 메세지 띄우기 -> formik에서 적용시켜준다.
+  const RegisterSchema = Yup.object().shape({
+    title: Yup.string().required('제목 입력은 필수입니다!'),
+    contents: Yup.string().required('공지 내용을 입력하세요!')
+  });
 
+  const formik = useFormik({
+    // 초기값
+    initialValues: {
+      important: '',
+      title: '',
+      contents: ''
+    },
+    validationSchema: RegisterSchema,
+    onSubmit: async(noticeForm) => {
+      // noticeForm의 데이터 받아오는 지 확인하기
+      console.log("important >>> " + state);
+      console.log("title >>> " + noticeForm.title);
+      console.log("contents >>> " + noticeForm.contents);
+
+      let data= {
+        userNo: auth.token,
+        chatNo: auth.chatNo,
+        important: state,
+        title: noticeForm.title,
+        contents: noticeForm.contents
+      };
+
+      const response = await axios.post('/TT/talk/topic/noticeWrite/', JSON.stringify(data),
+                                          {headers: {
+                                            'Content-Type' : 'application/json',
+                                            'Accept' : 'application/json'
+                                          }}
+                                          )
+                        .then((response) => {
+                          console.log("axios response >>> " + response)
+                        if(response.statusText != "OK") {
+                          throw `${response.status} ${response.statusText}`;
+                        }
+                        if(!response.data){
+                          alert("뭔가 잘못됐다;");
+                          return;
+                        }
+                        navigate('/tikitaka', {replace: true});
+                        })
+                        .catch((error) => {
+                          console.log("ChatNoticeWrite" + error);
+                        })
+    }
+  });
+
+  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
+
+  // box style
   const style = {
     position: "absolute",
     top: "50%",
@@ -44,60 +94,69 @@ export default function NoticeForm({notice}) {
     pb: 3
   };
 
-  // const refForm = useRef(null);
-
-
+  // 중요공지 체크 선택 시
+  const important = (e) => {
+    setState(e.target.value);
+  };
 // ------------------------------------------------------------------
-
+ 
   return (
-    <Stack spacing={3}>
-    <Box
+    <FormikProvider value={formik}>
+      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+      <Box
       sx={{ ...style, width: 400 }}
       noValidate
       autoComplete="off"
     >
-      <form
-            // ref={refForm}
-            // onSubmit={handleSubmit}>
-            >
-              
-        <div>
-          <Checkbox
-            {...label}
-            defaultChecked
-            sx={{
-              color: pink[800],
-              "&.Mui-checked": {
-                color: pink[600]
-              }
-            }}
-          />
-          중요 공지
-        </div>
-        <div>
+        <Stack spacing={3}>
+            <div>
+              <FormControl component="fieldset">
+              <RadioGroup
+                defaultValue='0'
+                row
+                aria-label="important"
+                name="controlled-radio-buttons-group"
+              >
+                <FormControlLabel value='0' control={<Radio />} label="일반 공지" checked={state === '0'} onChange={important}/>
+                <FormControlLabel value='1' control={<Radio />} label="중요 공지" checked={state === '1'} onClick={important}/>
+              </RadioGroup>
+            </FormControl>
+            </div>
+       
           <TextField
-            id="outlined-multiline-flexible"
+            fullWidth
+            autoComplete="title"
+            type="text"
             label="제목"
-            multiline
-            maxRows={2}
-            value={value}
-            onChange={handleChange}
+            {...getFieldProps('title')}
+            error={Boolean(touched.title && errors.title)}
+            helperText={touched.title && errors.title}
           />
-        </div>
-        <div>
+
           <TextField
-            id="outlined-multiline-static"
+            fullWidth
+            autoComplete="contents"
+            type="text"
             label="본문"
             multiline
-            rows={4}
+            rows={10}
+            {...getFieldProps('contents')}
+            error={Boolean(touched.contents && errors.contents)}
+            helperText={touched.contents && errors.contents}
           />
-        </div>
 
-          <Button type="submit" variant="contained" >
-          작성완료
-          </Button>
-      </form>
-    </Box>
-    </Stack>
+          <LoadingButton
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+            loading={isSubmitting}
+          >
+            공지 등록
+          </LoadingButton>
+          </Stack>
+        </Box>
+      </Form>
+    </FormikProvider>
   );
 }

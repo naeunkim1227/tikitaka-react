@@ -14,13 +14,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 export default function ChatNoticeListItem({key, important, title, contents, name, reg_date}) {
-    
-    const test = async(e) => {
-        console.log(`test호츌`);
-        console.log(key);
-      }
 
-        const date = moment(reg_date).format('YY/MM/DD HH:mm');
+        const regTime = moment(reg_date).format('YY/MM/DD HH:mm');
 
         const [open, setOpen] = React.useState(false);
     
@@ -30,8 +25,9 @@ export default function ChatNoticeListItem({key, important, title, contents, nam
         
           <Box sx={{ minWidth: 240 }}>
             
-              <Typography variant="subtitle2" noWrap sx={{color : {important}==1 ? red : 'text.secondary'}}>
-                {title} /  중요: {important}
+              {/* 중요 공지일 때 빨간색으로 표시 */}
+              <Typography variant="subtitle2" noWrap  color={important == 1 ? 'error' : 'text.secondary'}   >
+                {title} 
               </Typography>
             
 
@@ -50,7 +46,7 @@ export default function ChatNoticeListItem({key, important, title, contents, nam
             작성자 : {name}
           </Typography>
           <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
-            등록 시간 : {date}
+            등록 시간 : {regTime}
           </Typography>
         </Stack>
 
