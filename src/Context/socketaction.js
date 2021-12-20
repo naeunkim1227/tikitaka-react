@@ -11,7 +11,7 @@ import { useChatContext, useChatStateContext } from "./context";
 export const opensocket = async(chatNo) => {
 
    //보낸 메세지 상태 관리,저장 context
-   const chatstate =  useChatStateContext(); 
+   const chatstate =  useChatStateContext();
    const sendmessge = useChatContext(); 
 
 
@@ -31,6 +31,7 @@ export const opensocket = async(chatNo) => {
           dispatch({type: 'VIEW_MESSAGE', payload: msg})
           sessionStorage.setItem('chatMessage', msg );
           console.log(sessionStorage.getItem('chatMessage'));
+
         });
       });
     
@@ -54,9 +55,9 @@ export const gettopic = async(chatstate,dispatch,chatNo) => {
       console.log('link sub socket');
       stompClient.subscribe(`/topic/${chatNo}`,  (message) => {
         const msg =  JSON.parse(message.body);
-        console.log(msg.connects);
+        console.log("get topic에서의 데이터" , msg.contents);
         chatstate({type: 'VIEW_MESSAGE', chatdata: msg});
-    
+        sessionStorage.setItem('chatMessage',msg);
         
        });
     })

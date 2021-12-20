@@ -14,7 +14,7 @@ import TextField from '@mui/material/TextField';
 import { green, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
-import { useAuthState } from 'src/Context';
+import { opensocket, useAuthState } from 'src/Context';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import ImageIcon from '@mui/icons-material/Image';
@@ -58,15 +58,14 @@ const ChatRoom = () => {
 
   //보낸 메세지 상태 관리,저장 context
   const chatstate = useChatStateContext();
-  const sendmessge = useChatContext();
+  const ttmessage = useChatContext();
+  const [msg,setMsg] = useState({});
 
-  // const chatinfo= {
-  //   userNo: auth.token
-  // }
-
-  // useEffect(()=>{
-  //   getmessage();
-  // },[])
+  useEffect(() => {
+    console.log('1. OPEN SOCKET')
+    opensocket();
+}, []);
+ 
     const messageHandle = (e) =>{
         setContents(e.target.value);
         setTypeState('TEXT');
@@ -89,6 +88,27 @@ const ChatRoom = () => {
       setLoadImg('');
     }
 
+
+    const opensocket = async() => {
+      console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
+      
+      if(auth.chatNo){
+        var socket = new SockJS('http://localhost:8080/TT/websocket');
+        var stompClient = Stomp.over(socket);
+        stompClient.connect({},function(){
+          console.log('link sub socket');
+          stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
+            const msg =  JSON.parse(message.body);
+            
+            console.log("3. DATA >>" , msg);
+            showMessage(msg);
+          });
+
+      })
+      }
+        
+    }
+
     const sendMessage = async (e) => {
       e.preventDefault();
       // const data= {
@@ -100,8 +120,9 @@ const ChatRoom = () => {
       //   readCount: 1,
       //   regTime: time        
       // }
-
+      console.log('SEND MESSAGE TO ', auth.chatNo)
       const time = moment(now()).format('YY/MM/DD HH:mm');
+    
       switch(typeState){
         case 'TEXT':
           const messageData= {
@@ -115,9 +136,8 @@ const ChatRoom = () => {
           }
           return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
-                 
                   console.log("msg send: ", response);
-                  showMessage(response);
+                  // showMessage(response);
                   messageReset();
                   return response;
                 })
@@ -216,6 +236,7 @@ const ChatRoom = () => {
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
       const chatNo = JSON.parse(auth.chatNo);
       console.log("chatList 불러옴!!!!");
+  
       try {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
@@ -228,40 +249,43 @@ const ChatRoom = () => {
      
     }
     
-    const showMessage = (response) =>{
-      const result = JSON.parse(response.config.data);
-      console.log("showMessage!!!!: " + result.message);
-      switch(result.type){
+    const showMessage = (msg) =>{
+      // const result = JSON.parse(response.config.data);
+      
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.contents);
+      console.log(">>>>>>>>>>>>>>>>>>" ,typeof msg.userNo);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.name);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.regTime);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.chatNo);
+      console.log(">>>>>>>>>>>>>>>>>>" ,msg.type);
+      console.log(">>>>>>>>>>>>>>>>>>>>auth",typeof auth.token);
+     
+
+      switch(msg.type){
         case 'TEXT':
           console.log("TEXT 실행됨!!");
-           if(result.userNo === auth.token){
-            return $("#chat-room").append("<h3>"+auth.name+": </h3>" + "<p id='myMessage'>" + contents + "</p>" + result.regTime + "</br>" );
-          }else{
-            return $("#chat-room").append("<h3>"+result.name+": </h3>" + "<p id='yourMessage'>" + contents + "</p>" + result.regTime + "</br>");
+          console.log("4. VIEW MSG >>>>>" ,msg.contents);
+           if(msg.userNo === auth.token){
+             console.log('>>>>>>>> 보내는 내용');
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "<p id='myMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>" );
+          }else if(auth.token !== msg.userNo){
+            console.log('<<<<<<<<< 받아야 하는 내용');
+            return $("#chat-room").append("<h3>"+msg.name+": </h3>" + "<p id='yourMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>");
           }
 
         case 'IMAGE':
           console.log("IMAGE 실행됨!!");
-          if(result.userNo === auth.token){
-            return $("#chat-room").append("<h3>"+auth.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${result.message} width='250' height='250' ref={imgRef}/>`);
+          if(msg.userNo === auth.token){
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
           }else{
-            return $("#chat-room").append("<h3>"+result.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${result.message} width='250' height='250' ref={imgRef}/>`);
+            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
           }
         case 'FILE':
       }
       
       
     }
-    
-    useEffect(() => {
-      if(messageList === null){
-        chatList();
-      } else {
-        return;
-      }
-      
-      
-    })
+  
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
 
@@ -296,13 +320,13 @@ const ChatRoom = () => {
 
   // }
 
-  useEffect(() => {
-    if (messageList === null) {
-      // chatList();
-    } else {
-      return;
-    }
-  });
+  // useEffect(() => {
+  //   if (messageList === null) {
+  //     // chatList();
+  //   } else {
+  //     return;
+  //   }
+  // });
   // const authNo = no;
   // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
   //                                 // 화면에 채팅창을 나눠서 표시
@@ -338,10 +362,7 @@ const ChatRoom = () => {
       <Card sx={{ minWidth: 275 }}>
 
       <CardContent id='room-top'>
-        <h1>채팅방 이름, 검색창</h1>
-      <CardContent style={{borderBottom: "2px solid gray"}}>
         <h3>{auth.name}과의 채팅방</h3>
-
       </CardContent>
 
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
@@ -349,7 +370,7 @@ const ChatRoom = () => {
           
         </div>  
         {/* <img src={`http://localhost:8080/TT${image}`} width="250" height="250" ref={imgRef}/>   */}
-        {() => {
+        {/* {() => {
           const datalist = messageList.map((message) => {
            
             return(
@@ -375,7 +396,7 @@ const ChatRoom = () => {
             </List>
           )
 
-        }} 
+        }}  */}
         
 
       </CardContent>
@@ -418,6 +439,7 @@ const ChatRoom = () => {
           <Button>
             <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
           </Button>
+        
         </ButtonGroup>
         <TextField
           inputMode
@@ -433,6 +455,7 @@ const ChatRoom = () => {
           ref = {sendMsgRef}
         />
         
+       
         <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
           보내기
         </Button>

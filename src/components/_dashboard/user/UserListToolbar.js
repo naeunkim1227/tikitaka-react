@@ -15,19 +15,13 @@ import {
   Typography,
   OutlinedInput,
   InputAdornment,
-  Button,
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
+  Button
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAuthState, useAuthDispatch, maketopic, opensocket , gettopic } from 'src/Context';
 
 import axios from 'axios'
@@ -37,8 +31,6 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { useChatContext, useChatStateContext } from 'src/Context/context'; 
 // ----------------------------------------------------------------------
-
-
 
 const RootStyle = styled(Toolbar)(({ theme }) => ({
   height: 60,
@@ -71,28 +63,28 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-
-export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, talkName, allUncheck }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
-const sendmessge = useChatContext();
   const message = useChatContext();
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
     /////////////////소켓 연결
 const enterchat = async(chatstate,dispatch,talkNo,auth) => {
   console.log('enterchat 실행')
   console.log('길이' ,talkNo.length) 
+
+
+  //상대방 정보 저장
+  // const getinfo = await axios.post(`/TT/searchinfo/${talkNo[0]}`,{headers:{"Content-Type":"application/json"}})
+  //                 .then((res) => {
+  //                   console.log('GET INFO >>>')
+
+
+  //                 })
+
+
 
 
   //group personal인지 
@@ -110,15 +102,20 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
         console.log(res);
         const chatNo = res.data
 
+
         console.log("채팅방번호확인" + chatNo);
         if(res.data !== 0){
           console.log('chatno 존재  >>>> socket sub');
-          gettopic(chatstate,dispatch,chatNo);
+          // chatstate({type: 'GET_CHATROOM', chatdata: res.data})
+          // sessionStorage.setItem('chatMessage', chatNo);
+          dispatch({type:'STORE_TOPIC',payload: chatNo})
+         sessionStorage.setItem('currentUser',chatNo)
         }
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
           createTopic(talkNo[0], auth , type);
+
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
@@ -133,24 +130,8 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
 
 
   const createTopic = async (no, auth , type) =>{
-    console.log('>> 토픽 추가, 스톰프 실행!')
-    // console.log("선택한 userno 배열값들 :  ",no)
-    // console.log("배열 길이", no.length)
-    // console.log("배열0번째인덱스출력", no[0])
-
-    //그룹채팅으로 묶는 기능 아직 구현 못해서 한개 선택했을때(길이가 1일때)만 실행
-      // chatNo 반환 + topic 생성
-
-      let res = await maketopic(dispatch, no, auth, type);
-      console.log(res)
-      //chatNo 가지고 socket연결
-      const cno = res.replace(/"/g,"");
-      await opensocket(cno);
-      if(!res){
-        console.log("실패");
-        return;
-      }
-      navigate('/tikitaka/chat', { replace: true});
+    console.log('CREATE TOPIC >> ')
+     await maketopic(dispatch, no, auth, type);
     }
 
 
@@ -197,49 +178,20 @@ const enterchat = async(chatstate,dispatch,talkNo,auth) => {
       )} */}
 
       {
-
         numSelected > 0 ?
-          numSelected > 1 ?
-          <Button
-          onClick={(e) =>{handleClickOpen()}}>
-            group
-          <AddCommentOutlinedIcon color="action"  />
-          </Button> 
-          : 
-          <Button
-          variant="text"
-          onClick={(e) =>{ 
-            enterchat(chatstate, dispatch,talkNo,auth) 
-            allUncheck();
-          }}>
-            personal
-          <AddCommentOutlinedIcon color="action"  />
-          </Button>
-        :
-        null
-
+        <Button
+        onClick={(e) =>{ 
+          enterchat(chatstate,dispatch,talkNo,auth) 
+          allUncheck();
+        }}
+      >
+        <AddCommentOutlinedIcon color="action"  />
+      </Button>
+      :
+      null
       }
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>그룹채팅방 Title 설정</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            원하는 그룹채팅방의 Title을 설정하세요.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label={talkName}
-            type="text"
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>취소</Button>
-          <Button onClick={handleClose}>확인</Button>
-        </DialogActions>
-      </Dialog>
+
+
     </RootStyle>
   );
 }
