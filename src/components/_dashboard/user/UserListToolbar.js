@@ -15,13 +15,19 @@ import {
   Typography,
   OutlinedInput,
   InputAdornment,
-  Button
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  TextField,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 
 import axios from 'axios'
@@ -63,7 +69,7 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, talkName,allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
@@ -140,9 +146,9 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
    //   }
   
   navigate('/tikitaka/chat', { replace: true});
-}  
+  }  
 
-
+}
 
   const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
@@ -257,5 +263,4 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       </Dialog>
     </RootStyle>
   );
-}
 }
