@@ -142,7 +142,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
 
 
 
-  const createTopic = async (no, auth , type, , title) =>{
+  const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
      await maketopic(dispatch, no, auth, type, title);
     }
@@ -255,4 +255,5 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       </Dialog>
     </RootStyle>
   );
+}
 }
