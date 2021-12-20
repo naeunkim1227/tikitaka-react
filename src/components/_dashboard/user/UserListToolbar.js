@@ -210,7 +210,8 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           <Button
           variant="text"
           onClick={(e) =>{
-            const title ="1대1채팅은 상대방이름을 title로 설정 아직 미구현"
+            const title ="상대방의 userno: "+talkNo[0];
+            console.log(title);
             enterchat(chatstate, dispatch,talkNo,auth, title) 
             allUncheck();
           }}>
@@ -253,7 +254,8 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
             {(e) => {
               handleClose();
               const type = "GROUP";
-              createTopic(chatstate, talkNo, auth, type, useTalkname);
+              //여기서 useTalkname은 채팅방의 title
+              createTopic(talkNo, auth, type, useTalkname);
               console.log("설정된 title::",useTalkname); 
               allUncheck();
             }}>
