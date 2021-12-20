@@ -75,6 +75,11 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 chatNo: action.payload.chatNo,
                 title: action.payload.title
             }
+        case 'CHANGE_PROFILE':
+            return{
+                ...initialState,
+                profile: action.payload
+            }
         default:
             throw new Error( `Unhandled action type: ${action.type}`)
     }
