@@ -1,11 +1,40 @@
+/* eslint-disable */
+// scroll bar
+import 'simplebar/src/simplebar.css';
+
 import ReactDOM from 'react-dom';
-import {App} from './App.js';
+import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+
+//
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+import reportWebVitals from './reportWebVitals';
+//context
+import { Context } from './Context';
+
+// ----------------------------------------------------------------------
 
 
-//document
-//    .getElementById('root')
-//    .appendChild(App());
+//redux 세팅 방법 <React.StrictMode><Provider> 작성
 
-ReactDOM.render(App(), document.getElementById('root'));
 
-//root를 다음의 내용으로 바꾼다.
+
+ReactDOM.render(
+  <Context>
+        <HelmetProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </HelmetProvider>
+  </Context>,
+  document.getElementById('root')
+);
+
+// If you want to enable client cache, register instead.
+serviceWorker.unregister();
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

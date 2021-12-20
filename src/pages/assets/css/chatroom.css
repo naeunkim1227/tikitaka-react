@@ -1,0 +1,52 @@
+.speechbubble {
+	position: relative;
+	background: #00aabb;
+	border-radius: .4em;
+}
+
+.speechbubble:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 30px solid transparent;
+	border-right-color: #00aabb;
+	border-left: 0;
+	border-bottom: 0;
+	margin-top: -15px;
+	margin-left: -30px;
+}
+
+#room {
+	background-color: lavender;
+}
+
+
+#chat-room  #myMessage{
+	font-size: 25px;
+	text-align: right;
+	background-color: greenyellow;
+	padding-top: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+	margin-bottom: 10px;
+	border-radius: 10px;
+	width: max-content;
+	height: 4vh;
+	word-break: break-all;
+}
+#chat-room #yourMessage  {
+	font-size: 25px;
+	text-align: left;
+	background-color: ivory;
+	padding-top: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+	margin-bottom: 10px;
+	border-radius: 10px;
+	width: max-content;
+	height: 4vh;
+	word-break: break-all;
+}

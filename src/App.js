@@ -1,12 +1,22 @@
-import React from "react";
+/* eslint-disable */
+// routes
+import Router from './routes';
+// theme
+import ThemeConfig from './theme';
+import GlobalStyles from './theme/globalStyles';
+// components
+import ScrollToTop from './components/ScrollToTop';
+import { BaseOptionChartStyle } from './components/charts/BaseOptionChart';
 
+// ----------------------------------------------------------------------
 
-const App = function(){
-    //const app = document.createElement('h1');
-    //app.textContent = 'Hellooo world3 ';
-    const app = React.createElement('h1', null, 'Hello React!');
-
-    return app;
+export default function App() {
+  return (
+    <ThemeConfig>
+    <ScrollToTop />
+    <GlobalStyles />
+    <BaseOptionChartStyle />
+      <Router/>
+  </ThemeConfig>
+  );
 }
-
-export {App}
