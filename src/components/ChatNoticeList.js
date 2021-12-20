@@ -8,7 +8,6 @@ import { Button } from '@mui/material';
 
 import Modal from '@mui/material/Modal';
 
-import { Box  } from '@mui/system';
 import ChatNoticeWrite from 'src/components/ChatNoticeWrite'
 
     
@@ -65,7 +64,7 @@ export default function ChatNoticeList( {notice} ) {
             aria-labelledby="parent-modal-title"
             aria-describedby="parent-modal-description"
           >
-            <ChatNoticeWrite notice={notice.noticeNo}/>
+            <ChatNoticeWrite notice={notice}/>
           </Modal>
         </div>
 
