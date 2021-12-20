@@ -136,19 +136,20 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
+          createTopic(talkNo[0], auth, type, title);
           
-          createTopic(chatstate ,talkNo[0], auth, type, title);
 
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
    //   }
+  }  
   
   navigate('/tikitaka/chat', { replace: true});
-  }  
-
+  
 }
+
 
   const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
