@@ -22,7 +22,7 @@ import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
-import { useAuthState, useAuthDispatch, maketopic, opensocket , gettopic } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 
 import axios from 'axios'
 
@@ -91,12 +91,14 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
   console.log('길이' ,talkNo.length) 
 
   //상대방 정보 저장
-  // const getinfo = await axios.post(`/TT/searchinfo/${talkNo[0]}`,{headers:{"Content-Type":"application/json"}})
-  //                 .then((res) => {
-  //                   console.log('GET INFO >>>')
-
-
-  //                 })
+  const getinfo = await axios.post(`/TT/searchinfo/${talkNo[0]}`,{headers:{"Content-Type":"application/json"}})
+                  .then((res) => {
+                    console.log('GET INFO >>>')
+                    console.log(res.data);
+                    chatstate({type: 'STORE_INFO', chatdata: res.data})
+                    sessionStorage.setItem('chatMessage',res.data)
+                    
+                  })
 
 
 
@@ -142,7 +144,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
 
 
 
-  const createTopic = async (no, auth , type, , title) =>{
+  const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
      await maketopic(dispatch, no, auth, type, title);
     }
@@ -255,4 +257,5 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       </Dialog>
     </RootStyle>
   );
+}
 }

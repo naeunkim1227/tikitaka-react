@@ -31,7 +31,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dash
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
 import { map } from 'lodash-es';
-import { useAuthState, useAuthDispatch, maketopic, opensocket , enterchat } from 'src/Context';
+import { useAuthState, useAuthDispatch, maketopic, enterchat } from 'src/Context';
 
 import axios from 'axios'
 

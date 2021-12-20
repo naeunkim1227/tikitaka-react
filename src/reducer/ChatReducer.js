@@ -1,27 +1,31 @@
 /* eslint-disable */
 
-import { phone } from "faker";
-
-let userNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').userNo : '';
+let email =sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').email : '' ;
+let loginTime = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').loginTime :'';
+let logoutTime = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').logoutTime : '';
 let name = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').name : '';
-let chatNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').chatNo : '';
-let contents = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').contents : '';
-let type = sessionStorage.getItem('chatMessage') ? sessionStorage.getItem('chatMessage').type : '';
-let regTime= sessionStorage.getItem('chatMessage') ? sessionStorage.getItem('chatMessage').regTime : '';
+let no = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').no : '';
 let readCount = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').readCount : '';
+let phone = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').phone : '';
+let proName = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').proName : '';
+let profile = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').profile : '';
+let role = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').role : '';
+let status = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').status : '';
+let careNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').careNo : '';
+
 
 export const init = {
-    // email: "" || email,
-    // loginTime: "" || loginTime,
-    // logoutTime: "" || logoutTime,
-    // name: "" || name,
-    // no:  "" || no,
-    // password:  "" ,
-    // phone: ""  || phone,
-    // proName: ""  || proName,
-    // profile:  "" || profile,
-    // role:  "" || role,
-    // status: "" || status
+    email: "" || email,
+    loginTime: "" || loginTime,
+    logoutTime: "" || logoutTime,
+    name: "" || name,
+    no:  "" || no,
+    phone: ""  || phone,
+    proName: ""  || proName,
+    profile:  "" || profile,
+    role:  "" || role,
+    status: "" || status,
+    careNo: "" || careNo
 }
 
 
@@ -43,21 +47,22 @@ export const MessgeReducer = (init,action) => {
                  
         //      }
         case 'STORE_INFO' : 
-        console.log('>>>>>>> RESET_MESSAGE')
+        console.log('>>>>>>> STORE_INFO')
+        console.log('>>>>>>> STORE_INFO', action.chatdata);
+
              return{
-                // ...init,
-                // careNo: action.chatdata.careNo,
-                // email: action.chatdata.email,
-                // loginTime: action.chatdata.loginTime,
-                // logoutTime: action.chatdata.logoutTime,
-                // name: action.chatdata.name,
-                // no:  action.chatdata.no,
-                // password:  "",
-                // phone: action.chatdata.phone,
-                // proName: action.chatdata.proName,
-                // profile:  action.chatdata.profile,
-                // role:  action.chatdata.role,
-                // status: action.chatdata.status
+                ...init,
+                careNo: action.chatdata.careNo,
+                email: action.chatdata.email,
+                loginTime: action.chatdata.loginTime,
+                logoutTime: action.chatdata.logoutTime,
+                name: action.chatdata.name,
+                no:  action.chatdata.no,
+                phone: action.chatdata.phone,
+                proName: action.chatdata.proName,
+                profile:  action.chatdata.profile,
+                role:  action.chatdata.role,
+                status: action.chatdata.status
 
              }
             default : 
