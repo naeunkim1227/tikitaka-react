@@ -64,7 +64,7 @@ const ChatRoom = () => {
   useEffect(() => {
     console.log('1. OPEN SOCKET')
     opensocket();
-}, []);
+}, [auth.chatNo]);
  
     const messageHandle = (e) =>{
         setContents(e.target.value);
@@ -91,8 +91,6 @@ const ChatRoom = () => {
 
     const opensocket = async() => {
       console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
-      
-      
       if(auth.chatNo){
         var socket = new SockJS('http://localhost:8080/TT/websocket');
         var stompClient = Stomp.over(socket);
