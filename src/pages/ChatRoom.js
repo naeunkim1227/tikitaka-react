@@ -364,9 +364,9 @@ const ChatRoom = () => {
       <Card sx={{ minWidth: 275 }}>
 
       <CardContent id='room-top'>
-        <h3>{auth.name}과의 채팅방</h3>
+        <h3>{auth.name}님의 채팅방</h3>
       </CardContent>
-
+      <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
         <div id='chat-room'>
           
@@ -401,7 +401,9 @@ const ChatRoom = () => {
         }}  */}
         
 
+
       </CardContent>
+      </Scrollbar>
       <CardContent id='room-bottom'>
       <form style={{alignItems: "center"}}>
       <Box
