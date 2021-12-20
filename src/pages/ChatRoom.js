@@ -45,7 +45,8 @@ import Scrollbar from 'src/components/Scrollbar';
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
-    const [messageList, setMessageList] = useState(null);
+    const [messageList, setMessageList] = useState([]);
+    const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
     const [loadImg, setLoadImg] = useState();
     const [typeState, setTypeState] = useState();
@@ -240,15 +241,39 @@ const ChatRoom = () => {
       try {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
-                                 console.log("chatList: "+res.data);
-                                 setMessageList(JSON.stringify(res.data));
+                                 console.log("chatList: "+JSON.stringify(res.data));
+                                 setMessageList(res.data);
                                })
       } catch (error) {
         console.log(error);
       }
-     
+      showList();
     }
     
+    const showList = () => {
+      messageList.map((list) => {
+        console.log("showList map 들어옴!!!!!!!!!!!!!!!!!!!!!!");
+        console.log(list.type);
+        console.log(list.contents);
+        console.log(list.user_no);
+        switch(list.type){
+          case 'TEXT':
+            if(list.user_no === auth.token){
+              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "<p id='myMessage'>" + list.contents + "</p>" + list.reg_time + "</br>" );
+            }else {
+              return $("#chat-room").append("<h3>"+list.name+": </h3>" + "<p id='yourMessage'>" + list.contents + "</p>" + list.reg_time + "</br>");
+            }
+          case 'IMAGE':
+            if(list.user_no === auth.token){
+              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>`);
+            }else {
+              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "</br>" + `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>`);
+            }
+        }
+      })
+      setRoomCallState(true);
+    }
+
     const showMessage = (msg) =>{
       // const result = JSON.parse(response.config.data);
       
@@ -319,9 +344,10 @@ const ChatRoom = () => {
   //   }
 
   // }
-
+  
   useEffect(() => {
-    if (messageList === null) {
+    if (roomCallState === false) {
+      console.log("chatList 들어옴!!!");
       chatList();
     } else {
       return;
@@ -364,8 +390,8 @@ const ChatRoom = () => {
       <CardContent id='room-top'>
         <h3>{auth.name}님의 채팅방</h3>
       </CardContent>
-      <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
+        <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
         <div id='chat-room'>
           
         </div>  
@@ -400,8 +426,9 @@ const ChatRoom = () => {
         
 
 
+      
+        </Scrollbar>
       </CardContent>
-      </Scrollbar>
       <CardContent id='room-bottom'>
       <form style={{alignItems: "center"}}>
       <Box

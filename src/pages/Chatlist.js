@@ -21,11 +21,12 @@ import { useChatStateContext } from 'src/Context/context';
 export default function Chatlist() {
   const navigate = useNavigate();
   const [chatlist, setChatlist] = useState([]);
+  const [chatroomMap, setChaproomMap] = useState(new Map());
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const userno = auth.token;
-
+  const arrmap = new Map();
   useEffect(() => {
     getChatlist(userno);
   }, []);
@@ -38,15 +39,18 @@ export default function Chatlist() {
             const res = await axios.post(`/TT/talk/topiclist/${userno}`)
             .then((response) => {
             var arr = [];
+            arrmap.clear();
             for(var i=0; i<response.data.length; i++){
                 arr.push(response.data[i].no);
+                arrmap.set(response.data[i].no, response.data[i].title);
             }
-
-            console.log("채팅방 리스트 넘버",arr);
+            setChaproomMap(arrmap);
             return arr;
+
             }).catch((err)=>{
             console.log(err);
             })
+            
             setChatlist(res);
         }
         catch(err){
@@ -56,9 +60,8 @@ export default function Chatlist() {
 
   return (
       <Page>
-          <List sx={{ width: '100%', maxWidth: 200, bgcolor: 'background.paper'}}>
+          <List sx={{ width: '100%', maxWidth: 250, bgcolor: 'background.paper'}}>
           {chatlist && chatlist.map((chatno) => {
-
             return (                
             <ListItemButton alignItems="flex-start"
             onClick={(e) => {
@@ -71,7 +74,7 @@ export default function Chatlist() {
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
             </ListItemAvatar>
             <ListItemText
-            primary={chatno}
+            primary={chatroomMap.get(chatno)}
             />
             </ListItemButton>
             )
