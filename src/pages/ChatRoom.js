@@ -170,6 +170,7 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           } 
+          console.log("imageData!!!!!!!!!!!!!!!"+imageData.message);
           return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
