@@ -14,7 +14,7 @@ import { useAuthState } from 'src/Context';
 import axios from 'axios';
 import Page from 'src/components/Page';
 import Scrollbar from 'src/components/Scrollbar';
-import { gettopic, useAuthDispatch } from 'src/Context';
+import {  useAuthDispatch } from 'src/Context'; // gettopic 나중에 수정후 필요
 import { useChatStateContext } from 'src/Context/context';
 
 
