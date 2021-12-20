@@ -388,7 +388,7 @@ const ChatRoom = () => {
       <Card sx={{ minWidth: 275 }}>
 
       <CardContent id='room-top'>
-        <h3>{auth.name}님의 채팅방</h3>
+        <h3>{auth.title}님의 채팅방</h3>
       </CardContent>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
         <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>

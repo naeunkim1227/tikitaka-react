@@ -245,10 +245,8 @@ export default function UserlistTable({type}) {
       const json = await response.json();
 
       setUser(json.data);
-      console.log('데이터',json.data)
-      
-
-      console.log('길이', json.data.length)
+      //console.log('데이터',json.data)
+      //console.log('길이', json.data.length)
       setUserList(json.data.length);
 
     } catch (err) {

@@ -16,7 +16,7 @@ import Page from 'src/components/Page';
 import Scrollbar from 'src/components/Scrollbar';
 import {  useAuthDispatch } from 'src/Context'; // gettopic 나중에 수정후 필요
 import { useChatStateContext } from 'src/Context/context';
-
+import { gettopic } from 'src/Context/action';
 
 export default function Chatlist() {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ export default function Chatlist() {
             }).catch((err)=>{
             console.log(err);
             })
-            
+
             setChatlist(res);
         }
         catch(err){
@@ -66,7 +66,8 @@ export default function Chatlist() {
             <ListItemButton alignItems="flex-start"
             onClick={(e) => {
                 console.log("선택한 채팅방의 chatno: ",chatno);
-                gettopic(chatstate,dispatch,chatno);
+                console.log("선택한 채팅방의 샤싣: ",chatroomMap.get(chatno));
+                gettopic(dispatch,chatno, chatroomMap.get(chatno));
                 navigate('/tikitaka/chat', { replace: true});
             }}
             >
