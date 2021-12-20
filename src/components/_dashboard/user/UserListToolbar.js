@@ -82,7 +82,8 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
 
 
   const handleClickOpen = () => {
-    setuseTalkname(basicTalkName);
+    const title = basicTalkName.concat(",",auth.name);
+    setuseTalkname(title);
     setOpen(true);
   };
 
@@ -130,8 +131,10 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           console.log('chatno 존재  >>>> socket sub');
           // chatstate({type: 'GET_CHATROOM', chatdata: res.data})
           // sessionStorage.setItem('chatMessage', chatNo);
-          dispatch({type:'STORE_TOPIC',payload: chatNo})
-         sessionStorage.setItem('currentUser',chatNo)
+          const title = auth.title;
+          dispatch({type:'STORE_CHATNO',payload: {chatNo, title}})
+         sessionStorage.setItem('currentUser',chatNo);
+         sessionStorage.setItem('currentUser', title);
         }
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
@@ -143,7 +146,6 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
-   //   }
   }  
   
   navigate('/tikitaka/chat', { replace: true});
@@ -154,6 +156,10 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
   const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
      await maketopic(dispatch, no, auth, type, title);
+     if(type == "GROUP"){
+       navigate('/tikitaka/chat', { replace: true});
+     }
+     
     }
 
 
