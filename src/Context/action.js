@@ -6,6 +6,7 @@ import axios from 'axios';
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
+import { red } from "@mui/material/colors";
 
    //보낸 메세지 상태 관리,저장 context
 
@@ -90,6 +91,7 @@ export const maketopic=async (dispatch, no, auth, type)=>{
               console.log("res값 없음")
               return;
             }
+            console.log('MAKE TOPIC >>>>>>', res.data)
             dispatch({type:'STORE_TOPIC',payload: res.data})
             sessionStorage.setItem('currentUser',res.data)
             
