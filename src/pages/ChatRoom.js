@@ -40,14 +40,11 @@ import moment from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
-<<<<<<< HEAD
 import { Avatar, CardHeader } from '@mui/material';
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import { Navigate } from 'react-router-dom';
-=======
 import Scrollbar from 'src/components/Scrollbar';
->>>>>>> f78d2f67a200f9bac518fa872de8a2d97e288303
 
 ///////////////////////////////////////////////////////////////////////
 
