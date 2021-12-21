@@ -24,6 +24,8 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import $ from 'jquery';
 import Calendar from './Calendar';
+import SendIcon from "@mui/icons-material/Send";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -41,6 +43,7 @@ import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
 import { Avatar, CardHeader } from '@mui/material';
+
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import { Navigate } from 'react-router-dom';
@@ -51,6 +54,7 @@ import Scrollbar from 'src/components/Scrollbar';
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -353,6 +357,7 @@ const ChatRoom = () => {
     //채팅목록 띄우기
     const showList = () => {
       messageList.map((list) => {
+        const time = moment(list.reg_time).format('YY/MM/DD   HH:mm');
         switch(list.type){
           case 'TEXT':
             if(list.user_no === auth.token){
