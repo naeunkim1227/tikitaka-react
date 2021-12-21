@@ -31,6 +31,10 @@ import ListItemText from '@mui/material/ListItemText';
 import { Block } from '@mui/icons-material';
 import { Air } from '@mui/icons-material';
 
+import SendIcon from "@mui/icons-material/Send";
+import Stack from "@mui/material/Stack";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 // Stomp
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
@@ -39,14 +43,19 @@ import moment from 'moment';
 
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
-import { useChatContext, useChatStateContext } from 'src/Context/context';
 import Scrollbar from 'src/components/Scrollbar';
+import { useChatContext, useChatStateContext } from 'src/Context/context';
+import { Avatar, CardHeader } from '@mui/material';
+import IconButton from 'src/theme/overrides/IconButton';
+import { CardFooter } from 'reactstrap';
 
 ///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const chatstate = useChatStateContext();
+    const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -68,15 +77,14 @@ const ChatRoom = () => {
     // }
 
   //보낸 메세지 상태 관리,저장 context
-  const chatstate = useChatStateContext();
-  const ttmessage = useChatContext();
-  const [msg,setMsg] = useState({});
+
 
   // 최근 공지 채팅방 상단에 띄우기
   const [rcNotice, setRcNotice] = useState([]);
 
   useEffect(() => {
     console.log('1. OPEN SOCKET')
+    console.log('>>>>>opuser',opuser);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
 }, [auth.chatNo]);
@@ -270,6 +278,17 @@ const ChatRoom = () => {
     }
 
 
+    const outChat = async(e) =>{
+
+      console.log("OUTCHAT >>>>>>>", auth.chatNo);
+       const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
+                        .then((res) => {
+                          console.log("사용자가 선택한chatno 채팅방 나가기");
+                        }).catch((err) => {
+                          console.log(err);
+                        })
+    }
+
 
     //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
       //메시지 보내기
@@ -301,21 +320,6 @@ const ChatRoom = () => {
               
     }
 
-    // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
-    // const getmessage = async(e) => {
-    //   try{
-    //     console.log('데이터 보내버렷',chatinfo.chatNo);
-    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-    //     .then((res) => {
-    //       console.log('data test', res)
-    //       if(res.statusText !== "OK"){
-    //         throw `${res.status} ${res.statusText}`
-    //       }
-    //     })
-    //   }catch{
-  
-    //   }
-    // }
 
     const chatList =  async () =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
@@ -333,12 +337,26 @@ const ChatRoom = () => {
     
     const showList = () => {
       messageList.map((list) => {
+        console.log(list.user_no);
+        const time = moment(list.reg_time).format('YY/MM/DD   HH:mm');
         switch(list.type){
           case 'TEXT':
             if(list.user_no === auth.token){
-              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "<p id='myMessage'>" + list.contents + "</p>" + list.reg_time + "</br>" );
+              return $("#chat-room").append("<div id='mybubble'>" +
+              "<div id='bubble-name'>"
+              + list.name+ "<img id='bubble-image' src=`http://localhost:8080/TT${auth.profile}` ref={imgRef}></img></div>"  
+              + "<div id='myMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
             }else {
-              return $("#chat-room").append("<h3>"+list.name+": </h3>" + "<p id='yourMessage'>" + list.contents + "</p>" + list.reg_time + "</br>");
+
+
+              return $("#chat-room").append("<div id='yourbubble'>" +
+              "<div id='bubble-name'>"
+              + list.name+ "<img id='bubble-image' src='http://localhost:8080/TT${opuser.profile}' ref={imgRef}></img></div>"  
+              + "<div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
             }
           case 'IMAGE':
             if(list.user_no === auth.token){
@@ -353,13 +371,30 @@ const ChatRoom = () => {
 
     const showMessage = (msg) =>{
       // const result = JSON.parse(response.config.data);
+      
+      console.log(">>>>>>>>>>>>>>>>>>WHOOOOOOOO",opuser.profile);
+
+
+     
 
       switch(msg.type){
         case 'TEXT':
+          console.log("4. VIEW MSG >>>>>" ,msg.contents);
            if(msg.userNo === auth.token){
-            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "<p id='myMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>" );
+             return $("#chat-room").append("<div id='mybubble'>" +
+             "<div id='bubble-name'>"
+             + msg.name+ "<img id='bubble-image' src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img></div>"  
+             + "<div id='myMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+             + "</div>"
+              );
+          
           }else if(auth.token !== msg.userNo){
-            return $("#chat-room").append("<h3>"+msg.name+": </h3>" + "<p id='yourMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>");
+            return $("#chat-room").append("<div id='yourbubble'>" +
+            "<div id='bubble-name'>"
+            + msg.name+ "<img id='bubble-image' src=https://mblogthumb-phinf.pstatic.net/MjAyMDExMjhfMjc5/MDAxNjA2NTM2ODcyNDQ3.IBJwizNGacYmK5YTGfBGRBBZU0J9NNEEzAY_AZTSE54g.39WsX9Wa7WPuf2ZV6xlrt1Tp3drO9-EJSW9xF7EyoM8g.JPEG.kjtjuntae/Screenshot%EF%BC%BF20201127%EF%BC%8D0743572.jpg?type=w800></img></div>"  
+            + "<div id='yourMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+            + "</div>"
+
           }
 
         case 'IMAGE':
@@ -410,6 +445,12 @@ const ChatRoom = () => {
     setOpen(false);
   };
 
+
+
+
+  const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
+  
+  
   //--------------------------------------------------
   const [calState, setCalstate] = React.useState(false);
   const calClose = () =>{
@@ -423,9 +464,20 @@ const ChatRoom = () => {
 
     return (
       <Card sx={{ minWidth: 275 }}>
-      <CardContent id='room-top'>
-        <h3>{auth.title}님의 채팅방</h3>
-      </CardContent>
+
+      <CardHeader
+        avatar={
+          <Avatar aria-label="recipe" src="http://localhost:8080/TT{opuser.profile}">
+          </Avatar>
+        }
+        title={opuser.name}
+        subheader={`마지막 접속 시간 : ${logintime}`}
+      >
+        
+      </CardHeader>
+    
+    
+
       <CardContent id='room-top'>
         {/* chatNo에 해당하는 채팅방의 최근 공지 가져와서 채팅방 상단에 띄우기 
             no (noticeNo), reg_date, contents, name, title*/}
@@ -444,11 +496,15 @@ const ChatRoom = () => {
         
       </CardContent>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
-        <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
+        <div>
+
+
+   
+        <Scrollbar >
         <div id='chat-room'>
-          
         </div>  
         </Scrollbar>
+        </div>
       </CardContent>
       <CardContent id='room-bottom'>
       <form style={{alignItems: "center"}}>
@@ -517,10 +573,21 @@ const ChatRoom = () => {
           ref = {sendMsgRef}
         />
         
-       
-        <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
+        {/* <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
           보내기
         </Button>
+        <Button type='submit' variant="contained" style={{position: 'absolute', right:100}} size="large" onClick={sendMessage}>
+          나가기
+        </Button> */}
+      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
+        Send
+      </Button>
+      {/* <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={outChat}>
+        나가기
+      </Button> */}
+
+      
+       
         </Box>
         </form>
       </CardContent>
