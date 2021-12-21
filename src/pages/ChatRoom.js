@@ -48,6 +48,7 @@ import { useChatContext, useChatStateContext } from 'src/Context/context';
 import { Avatar, CardHeader } from '@mui/material';
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
+import { Navigate } from 'react-router-dom';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -241,12 +242,19 @@ const ChatRoom = () => {
     const outChat = async(e) =>{
       alert(alert);
       console.log("OUTCHAT >>>>>>>", auth.chatNo);
-      //  const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
-      //                   .then((res) => {
-      //                     console.log("사용자가 선택한chatno 채팅방 나가기");
-      //                   }).catch((err) => {
-      //                     console.log(err);
-      //                   })
+       const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
+                        .then((res) => {
+                          console.log("사용자가 선택한chatno 채팅방 나가기");
+
+                            if (stompClient !== null) {
+                              console.log('STOMP DISCONNECT >>>>>>' ,auth.chatNo)
+                              stompClient.disconnect();
+                          }
+                        }).catch((err) => {
+                          console.log(err);
+                        })
+                        
+        navigate('/tikitaka/main', { replace: true});
     }
 
 
