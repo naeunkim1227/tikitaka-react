@@ -56,6 +56,12 @@ const ChatRoom = () => {
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
     const [stateCalendar, setStateCalendar] = useState(new Date());
+    
+    const [file, setFile] = useState();
+    const [loadFile, setloadFile] = useState(); // append로 보낼 formData
+    const fileRef = useRef(null);
+    const sendFileRef = useRef();
+   
 
     // const chatinfo= {
     //   userNo: auth.token
@@ -81,7 +87,7 @@ const ChatRoom = () => {
     }  
 
     const uploadImage = (e) =>{
-      setLoadImg(e.target.files[0]);
+      setLoadImg(e.target.files[0]); // 등록된 파일 가져오려면 [0]으로 들고와야함
       setTypeState('IMAGE');
     }
 
@@ -93,6 +99,19 @@ const ChatRoom = () => {
     const loadImgReset = ()=>{
       sendImgRef.current.value='';
       setLoadImg('');
+    }
+
+    // // Spring에 보낸 파일 삭제
+    const loadFileReset = () => { 
+      sendFileRef.current.value='';
+      setloadFile('');
+    }
+
+    // Button 클릭 시 uploadFile
+    const uploadFile = (e) => {
+      setloadFile(e.target.files[0]);
+      setTypeState('FILE'); // switch(typeState){ => case 'FILE':
+      // e.target.value =''; // Spring에 보낸 파일 삭제
     }
 
 
@@ -166,13 +185,13 @@ const ChatRoom = () => {
                 })
 
         case 'IMAGE':
-          const formData = new FormData();
-          formData.append('file', loadImg);
+          const formData = new FormData(); 
+          formData.append('image', loadImg);
           const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
                 .then((response) => {
-                    setImage(response.data);
-                    loadImgReset();
-                  return response.data;
+                    setImage(response.data); 
+                    loadImgReset(); // 보내고 나서 전송한 파일 삭제
+                  return response.data; 
                 })
                 .catch((err) => {
                   console.log(err);
@@ -188,6 +207,7 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           } 
+          
           return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
@@ -199,7 +219,54 @@ const ChatRoom = () => {
                           })
           
         case 'FILE':
-          return
+          const fileData = new FormData(); // FormData에는 키와 값 쌍으로 담아주어야 함
+          // "file" -> key값 => Spring @RequestParam
+          fileData.append("file", loadFile); // const [loadImg, setLoadImg] = useState(); 
+
+          // Spring에서 File url을 리턴(fileResult로)받기 
+          const fileResult = await axios.post(`/TT/talk/topic/sendFile`, 
+                                        fileData, 
+                                        { headers : {"Content-Type":"application/json" , 
+                                                     "charset":"UTF-8"}
+                                        })
+                      .then((response) => {
+                        setFile(response.data);
+                        loadFileReset(); // Spring에 보낸 파일 삭제 (안하면 남아있어서 직접 삭제해 주어야한다.) 
+
+                        console.log("file response data >>> ", file)
+
+                        return response.data; // Spring - service에서 uuid로 생성한 url 값
+                      })
+                      .catch((err) => {
+                        console.log("fileUpload error >>> ", err)
+                      });
+          
+          const fResult = await fileResult;
+
+          const sendFileData = {
+            chatNo : JSON.parse(auth.chatNo),
+            userNo : auth.token,
+            name : auth.name,
+            type : typeState,
+            message : fResult,
+            readCount : 1,
+            regTime : time
+          }
+
+          // 메세지 전송하듯이
+          return axios.post(`/TT/talk/topic`,
+                            JSON.stringify(sendFileData),
+                            {headers: {"Content-Type":"application/json" , 
+                                      "charset":"UTF-8"}
+                          })
+                .then ((response) => {
+                  console.log("file send >>> ", response);
+
+                  return response;
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
     }
 
 
@@ -302,7 +369,14 @@ const ChatRoom = () => {
           }else{
             return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
           }
+
         case 'FILE':
+          console.log("FILE UPLOAD 실행됨!!")
+          if(msg.userNo === auth.token){ // 다운로드 이미지하면서 수정할겁니다,,,
+            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+          } else {
+            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+          }
       }
       
       
@@ -408,12 +482,16 @@ const ChatRoom = () => {
           <Button>
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
           </Button>
+
           <Button >
             <label for='input-file'><ImageIcon sx={{ width: 40, height: 40}}/></label>
             <input id='input-file' type='file' accept='images/*' onChange={uploadImage} ref={sendImgRef} style={{display:"none"}}/>
           </Button>
+
           <Button>
-            <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
+            <label for='input-file2'><UploadFileRoundedIcon sx={{ width: 40, height: 40}} /></label>
+            {/* input태그의 accept : 서버로 업로드할 수 있는 파일의 타입을 명시 */}
+            <input id='input-file2' type='file' accept='text/plain' onChange={uploadFile} ref={sendFileRef} style={{display:"none"}}/>
           </Button>
           <div>
             <Button onClick={openCalendar}>
