@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -11,7 +11,7 @@ import TextField from '@mui/material/TextField';
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import axios from 'axios';
-import { useAuthState } from 'src/Context';
+import { useAuthState, useAuthDispatch } from 'src/Context';
 import { useNavigate } from 'react-router-dom';
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -22,20 +22,15 @@ const UpdateProfile = () => {
     const auth = useAuthState();
     const [userInfo, setUserInfo] = useState();
     const [userImage, setUserImage] = useState();
-    const [imgData, setImageData] = useState(null);
+    const [imageData, setImageData] = useState(null);
     const [urlData, setUrlData] = useState(null);
     const [changeImg, setChangeImg] = useState('');
     // update form data
     const [userEmail, setUserEmail] = useState('');
     const [userPhone, setUserPhone] = useState('');
-
-    const getInfo = async () => {
-        const res = await axios.get(`/TT/getInfo/${auth.token}`)
-                                .then((res) => {
-                                    
-                                    setUserInfo(res.data);
-                                })
-    }
+    const [getProfile, setGetProfile] = useState(false);
+    const profileRef = useRef();
+    const dispatch = useAuthDispatch();
 
     const change = (e) => {
         setChangeImg(userInfo.profile);
@@ -65,8 +60,9 @@ const UpdateProfile = () => {
 
         const response = await axios.post(`/TT/updateImage/${auth.token}`, formData, {headers:{"Content-Type":"multipart/form-data"}})
                                     .then((res) => {
-                                        setUserImage(res.data);
-                                        getImage();
+                                        setImageData(res.data);
+                                        dispatch({type:'CHANGE_PROFILE', payload:res.data});
+                                        sessionStorage.setItem('currentUser',res.data);
                                     })
                                     .catch((err) => {
                                         console.log(err);
@@ -95,26 +91,6 @@ const UpdateProfile = () => {
                                     //return response;
     }
 
-    // 비밀번호 변경 페이지
-    const changePassword = (e) => {
-        navigate('/tikitaka/changePassword', { replace: true });
-    }
-    
-    const getImage = async () => {
-        try {
-            const response = await axios.get(`/TT/getImage/${auth.token}`)
-                                        .then((res) => {
-                                            setChangeImg(res.data);
-                                            
-                                        })
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    useEffect(() => {
-        getImage();
-    })
 
     return (
         <div align="center">
@@ -128,11 +104,14 @@ const UpdateProfile = () => {
             <CardContent>
                 <form encType="multipart/form-data">
                     <Badge color="success" overlap="circular" badgeContent=" ">
-                    <Avatar id='avatar' alt="" src={`/TT${changeImg}`} sx={{ width: 100, height: 100 }} onChange={change}/>
+                    <Avatar id='avatar' alt="" src={`http://localhost:8080/TT${auth.profile}`} sx={{ width: 100, height: 100 }} onChange={change} ref={profileRef}/>
                     </Badge>
                     <br />
                     <br />
-                    <input type="file" accept="image/*" onChange={imageHandle}/>
+                    <Button size="small" variant="contained" >
+                    <label for='load-img' >사진등록</label>
+                    <input id='load-img' type="file" accept="image/*" onChange={imageHandle} style={{display:"none"}}/>
+                    </Button>
                     <Button size="small" variant="contained" onClick={changeImage}>프로필 변경</Button>
                 </form>
                 
@@ -151,7 +130,7 @@ const UpdateProfile = () => {
                 <TextField
                     id="inline"
                     label="사원번호:"
-                    defaultValue={`${auth.no}-${auth.dept}-${auth.position}-1`}
+                    defaultValue={`${auth.token}`}
                     InputProps={{
                         readOnly: true
                     }}

@@ -10,6 +10,8 @@ let phone = sessionStorage.getItem('currentUser')? sessionStorage.getItem('curre
 let status = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').status : '';
 let message = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').message : '';
 let chatNo = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').chatNo : '';
+let title = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').title : '';
+
 export const initialState ={ //초기값 설정
     token:""||token,
     name:""||name,
@@ -19,7 +21,8 @@ export const initialState ={ //초기값 설정
     phone:""||phone,
     status:""||status,
     message:""||message,
-    chatNo:""||chatNo
+    chatNo:""||chatNo,
+    title:""||title
     // loading:false,
     // errorMessage:null
 }
@@ -66,16 +69,16 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 ...initialState,
                 message: action.target.value
             }
-        case 'STORE_TOPIC':
-            console.log('STORE_TOPIC >>> ' ,action.payload); 
-            return{
-                ...initialState,  
-                chatNo: action.payload
-            }
         case 'STORE_CHATNO':
             return{
                 ...initialState,
-                chatNo: action.payload
+                chatNo: action.payload.chatNo,
+                title: action.payload.title
+            }
+        case 'CHANGE_PROFILE':
+            return{
+                ...initialState,
+                profile: action.payload
             }
         default:
             throw new Error( `Unhandled action type: ${action.type}`)
