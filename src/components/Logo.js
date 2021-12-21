@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from 'prop-types';
 // material
 import { Box } from '@mui/material';
@@ -9,5 +10,5 @@ Logo.propTypes = {
 };
 
 export default function Logo({ sx }) {
-  return <Box component="img" src="/static/logo.svg" sx={{ width: 40, height: 40, ...sx }} />;
+  return <Box component="img" src="/static/tikitakalogo.png" sx={{ width: 80, height: 60, ...sx }} />;
 }
