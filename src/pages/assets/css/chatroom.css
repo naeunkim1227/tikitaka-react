@@ -45,12 +45,14 @@
 #bubble-image {
 	border-radius: 50%;
 	text-align: center;
+	width: 60px;
+	height: 60px;
 
 }
 
 #bubble-time{
-	font-weight: 300;
-	margin-top: 10%;
+	font-weight: 600;
+	margin-top: 1%;
 }
 
 
@@ -87,6 +89,14 @@
 	margin: 10px;
 	padding: 0.6% 1.5% 0 1.5%;
 }
+
+#imgMessage {
+	border: 3px solid #e8d7f4;
+	border-radius: 20px;
+	padding: 2%;
+
+}
+
 
 
 #room {
