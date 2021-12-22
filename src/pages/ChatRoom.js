@@ -75,6 +75,8 @@ const ChatRoom = () => {
     const sendFileRef = useRef();
    
 
+    const socket = new SockJS('http://localhost:8080/TT/websocket');
+    const stompClient = Stomp.over(socket);
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -94,7 +96,10 @@ const ChatRoom = () => {
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
 
-
+    return() => {
+      stompClient.disconnect();
+      socket.close();
+    }
 }, [auth.chatNo]);
  
     const messageHandle = (e) =>{
@@ -135,9 +140,6 @@ const ChatRoom = () => {
     const opensocket = async() => {
       console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
       if(auth.chatNo){
-        const socket = new SockJS('http://localhost:8080/TT/websocket');
-        const stompClient = Stomp.over(socket);
-        setSoc(socket);
         stompClient.connect({},function(){
           console.log('link sub socket');
           stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
