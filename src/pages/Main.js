@@ -39,16 +39,11 @@ export default function DashboardApp() {
   const [alert ,setAlert] =useState(false);
   
   useEffect(() => {
+
+    setInterval
     AlertSocket();
   }, []);
 
-
-  const list = {
-    contents: '',
-    name: '',
-    regTime: '',
-    type: 'TEXT',
-  }
   
   useEffect(() => {
     toast(`${name} 님  :    ${contents} `);

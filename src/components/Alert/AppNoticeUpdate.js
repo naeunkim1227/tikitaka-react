@@ -32,8 +32,8 @@ const auth = useAuthState();
 const [chatNolist,SetchatNolist] = useState();
 
 
-// const socket = new SockJS('http://localhost:8080/TT/alertsocket');
-// const stompClient = Stomp.over(socket);
+const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+const stompClient = Stomp.over(socket);
 
 
 const data = {
@@ -41,46 +41,40 @@ const data = {
 }
 
 useEffect(() => {
-    getchatNolist();
-    // AlertSocket();
-    // getAlertData();
+    getAlertData();
 }, []);
 
-const getchatNolist = async() =>{
-  console.log('11111111111111111111111111111111111111')
+
+
+const getAlertData =  async () => {
+    
+  try{
+    const res = await fetch(`/TT/main/`, {
+      method: 'post',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Accept' : 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    setNotice(json.data);
+    
+    if(!res.ok){ 
+      throw new Error(`${res.status} ${res.statusText}`)}
+
+
+      if(json.result !== 'success'){
+        throw json.message;
+      }
+
+
+    }catch(err){
+      console.log('main fetch error',err);
+    }
+
+
 }
-
-
-
-// const getAlertData =  async () => {
-    
-//   try{
-//     const res = await fetch(`/TT/main/`, {
-//       method: 'post',
-//       headers: {
-//         'Content-Type' : 'application/json',
-//         'Accept' : 'application/json'
-//       },
-//       body: JSON.stringify(data)
-//     });
-//     const json = await res.json();
-//     setNotice(json.data);
-    
-//     if(!res.ok){ 
-//       throw new Error(`${res.status} ${res.statusText}`)}
-
-
-//       if(json.result !== 'success'){
-//         throw json.message;
-//       }
-
-
-//     }catch(err){
-//       console.log('main fetch error',err);
-//     }
-
-
-// }
 
   return (
     <Card>
