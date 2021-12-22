@@ -51,8 +51,6 @@ import { Avatar, CardHeader } from '@mui/material';
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
-import SendIcon from '@mui/icons-material/Send';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +68,6 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
-    const opuser = useChatContext();
     const [stateCalendar, setStateCalendar] = useState(new Date());
     const opuser = useChatContext();
     const [file, setFile] = useState();
@@ -103,6 +100,7 @@ const ChatRoom = () => {
     return() => {
       stompClient.disconnect();
       socket.close();
+      exitTimeUpdate(); //chatroom 나갈떄 현재 시간 DB에 update
     }
 }, [auth.chatNo]);
  
@@ -176,7 +174,16 @@ const ChatRoom = () => {
         navigate('/tikitaka/main', { replace: true});
     }
 
-
+    //채팅방 나갈때 time을 체크해서 채팅room list에서 안읽은 메시지 갯수 카운팅
+    const exitTimeUpdate = async() =>{
+      console.log('TIME UPDATE >> ')
+      //const time = moment(now()).format('Y-MM-DD HH:mm:ss');
+      const data={
+        userno:auth.token,
+        chatno:auth.chatNo
+      }
+      const res = await axios.post(`/TT/talk/updateouttime/`, JSON.stringify(data),{headers:{"Content-Type":"application/json", "charset":"UTF-8"}}) 
+      }
 
     // 최근 공지 채팅방 상단에 띄우기
     const recentNotice = async() => {
