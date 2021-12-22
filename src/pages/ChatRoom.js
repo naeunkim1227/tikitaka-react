@@ -57,6 +57,8 @@ const ChatRoom = () => {
     const sendMsgRef = useRef();
     const [stateCalendar, setStateCalendar] = useState(new Date());
 
+    const socket = new SockJS('http://localhost:8080/TT/websocket');
+    const stompClient = Stomp.over(socket);
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -73,6 +75,11 @@ const ChatRoom = () => {
     console.log('1. OPEN SOCKET')
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
+
+    return() => {
+      stompClient.disconnect();
+      socket.close();
+    }
 }, [auth.chatNo]);
  
     const messageHandle = (e) =>{
@@ -99,8 +106,7 @@ const ChatRoom = () => {
     const opensocket = async() => {
       console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
       if(auth.chatNo){
-        var socket = new SockJS('http://localhost:8080/TT/websocket');
-        var stompClient = Stomp.over(socket);
+
         stompClient.connect({},function(){
           console.log('link sub socket');
           stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
