@@ -99,8 +99,37 @@
 
 
 
+
+
 #room {
 	background-color: #ffffff
 
 }
 
+
+#myCal{
+	border:1px solid #ff9e00;
+	border-radius: 20px;
+	width: fit-content;
+	font-size: 20px;
+	text-align: center;
+	direction: ltr;
+	position: relative;
+	left: 80%;
+	margin-top: 5%;
+}
+
+#cal-body{
+	background-color: #ff9e00;
+	border-radius: 20px;
+	display: flex;
+	text-align: left;
+	width: max-content;
+	padding: 3%;
+	margin: -3%;
+}
+
+#cal-text{
+	padding: -1%;
+	font-size: 18px;
+}
