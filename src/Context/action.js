@@ -114,7 +114,6 @@ export const gettopic = async(dispatch,chatNo, title) => {
 
     console.log('gettopic');
     console.log(chatNo);
-    console.log("타이틀이양",title);
     dispatch({type:'STORE_CHATNO',payload: {chatNo, title} })
     sessionStorage.setItem('currentUser', chatNo);
     sessionStorage.setItem('currentUser', title);

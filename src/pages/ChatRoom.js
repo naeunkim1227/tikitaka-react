@@ -146,7 +146,6 @@ const ChatRoom = () => {
             console.log("3. DATA >>" , msg);
             showMessage(msg);
           });
-
       })
       }
       
