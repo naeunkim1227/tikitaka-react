@@ -74,7 +74,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
-  const message = useChatContext();
+  const opuser = useChatContext();
   const [open, setOpen] = useState(false);
   //선택된 유저들의 이름관리
   const basicTalkName = talkName.toString();
@@ -217,8 +217,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           <Button
           variant="text"
           onClick={(e) =>{
-            const title ="상대방의 userno: "+talkNo[0];
-            console.log(title);
+            const title = "상대방의 userno: "+talkNo[0];
             enterchat(chatstate, dispatch,talkNo,auth, title) 
             allUncheck();
           }}>

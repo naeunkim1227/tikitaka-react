@@ -25,7 +25,9 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import $ from 'jquery';
 import Calendar from './Calendar';
+
 import Avatar from "@mui/material/Avatar";
+
 import SendIcon from "@mui/icons-material/Send";
 import LogoutIcon from "@mui/icons-material/Logout";
 
@@ -44,13 +46,22 @@ import moment from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
+import { Avatar, CardHeader } from '@mui/material';
+
+import IconButton from 'src/theme/overrides/IconButton';
+import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
+import SendIcon from '@mui/icons-material/Send';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 
 ///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const navigate = useNavigate();
+    const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -59,6 +70,7 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
+    const opuser = useChatContext();
     const [stateCalendar, setStateCalendar] = useState(new Date());
     const opuser = useChatContext();
     const [file, setFile] = useState();
@@ -67,6 +79,8 @@ const ChatRoom = () => {
     const sendFileRef = useRef();
    
 
+    const socket = new SockJS('http://localhost:8080/TT/websocket');
+    const stompClient = Stomp.over(socket);
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -85,6 +99,11 @@ const ChatRoom = () => {
     console.log(auth.profile);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
+
+    return() => {
+      stompClient.disconnect();
+      socket.close();
+    }
 }, [auth.chatNo]);
  
     const messageHandle = (e) =>{
@@ -120,12 +139,11 @@ const ChatRoom = () => {
       // e.target.value =''; // Spring에 보낸 파일 삭제
     }
 
+    const [soc,setSoc] = useState();
 
     const opensocket = async() => {
       console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
       if(auth.chatNo){
-        var socket = new SockJS('http://localhost:8080/TT/websocket');
-        var stompClient = Stomp.over(socket);
         stompClient.connect({},function(){
           console.log('link sub socket');
           stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
@@ -134,11 +152,31 @@ const ChatRoom = () => {
             console.log("3. DATA >>" , msg);
             showMessage(msg);
           });
-
       })
       }
+      
         
     }
+
+        //채팅방 나가기
+    const outChat = async(e) =>{
+      console.log("OUTCHAT >>>>>>>", auth.chatNo);
+      
+     
+       const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
+                        .then((res) => {
+                          console.log("사용자가 선택한chatno topic 삭제하기");
+                          const stompClient = Stomp.over(soc);
+                          stompClient.disconnect();
+
+                        }).catch((err) => {
+                          console.log(err);
+                        })
+                        
+        navigate('/tikitaka/main', { replace: true});
+    }
+
+
 
     // 최근 공지 채팅방 상단에 띄우기
     const recentNotice = async() => {
@@ -203,7 +241,7 @@ const ChatRoom = () => {
                   console.log(err);
                 });
           const ans = await result;
-          
+         
           const imageData = {
             chatNo : JSON.parse(auth.chatNo),
             userNo : auth.token,
@@ -329,17 +367,7 @@ const ChatRoom = () => {
       showList();
     }
 
-    //채팅방 나가기
-    const outChat = async(e) =>{
-      alert(alert);
-      console.log("OUTCHAT >>>>>>>", auth.chatNo);
-      //  const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
-      //                   .then((res) => {
-      //                     console.log("사용자가 선택한chatno 채팅방 나가기");
-      //                   }).catch((err) => {
-      //                     console.log(err);
-      //                   })
-    }
+
 
 
 

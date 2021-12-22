@@ -19,29 +19,43 @@ import { useChatStateContext } from 'src/Context/context';
 import { gettopic } from 'src/Context/action';
 import { Box, styled } from '@mui/system';
 import Badge from "@mui/material/Badge";
-
+import {makeStyles} from "@material-ui/core";
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
-    right: -10,
-    top: 3,
+    right: -50,
+    top: 20,
     border: `2px solid ${theme.palette.background.paper}`,
     padding: "0 4px",
     background: "#ff4d4f"
   }
 }));
 
+const useStyles = makeStyles((theme) => ({
+  mainContent: {
+    display: 'box',
+    lineClamp: 2,
+    boxOrient: 'vertical',  
+    overflow: 'hidden',
+  }
+}));
+
+
 
 export default function Chatlist() {
+  const classes = useStyles(); //frontend
   const navigate = useNavigate();
-  const [chatlist, setChatlist] = useState([]);
-  const [chatroomMap, setChaproomMap] = useState(new Map());
+  const [chatNolist, setChatlist] = useState([]);
+  const [chatroomNameMap, setChaproomMap] = useState(new Map());
+  const [chatContentMap, setChatContentMap] = useState(new Map());
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const userno = auth.token;
-  const arrmap = new Map();
+  const arrtitlemap = new Map(); //채팅방 title (key:chatNo value:title)
+  const arrcontentmap = new Map(); //채팅방 last_content (key:chatNo value:last_content)
   useEffect(() => {
     getChatlist(userno);
+    getChatlistMsg(userno);
   }, []);
     
     //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
@@ -52,33 +66,54 @@ export default function Chatlist() {
             const res = await axios.post(`/TT/talk/topiclist/${userno}`)
             .then((response) => {
             var arr = [];
-            arrmap.clear();
+            arrtitlemap.clear();
             for(var i=0; i<response.data.length; i++){
                 arr.push(response.data[i].no);
-                arrmap.set(response.data[i].no, response.data[i].title);
+                arrtitlemap.set(response.data[i].no, response.data[i].title);
             }
-            setChaproomMap(arrmap);
+            setChaproomMap(arrtitlemap);
             return arr;
-
             }).catch((err)=>{
             console.log(err);
             })
 
             setChatlist(res);
+            
         }
         catch(err){
             console.log("chatlist error" + err);
         }
     }
 
+    //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
+    const getChatlistMsg = async(userno) => {
+      try{
+          
+          //사용자 연결되어있는 채팅리스트를 출력
+          const res = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
+          .then((response) => {
+            arrcontentmap.clear();
+            for(var i=0; i<response.data.length; i++){
+              arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
+            }
+            setChatContentMap(arrcontentmap);
+          }).catch((err)=>{
+          console.log(err);
+          })
+      }
+      catch(err){
+          console.log("chatlist error" + err);
+      }
+  }
+
   return (
       <Page>
           <List sx={{ width: '100%', maxWidth: 300, bgcolor: 'background.paper'}}>
-          {chatlist && chatlist.map((chatno) => {
+          {chatNolist && chatNolist.map((chatno) => {
             return (             
             <ListItemButton alignItems="flex-start"
             onClick={(e) => {
-                gettopic(dispatch,chatno, chatroomMap.get(chatno));
+                gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
                 navigate('/tikitaka/chat', { replace: true});
             }}
             >
@@ -94,32 +129,34 @@ export default function Chatlist() {
               color="text.secondary"
             >
 
-              {chatroomMap.get(chatno)}
+              {chatroomNameMap.get(chatno)}
               
             </Typography>}
             secondary=
             {
               <React.Fragment>
-                {/* 채팅메시지내용길면 ... 으로 표시되게하기 */}
-                <Box sx={{ "& > :not(style) + :not(style)": { ml: 4 } }}>
-                <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
+                {
+                  chatContentMap.get(chatno) == null ?
+                  null:
+                  <StyledBadge badgeContent={4} color="secondary">
+                  <Typography
+                    width="140px"
                     variant="body2"
                     color="text.primary"
+                    className={classes.mainContent}
+                    gutterBottom
                   >
-                    seung wooa
-                  </Typography>
-                  <StyledBadge badgeContent={4} color="secondary">
-                  <Typography>
+                  {chatContentMap.get(chatno)}
                   </Typography>
                   </StyledBadge>
-                </Box>
+                }
               </React.Fragment>
             }
             
             />
-
+            <ListItemText
+            
+            />
             </ListItemButton>
             
             )
