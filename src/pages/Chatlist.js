@@ -47,16 +47,18 @@ export default function Chatlist() {
   const [chatNolist, setChatlist] = useState([]);
   const [chatroomNameMap, setChaproomMap] = useState(new Map());
   const [chatContentMap, setChatContentMap] = useState(new Map());
+  const [chatNoreadMap, setChatNoreadMap] = useState(new Map());
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const userno = auth.token;
   const arrtitlemap = new Map(); //채팅방 title (key:chatNo value:title)
   const arrcontentmap = new Map(); //채팅방 last_content (key:chatNo value:last_content)
+  const arrnoreadmap = new Map(); //채팅방 NoReadCount (key:chatNo value:NoReadCount)
+
   useEffect(() => {
     getChatlist(userno);
-    getChatlistMsg(userno);
-  }, []);
+  },[]);
     
     //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
     const getChatlist = async(userno) => {
@@ -76,8 +78,22 @@ export default function Chatlist() {
             }).catch((err)=>{
             console.log(err);
             })
-
             setChatlist(res);
+            //noReadMessage count하기
+            for(var i=0; i<res.length; i++){
+              getnoReadmsgCount(userno,res[i]);
+            }
+            //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
+            const res2 = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
+            .then((response) => {
+              arrcontentmap.clear();
+              for(var i=0; i<response.data.length; i++){
+                arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
+              }
+              setChatContentMap(arrcontentmap);
+            }).catch((err)=>{
+            console.log(err);
+            })
             
         }
         catch(err){
@@ -85,25 +101,24 @@ export default function Chatlist() {
         }
     }
 
-    //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
-    const getChatlistMsg = async(userno) => {
-      try{
-          
-          //사용자 연결되어있는 채팅리스트를 출력
-          const res = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
-          .then((response) => {
-            arrcontentmap.clear();
-            for(var i=0; i<response.data.length; i++){
-              arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
-            }
-            setChatContentMap(arrcontentmap);
-          }).catch((err)=>{
-          console.log(err);
-          })
-      }
-      catch(err){
-          console.log("chatlist error" + err);
-      }
+  //채팅방 사용자가 읽지않은 Message 갯수 count
+  const getnoReadmsgCount = async(userno, chatno) => {
+    try{
+        
+        //사용자 연결되어있는 채팅리스트를 출력
+        const res = await axios.post(`/TT/talk/topiclistnoread/${userno}/${chatno}`)
+        .then((response) => {
+          //arrnoreadmap.clear();
+          arrnoreadmap.set(chatno, response.data);
+          console.log(response.data)
+          setChatNoreadMap(arrnoreadmap);
+        }).catch((err)=>{
+        console.log(err);
+        })
+    }
+    catch(err){
+        console.log("chatlist error" + err);
+    }
   }
 
   return (
@@ -138,7 +153,7 @@ export default function Chatlist() {
                 {
                   chatContentMap.get(chatno) == null ?
                   null:
-                  <StyledBadge badgeContent={4} color="secondary">
+                  <StyledBadge badgeContent={chatNoreadMap.get(chatno)} color="secondary">
                   <Typography
                     width="140px"
                     variant="body2"

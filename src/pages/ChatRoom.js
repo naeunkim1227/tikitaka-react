@@ -95,6 +95,7 @@ const ChatRoom = () => {
     return() => {
       stompClient.disconnect();
       socket.close();
+      exitTimeUpdate(); //chatroom 나갈떄 현재 시간 DB에 update
     }
 }, [auth.chatNo]);
  
@@ -175,7 +176,16 @@ const ChatRoom = () => {
         navigate('/tikitaka/main', { replace: true});
     }
 
-
+    //채팅방 나갈때 time을 체크해서 채팅room list에서 안읽은 메시지 갯수 카운팅
+    const exitTimeUpdate = async() =>{
+      console.log('TIME UPDATE >> ')
+      //const time = moment(now()).format('Y-MM-DD HH:mm:ss');
+      const data={
+        userno:auth.token,
+        chatno:auth.chatNo
+      }
+      const res = await axios.post(`/TT/talk/updateouttime/`, JSON.stringify(data),{headers:{"Content-Type":"application/json", "charset":"UTF-8"}}) 
+      }
 
     // 최근 공지 채팅방 상단에 띄우기
     const recentNotice = async() => {
