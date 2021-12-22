@@ -353,6 +353,7 @@ const ChatRoom = () => {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
                                  setMessageList(res.data);
+                                 console.log('함 보자.....' ,res.data);
                                })
       } catch (error) {
         console.log(error);
