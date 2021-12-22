@@ -5,6 +5,7 @@ import './assets/css/components.css';
 import './assets/css/style.css';
 import './assets/css/chatroom.css';
 import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Button from '@mui/material/Button';
 // import SendIcon from '@mui/icons-material/Send';
@@ -24,6 +25,9 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import $ from 'jquery';
 import Calendar from './Calendar';
+import Avatar from "@mui/material/Avatar";
+import SendIcon from "@mui/icons-material/Send";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -56,7 +60,7 @@ const ChatRoom = () => {
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
     const [stateCalendar, setStateCalendar] = useState(new Date());
-    
+    const opuser = useChatContext();
     const [file, setFile] = useState();
     const [loadFile, setloadFile] = useState(); // append로 보낼 formData
     const fileRef = useRef(null);
@@ -342,6 +346,7 @@ const ChatRoom = () => {
     //채팅목록 띄우기
     const showList = () => {
       messageList.map((list) => {
+        const time = moment(list.reg_time).format('YY/MM/DD   HH:mm');
         switch(list.type){
           case 'TEXT':
             if(list.user_no === auth.token){
@@ -476,6 +481,39 @@ const ChatRoom = () => {
 
   // ========================
 
+  const sendCalendar = async (data) =>{
+    const calData = {
+      chatNo: auth.chatNo,
+      userNo: auth.token,
+      title: data.title,
+      contents: data.contentsCal,
+      startDate: data.startDate,
+      endDate: data.endDate
+    }
+    const response = await axios.post('/TT/talk/topic/addCalendar', calData)
+                                .then((res) =>{
+                                  console.log(res.data);
+                                  showCalendar(res.data);
+                                })
+  }
+  
+  const showCalendar = (data) =>{
+    return $("#chat-room").append("<div id='myCal'><p>알림등록</p>" +
+                                    "<div id='cal-body'>"+ "<div id='cal-text'>" +
+                                    "<p><strong>제목:&nbsp;</strong>"+ `${data.title}</p>` + 
+                                    "<p><strong>내용:&nbsp;</strong>"+ `${data.contentsCal}</p>` +
+                                    "<p><strong>시작일:&nbsp;</strong>"+ `${data.startDate}</p>` +
+                                    "<p><strong>종료일:&nbsp;</strong>"+ `${data.endDate}</p>` +
+                                +"</div></div></div>");
+  }
+
+  const callback = (data) =>{
+    calClose();
+    data.startDate = moment(data.startDate).format('YY/MM/DD HH:mm');
+    data.endDate = moment(data.endDate).format('YY/MM/DD HH:mm');
+    sendCalendar(data);
+  }  
+
     return (
       <Card sx={{ minWidth: 275 }}>
 
@@ -563,7 +601,7 @@ const ChatRoom = () => {
             </Button>
             <Modal open={calState}
                    onClose={calClose}>
-              <Calendar />
+              <Calendar callback={callback} calClose={calClose}/>
             </Modal>
           </div>
         </ButtonGroup>
