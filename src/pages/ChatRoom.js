@@ -166,8 +166,8 @@ const ChatRoom = () => {
        const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
                         .then((res) => {
                           console.log("사용자가 선택한chatno topic 삭제하기");
-                          const stompClient = Stomp.over(soc);
                           stompClient.disconnect();
+                          socket.close();
 
                         }).catch((err) => {
                           console.log(err);
@@ -369,6 +369,7 @@ const ChatRoom = () => {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
                                  setMessageList(res.data);
+                                 console.log('함 보자.....' ,res.data);
                                })
       } catch (error) {
         console.log(error);

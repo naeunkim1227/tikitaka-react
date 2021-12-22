@@ -102,7 +102,7 @@ export default function NotificationsPopover() {
                       throw `${res.status} ${res.statusText}`
                     }
 
-                    setDatalength(res.data.data.Nlist.length + res.data.data.Clist.length);
+                    setDatalength(res.data.data.Nlist.length);
                     
                     console.log('공지리스트 >>>>>>',res.data.data.Nlist)
                     console.log('채팅리스트 >>>>>>',res.data.data.Clist)
@@ -208,7 +208,7 @@ export default function NotificationsPopover() {
                 <NotificationItem key={notification.id} notification={notification} />
                 ))}
             </List>
-            <List
+            {/* <List
               disablePadding
               subheader={
                 <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
@@ -218,7 +218,7 @@ export default function NotificationsPopover() {
               {newchats.map((newchat) => (
                 <NewChat key={newchat.no} newchat={newchat}/>
                 ))}
-            </List>
+            </List> */}
           </Scrollbar>
 
         </MenuPopover>
