@@ -19,20 +19,74 @@ import Scrollbar from '../Scrollbar';
 import NoticeList from './NoticeList';
 import { useAuthState } from '../../Context';
 
+//socket
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import axios from 'axios';
 
 export default function AppNoticeUpdate() {
 
 
 const [notice, setNotice] = useState([]);
-const Auth = useAuthState();
+const auth = useAuthState();
+const [chatNolist,SetchatNolist] = useState();
+
+
+const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+const stompClient = Stomp.over(socket);
+
 
 const data = {
-  token : Auth.token
+  token : auth.token
 }
 
 useEffect(() => {
-    getAlertData();
+    getchatNolist();
+    AlertSocket();
+    // getAlertData();
 }, []);
+
+const getchatNolist = async() =>{
+  console.log('11111111111111111111111111111111111111')
+ 
+
+
+}
+
+const AlertSocket = async() => {
+  console.log('SOCKET CONNECT >>>>>>')
+    const list = await axios.post(`/TT/ring/alert/${auth.token}`, {headers:{"Content-Type":"application/json"}} )
+                .then((res) => {
+                  if(!res){
+                    console.log('res값 x')
+                    return
+                  }
+                  const chatNolist = res.data;
+                  console.log(chatNolist)
+                  console.log(res.data[0].no)
+                  return chatNolist
+                }).catch((err) => {
+                  console.log(err);
+                })
+
+ 
+    console.log('1. SOCKET CHAT NO >> ', list[0].no);
+
+    stompClient.connect({},function(){
+    list.map((chat) => {
+      console.log('제발!!!!',chat.no);
+        console.log('되나...되나..!')
+        stompClient.subscribe(`/alert/${list[0].no}`,  (message) => {
+          const msg =  JSON.parse(message.body);
+          console.log("3. DATA >>" , msg);
+
+        });
+
+      })
+  
+    })
+
+}
 
 
 const getAlertData =  async () => {

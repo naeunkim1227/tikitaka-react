@@ -47,8 +47,6 @@ import { Avatar, CardHeader } from '@mui/material';
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
-import SendIcon from '@mui/icons-material/Send';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +64,6 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
-    const opuser = useChatContext();
     const [stateCalendar, setStateCalendar] = useState(new Date());
     
     const [file, setFile] = useState();
@@ -162,8 +159,8 @@ const ChatRoom = () => {
        const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
                         .then((res) => {
                           console.log("사용자가 선택한chatno topic 삭제하기");
-                          const stompClient = Stomp.over(soc);
                           stompClient.disconnect();
+                          socket.close();
 
                         }).catch((err) => {
                           console.log(err);
