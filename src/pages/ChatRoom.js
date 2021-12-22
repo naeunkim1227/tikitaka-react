@@ -11,7 +11,7 @@ import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TextField from '@mui/material/TextField';
-import { green, lightGreen, red } from '@mui/material/colors';
+import { green, grey, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
 import { useAuthState } from 'src/Context';
@@ -24,6 +24,8 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import CalendarIcon from '@mui/icons-material/CalendarToday';
 import $ from 'jquery';
 import Calendar from './Calendar';
+import SendIcon from "@mui/icons-material/Send";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -40,13 +42,22 @@ import moment from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
+import { Avatar, CardHeader } from '@mui/material';
+
+import IconButton from 'src/theme/overrides/IconButton';
+import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
+import SendIcon from '@mui/icons-material/Send';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
 
 ///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const navigate = useNavigate();
+    const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -55,7 +66,14 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
+    const opuser = useChatContext();
     const [stateCalendar, setStateCalendar] = useState(new Date());
+    
+    const [file, setFile] = useState();
+    const [loadFile, setloadFile] = useState(); // append로 보낼 formData
+    const fileRef = useRef(null);
+    const sendFileRef = useRef();
+   
 
     const socket = new SockJS('http://localhost:8080/TT/websocket');
     const stompClient = Stomp.over(socket);
@@ -73,6 +91,8 @@ const ChatRoom = () => {
 
   useEffect(() => {
     console.log('1. OPEN SOCKET')
+    console.log('>>>>>opuser',opuser);
+    console.log(auth.profile);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
 
@@ -88,7 +108,7 @@ const ChatRoom = () => {
     }  
 
     const uploadImage = (e) =>{
-      setLoadImg(e.target.files[0]);
+      setLoadImg(e.target.files[0]); // 등록된 파일 가져오려면 [0]으로 들고와야함
       setTypeState('IMAGE');
     }
 
@@ -102,11 +122,24 @@ const ChatRoom = () => {
       setLoadImg('');
     }
 
+    // // Spring에 보낸 파일 삭제
+    const loadFileReset = () => { 
+      sendFileRef.current.value='';
+      setloadFile('');
+    }
+
+    // Button 클릭 시 uploadFile
+    const uploadFile = (e) => {
+      setloadFile(e.target.files[0]);
+      setTypeState('FILE'); // switch(typeState){ => case 'FILE':
+      // e.target.value =''; // Spring에 보낸 파일 삭제
+    }
+
+    const [soc,setSoc] = useState();
 
     const opensocket = async() => {
       console.log('2. SOCKET CHAT NO >> ',auth.chatNo);
       if(auth.chatNo){
-
         stompClient.connect({},function(){
           console.log('link sub socket');
           stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
@@ -117,8 +150,29 @@ const ChatRoom = () => {
           });
       })
       }
+      
         
     }
+
+        //채팅방 나가기
+    const outChat = async(e) =>{
+      console.log("OUTCHAT >>>>>>>", auth.chatNo);
+      
+     
+       const res = await axios.delete(`/TT/talk/topic/${auth.chatNo}`)
+                        .then((res) => {
+                          console.log("사용자가 선택한chatno topic 삭제하기");
+                          const stompClient = Stomp.over(soc);
+                          stompClient.disconnect();
+
+                        }).catch((err) => {
+                          console.log(err);
+                        })
+                        
+        navigate('/tikitaka/main', { replace: true});
+    }
+
+
 
     // 최근 공지 채팅방 상단에 띄우기
     const recentNotice = async() => {
@@ -171,19 +225,19 @@ const ChatRoom = () => {
                 })
 
         case 'IMAGE':
-          const formData = new FormData();
-          formData.append('file', loadImg);
+          const formData = new FormData(); 
+          formData.append('image', loadImg);
           const result = await axios.post(`/TT/talk/topic/sendimage`, formData, {headers:{"Content-Type":"multipart/form-data", "charset":"UTF-8"}})
                 .then((response) => {
-                    setImage(response.data);
-                    loadImgReset();
-                  return response.data;
+                    setImage(response.data); 
+                    loadImgReset(); // 보내고 나서 전송한 파일 삭제
+                  return response.data; 
                 })
                 .catch((err) => {
                   console.log(err);
                 });
           const ans = await result;
-          
+         
           const imageData = {
             chatNo : JSON.parse(auth.chatNo),
             userNo : auth.token,
@@ -193,6 +247,7 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           } 
+          
           return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
@@ -204,7 +259,54 @@ const ChatRoom = () => {
                           })
           
         case 'FILE':
-          return
+          const fileData = new FormData(); // FormData에는 키와 값 쌍으로 담아주어야 함
+          // "file" -> key값 => Spring @RequestParam
+          fileData.append("file", loadFile); // const [loadImg, setLoadImg] = useState(); 
+
+          // Spring에서 File url을 리턴(fileResult로)받기 
+          const fileResult = await axios.post(`/TT/talk/topic/sendFile`, 
+                                        fileData, 
+                                        { headers : {"Content-Type":"application/json" , 
+                                                     "charset":"UTF-8"}
+                                        })
+                      .then((response) => {
+                        setFile(response.data);
+                        loadFileReset(); // Spring에 보낸 파일 삭제 (안하면 남아있어서 직접 삭제해 주어야한다.) 
+
+                        console.log("file response data >>> ", file)
+
+                        return response.data; // Spring - service에서 uuid로 생성한 url 값
+                      })
+                      .catch((err) => {
+                        console.log("fileUpload error >>> ", err)
+                      });
+          
+          const fResult = await fileResult;
+
+          const sendFileData = {
+            chatNo : JSON.parse(auth.chatNo),
+            userNo : auth.token,
+            name : auth.name,
+            type : typeState,
+            message : fResult,
+            readCount : 1,
+            regTime : time
+          }
+
+          // 메세지 전송하듯이
+          return axios.post(`/TT/talk/topic`,
+                            JSON.stringify(sendFileData),
+                            {headers: {"Content-Type":"application/json" , 
+                                      "charset":"UTF-8"}
+                          })
+                .then ((response) => {
+                  console.log("file send >>> ", response);
+
+                  return response;
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
     }
 
 
@@ -229,14 +331,6 @@ const ChatRoom = () => {
       //                     console.log(err);
       //                   })
       
-      // //채팅방 나가기
-      // const res = await axios.delete(`/TT/talk/topic/${data.chatNo}`)
-      //                   .then((res) => {
-      //                     console.log("사용자가 선택한chatno 채팅방 나가기"+res);
-      //                   }).catch((err) => {
-      //                     console.log(err);
-      //                   })
-              
     }
 
     // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
@@ -268,21 +362,45 @@ const ChatRoom = () => {
       }
       showList();
     }
-    
+
+
+
+
+
+    //채팅목록 띄우기
     const showList = () => {
       messageList.map((list) => {
+        const time = moment(list.reg_time).format('YY/MM/DD   HH:mm');
         switch(list.type){
           case 'TEXT':
             if(list.user_no === auth.token){
-              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "<p id='myMessage'>" + list.contents + "</p>" + list.reg_time + "</br>" );
+              return $("#chat-room").append("<div id='mybubble'><div id='bubble-name'>"+ list.name+ `<img id='bubble-image' src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`
+              +"</div><div id='myMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
             }else {
-              return $("#chat-room").append("<h3>"+list.name+": </h3>" + "<p id='yourMessage'>" + list.contents + "</p>" + list.reg_time + "</br>");
+              return $("#chat-room").append("<div id='yourbubble'>" +
+              "<div id='bubble-name'>"
+              + list.name+`<img id='bubble-image' src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+              + "</div><div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
             }
           case 'IMAGE':
             if(list.user_no === auth.token){
-              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>`);
+              return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+              + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
+  
+
             }else {
-              return $("#chat-room").append("<h3>"+ list.name+": </h3>" + "</br>" + `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>`);
+              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+              + "</div>"
+               );
+  
             }
         }
       })
@@ -295,19 +413,49 @@ const ChatRoom = () => {
       switch(msg.type){
         case 'TEXT':
            if(msg.userNo === auth.token){
-            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "<p id='myMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>" );
+
+             return $("#chat-room").append("<div id='mybubble'>" +
+             "<div id='bubble-name'>"
+             + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+             + "</div><div id='myMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+             + "</div>"
+              );
+          
           }else if(auth.token !== msg.userNo){
-            return $("#chat-room").append("<h3>"+msg.name+": </h3>" + "<p id='yourMessage'>" + msg.contents + "</p>" + msg.regTime + "</br>");
+            return $("#chat-room").append("<div id='yourbubble'>" +
+            "<div id='bubble-name'>"
+            + msg.name+`<img id='bubble-image'  src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+            + "</div><div id='yourMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+            + "</div>"
+             );
+
           }
 
         case 'IMAGE':
           console.log("IMAGE 실행됨!!");
           if(msg.userNo === auth.token){
-            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
+            return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='1250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+            + "</div>"
+             );
+
+
+
           }else{
-            return $("#chat-room").append("<h3>"+ msg.name+": </h3>" + "</br>" + `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>`);
+            return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time+ "</div></div>"
+              + "</div>"
+               );
+  
           }
+
         case 'FILE':
+          console.log("FILE UPLOAD 실행됨!!")
+          if(msg.userNo === auth.token){ // 다운로드 이미지하면서 수정할겁니다,,,
+            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+          } else {
+            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+          }
       }
       
       
@@ -341,6 +489,11 @@ const ChatRoom = () => {
     setOpen(false);
   };
 
+
+
+  const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
+  
+  
   //--------------------------------------------------
   const [calState, setCalstate] = React.useState(false);
   const calClose = () =>{
@@ -354,9 +507,18 @@ const ChatRoom = () => {
 
     return (
       <Card sx={{ minWidth: 275 }}>
-      <CardContent id='room-top'>
-        <h3>{auth.title}님의 채팅방</h3>
-      </CardContent>
+
+      <CardHeader
+        avatar={
+          <Avatar aria-label="recipe"  src={`http://localhost:8080/TT${opuser.profile}`}>
+          </Avatar>
+        }
+        title={opuser.name}
+        subheader={`마지막 접속 시간 : ${logintime}`}
+      >
+        
+      </CardHeader>
+
       <CardContent id='room-top'>
         {/* chatNo에 해당하는 채팅방의 최근 공지 가져와서 채팅방 상단에 띄우기 
             no (noticeNo), reg_date, contents, name, title*/}
@@ -413,12 +575,16 @@ const ChatRoom = () => {
           <Button>
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
           </Button>
+
           <Button >
             <label for='input-file'><ImageIcon sx={{ width: 40, height: 40}}/></label>
             <input id='input-file' type='file' accept='images/*' onChange={uploadImage} ref={sendImgRef} style={{display:"none"}}/>
           </Button>
+
           <Button>
-            <UploadFileRoundedIcon sx={{ width: 40, height: 40}} />
+            <label for='input-file2'><UploadFileRoundedIcon sx={{ width: 40, height: 40}} /></label>
+            {/* input태그의 accept : 서버로 업로드할 수 있는 파일의 타입을 명시 */}
+            <input id='input-file2' type='file' accept='text/plain' onChange={uploadFile} ref={sendFileRef} style={{display:"none"}}/>
           </Button>
           <div>
             <Button onClick={openCalendar}>
@@ -436,18 +602,24 @@ const ChatRoom = () => {
           id="textWindow"
           placeholder='메시지를 입력하시오.'
           variant="outlined"
-          style={{align:"center" , width: '50%'}}
+          style={{align:"center" , width: '40%'}}
           type='text'
           name="message"
           value={contents}
           onChange={messageHandle}
           ref = {sendMsgRef}
         />
-        
        
-        <Button type='submit' variant="contained" style={{position: 'absolute', right:200}} size="large" onClick={sendMessage}>
-          보내기
-        </Button>
+        
+      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
+        Send
+      </Button>
+      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={outChat}>
+        나가기
+      </Button>
+
+      
+       
         </Box>
         </form>
       </CardContent>

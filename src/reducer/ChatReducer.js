@@ -1,8 +1,8 @@
 /* eslint-disable */
 
 let email =sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').email : '' ;
-let loginTime = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').loginTime :'';
-let logoutTime = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').logoutTime : '';
+let login_time= sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').login_time :'';
+let logout_time = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').logout_time : '';
 let name = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').name : '';
 let no = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').no : '';
 let readCount = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').readCount : '';
@@ -16,8 +16,8 @@ let careNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chat
 
 export const init = {
     email: "" || email,
-    loginTime: "" || loginTime,
-    logoutTime: "" || logoutTime,
+    login_time: "" || login_time,
+    logout_time: "" || logout_time,
     name: "" || name,
     no:  "" || no,
     phone: ""  || phone,
@@ -47,22 +47,23 @@ export const MessgeReducer = (init,action) => {
                  
         //      }
         case 'STORE_INFO' : 
-        console.log('>>>>>>> STORE_INFO')
-        console.log('>>>>>>> STORE_INFO', action.chatdata);
+        console.log('>>>>>>> STORE_INFO', action.chatdata[0]);
+        console.log('>>>>>>> STORE_INFO', action.chatdata[0].email);
+        console.log('>>>>>>> STORE_INFO', action.chatdata[0].profile);
 
              return{
                 ...init,
-                careNo: action.chatdata.careNo,
-                email: action.chatdata.email,
-                loginTime: action.chatdata.loginTime,
-                logoutTime: action.chatdata.logoutTime,
-                name: action.chatdata.name,
-                no:  action.chatdata.no,
-                phone: action.chatdata.phone,
-                proName: action.chatdata.proName,
-                profile:  action.chatdata.profile,
-                role:  action.chatdata.role,
-                status: action.chatdata.status
+                careNo: action.chatdata[0].careNo,
+                email: action.chatdata[0].email,
+                login_time: action.chatdata[0].login_time,
+                logout_time: action.chatdata[0].logout_time,
+                name: action.chatdata[0].name,
+                no:  action.chatdata[0].no,
+                phone: action.chatdata[0].phone,
+                proName: action.chatdata[0].proName,
+                profile:  action.chatdata[0].profile,
+                role:  action.chatdata[0].role,
+                status: action.chatdata[0].status
 
              }
             default : 
