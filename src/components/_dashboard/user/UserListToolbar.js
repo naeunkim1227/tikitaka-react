@@ -217,7 +217,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           <Button
           variant="text"
           onClick={(e) =>{
-            const title = "상대방의 userno: "+talkNo[0];
+            const title =  '개인 채팅';
             enterchat(chatstate, dispatch,talkNo,auth, title) 
             allUncheck();
           }}>

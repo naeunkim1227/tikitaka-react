@@ -119,6 +119,15 @@
 	margin-top: 5%;
 }
 
+#yourCal{
+	border:1px solid gray;
+	border-radius: 20px;
+	width: fit-content;
+	font-size: 20px;
+	text-align: center;
+	margin-top: 5%;
+}
+
 #cal-body{
 	background-color: #ff9e00;
 	border-radius: 20px;
