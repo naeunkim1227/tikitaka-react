@@ -35,9 +35,6 @@ export default function DashboardApp() {
   const time = moment(now()).format('HH:mm');
   const [contents,setContents] = useState(`${time}`);
   const [alert ,setAlert] =useState(0);
-
-  
-      
   const socket = new SockJS('http://localhost:8080/TT/alertsocket');
   const stompClient = Stomp.over(socket);
   
