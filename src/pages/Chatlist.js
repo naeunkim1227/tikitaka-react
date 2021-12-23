@@ -20,7 +20,12 @@ import { gettopic } from 'src/Context/action';
 import { Box, styled } from '@mui/system';
 import Badge from "@mui/material/Badge";
 import {makeStyles} from "@material-ui/core";
-import ChatRoom from './ChatRoom';
+
+//socket
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: -50,
@@ -46,23 +51,34 @@ export default function Chatlist() {
   const classes = useStyles(); //frontend
   const navigate = useNavigate();
   const [chatNolist, setChatlist] = useState([]);
+  const arrtitlemap = new Map(); //채팅방 title (key:chatNo value:title)
+  let arrcontentmap = new Map(); //채팅방 last_content (key:chatNo value:last_content)
+  let arrnoreadmap = new Map(); //채팅방 NoReadCount (key:chatNo value:NoReadCount)
   const [chatroomNameMap, setChaproomMap] = useState(new Map());
+  const [preContentMap, setPreContentMap] = useState(arrcontentmap);
   const [chatContentMap, setChatContentMap] = useState(new Map());
+  const [preNoreadMap, setpreNoreadMap] = useState(arrnoreadmap);
   const [chatNoreadMap, setChatNoreadMap] = useState(new Map());
+
+
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
   const userno = auth.token;
-  const arrtitlemap = new Map(); //채팅방 title (key:chatNo value:title)
-  const arrcontentmap = new Map(); //채팅방 last_content (key:chatNo value:last_content)
-  const arrnoreadmap = new Map(); //채팅방 NoReadCount (key:chatNo value:NoReadCount)
+
 
   useEffect(() => {
+    getChatlist1(userno);
+  },[])
+
+  useEffect(() => { //처음 마운트될때 실행됨
     getChatlist(userno);
-  },[]);
     
-    //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
-    const getChatlist = async(userno) => {
+  },[chatContentMap]);
+
+
+      //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
+      const getChatlist1 = async(userno) => {
         try{
             
             //사용자 연결되어있는 채팅리스트를 출력
@@ -82,7 +98,7 @@ export default function Chatlist() {
             setChatlist(res);
             //noReadMessage count하기
             for(var i=0; i<res.length; i++){
-              getnoReadmsgCount(userno,res[i]);
+              await getnoReadmsgCount(userno,res[i]);
             }
             //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
             const res2 = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
@@ -91,10 +107,92 @@ export default function Chatlist() {
               for(var i=0; i<response.data.length; i++){
                 arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
               }
+              setPreContentMap(arrcontentmap);
               setChatContentMap(arrcontentmap);
             }).catch((err)=>{
             console.log(err);
             })
+            
+        }
+        catch(err){
+            console.log("chatlist error" + err);
+        }
+    }
+
+  
+    //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
+    const getChatlist = async(userno) => {
+        try{
+            
+            //사용자 연결되어있는 채팅리스트를 출력
+            const chatnolist = await axios.post(`/TT/talk/topiclist/${userno}`)
+            .then((response) => {
+            var arr = [];
+            arrtitlemap.clear();
+            for(var i=0; i<response.data.length; i++){
+                arr.push(response.data[i].no);
+                arrtitlemap.set(response.data[i].no, response.data[i].title);
+            }
+            setChaproomMap(arrtitlemap);
+            return arr;
+            }).catch((err)=>{
+            console.log(err);
+            })
+            setChatlist(chatnolist);
+
+
+            const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+            const stompClient = Stomp.over(socket);
+            
+
+            if(chatnolist){
+            stompClient.connect({},function(){
+              chatnolist.map((chat) => {
+              console.log('SUB CHAT NO(ChatList) >>>>>>>>>>>>' , chat);
+                stompClient.subscribe(`/topic/${chat}`,  (message) => {
+                  const msg =  JSON.parse(message.body);
+                  console.log("lastMsgDATA 222222>>" , msg);
+                  if(msg.type === 'TEXT'){
+                    arrcontentmap = preContentMap;
+                    arrcontentmap.set(chat, msg.contents);
+                    setPreContentMap(arrcontentmap);
+                    setChatContentMap(arrcontentmap);
+
+                    // arrnoreadmap = preNoreadMap;
+                    // let countplus = arrnoreadmap.get(chat) + 1; //해당 챗넘버 key로 안읽은 메시지 수량 파악하고
+                    // console.log("청소부청소부청소부청소부청소부",countplus);
+                    // arrnoreadmap.set(chat, countplus);
+                    // setChatNoreadMap(arrnoreadmap);
+
+
+                  }
+                  // else if(msg.type === 'IMAGE'){
+                  //   const contents = `${msg.name} 님이 사진을 보냈습니다.`
+                  //   setContents(contents);
+                  // }
+
+                });
+              })
+          
+            })
+          }
+
+
+
+
+
+
+            // //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
+            // const res2 = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
+            // .then((response) => {
+            //   arrcontentmap.clear();
+            //   for(var i=0; i<response.data.length; i++){
+            //     arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
+            //   }
+            //   setChatContentMap(arrcontentmap);
+            // }).catch((err)=>{
+            // console.log(err);
+            // })
             
         }
         catch(err){
@@ -110,8 +208,10 @@ export default function Chatlist() {
         const res = await axios.post(`/TT/talk/topiclistnoread/${userno}/${chatno}`)
         .then((response) => {
           //arrnoreadmap.clear();
+          console.log("여기찍히니",response.data);
+          //arrnoreadmap = preNoreadMap;
           arrnoreadmap.set(chatno, response.data);
-          console.log(response.data)
+          setpreNoreadMap(arrnoreadmap);
           setChatNoreadMap(arrnoreadmap);
         }).catch((err)=>{
         console.log(err);

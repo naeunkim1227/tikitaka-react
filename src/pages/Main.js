@@ -35,8 +35,15 @@ export default function DashboardApp() {
   const time = moment(now()).format('HH:mm');
   const [contents,setContents] = useState(`${time}`);
   const [alert ,setAlert] =useState(0);
+  const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+  const stompClient = Stomp.over(socket);
   
   useEffect(() => {
+
+    return() => {
+      stompClient.disconnect();
+      socket.close();
+    }
   }, []);
   
   
@@ -48,30 +55,12 @@ export default function DashboardApp() {
   
   const AlertSocket = async() => {
     console.log('SOCKET CONNECT >>>>>>')
-      const list = await axios.post(`/TT/ring/alert/${auth.token}`, {headers:{"Content-Type":"application/json"}} )
-                  .then((res) => {
-                    if(!res){
-                      console.log('res값 x')
-                      return
-                    }
-                    const chatNolist = res.data;
-                    console.log(chatNolist)
-                    console.log(res.data[0].no)
-                    return chatNolist
-                  }).catch((err) => {
-                    console.log(err);
-                  })
+   
   
    
-      
-      const socket = new SockJS('http://localhost:8080/TT/alertsocket');
-      const stompClient = Stomp.over(socket);
-      
-      if(list){
       stompClient.connect({},function(){
-      list.map((chat) => {
-        console.log('SUB CHAT NO >>>>>>>>>>>>' , chat);
-          stompClient.subscribe(`/topic/${chat}`,  (message) => {
+        console.log('나의 번호', auth.token)
+          stompClient.subscribe(`/topic/${auth.token}`,  (message) => {
             const msg =  JSON.parse(message.body);
             console.log("3. AlertDATA >>" , msg);
             const time = moment(now()).format('HH:mm');
@@ -90,9 +79,6 @@ export default function DashboardApp() {
           });
   
         })
-    
-      })
-    }
 
   
   }
