@@ -35,7 +35,6 @@ export default function DashboardApp() {
   const time = moment(now()).format('HH:mm');
   const [contents,setContents] = useState(`${time}`);
   const [alert ,setAlert] =useState(0);
-  
   useEffect(() => {
   }, []);
   
