@@ -31,7 +31,7 @@ export const init = {
 
 
 
-export const MessgeReducer = (init,action) => {
+export const ChatReducer = (init,action) => {
     switch (action.type){
         // case 'VIEW_MESSAGE' :
         //     console.log('VIEW_MESSAGE >>>>> ' , action.chatdata);
