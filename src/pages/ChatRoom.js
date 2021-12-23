@@ -50,6 +50,10 @@ import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
 import { useNavigate } from 'react-router-dom';
+import { width } from '@mui/system';
+
+
+import ChatList from './Chatlist'
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -323,44 +327,8 @@ const ChatRoom = () => {
     }
 
 
-
-    //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
-      //메시지 보내기
-      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      // .then((response) => {
-      //   console.log("msg send: ", response);
-      //   return response;
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // })
-      
-      // //사용자의 연결되어있는 채팅리스트를 출력
-      // const res = await axios.get(`/TT/talk/topic`)
-      //                   .then((res) => {
-      //                     const channellist = res.data;
-      //                     console.log("추후 채팅목록에 사용:"+ channellist);
-      //                   }).catch((err)=>{
-      //                     console.log(err);
-      //                   })
-      
     }
 
-    // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
-    // const getmessage = async(e) => {
-    //   try{
-    //     console.log('데이터 보내버렷',chatinfo.chatNo);
-    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-    //     .then((res) => {
-    //       console.log('data test', res)
-    //       if(res.statusText !== "OK"){
-    //         throw `${res.status} ${res.statusText}`
-    //       }
-    //     })
-    //   }catch{
-  
-    //   }
-    // }
 
     const chatList =  async () =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
@@ -560,7 +528,43 @@ const ChatRoom = () => {
   }  
 
     return (
-      <Card sx={{ minWidth: 275 }}>
+      <div style={{ width: "100%" }}>
+        <Box
+             sx={{
+              display: "flex",
+              flexDirection: "row",
+              p: 1,
+              m: 1,
+            }}
+        >
+        <Card
+        component="div"
+        sx={{
+          blockSize: "90%",
+          display: "inline",
+          minWidth: 50,
+          minBlockSize: 200,
+          width: "30%",
+          marginRight: 2
+        }}
+       
+      >
+          <CardHeader
+        title={`${auth.name}님의 채팅목록`}
+        subheader={`마지막 접속 시간 : ${logintime}`}
+        mb={10}
+      ></CardHeader>
+        <ChatList/>
+      </Card>
+      <Card 
+      component="div"
+      sx={{  
+        blockSize: "80%",
+        width: "70%",
+        minWidth: 300,
+        minBlockSize: 200,
+        display: "inline",
+          }}>
 
       <CardHeader
         avatar={
@@ -601,7 +605,6 @@ const ChatRoom = () => {
       <form style={{alignItems: "center"}}>
       <Box
         sx={{
-          display: 'flex',
           position:'abslolute',
           flexDirection: 'row',
           alignItems: 'center',
@@ -610,6 +613,7 @@ const ChatRoom = () => {
           },
         }}
       >
+        <Box>
         <ButtonGroup variant='string'>
           {/* 공지 >>> Button, Modal */}
           <div>
@@ -650,13 +654,15 @@ const ChatRoom = () => {
             </Modal>
           </div>
         </ButtonGroup>
+        </Box>
+        <Box>
         <TextField
           inputMode
           hiddenLabel
           id="textWindow"
           placeholder='메시지를 입력하시오.'
           variant="outlined"
-          style={{align:"center" , width: '40%'}}
+          style={{align:"center" , width: '70%'}}
           type='text'
           name="message"
           value={contents}
@@ -668,9 +674,10 @@ const ChatRoom = () => {
       <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
         Send
       </Button>
-      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={outChat}>
+      <Button variant="outlined" style={{position: 'absolute', right:15, bottom: 40}}  size="small" startIcon={<LogoutIcon />} onClick={outChat}>
         나가기
       </Button>
+      </Box>
 
       
        
@@ -678,6 +685,8 @@ const ChatRoom = () => {
         </form>
       </CardContent>
     </Card>
+    </Box>
+    </div>
   );
 };
 

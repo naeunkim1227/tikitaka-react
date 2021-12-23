@@ -70,8 +70,8 @@ export default function DashboardApp() {
       if(list){
       stompClient.connect({},function(){
       list.map((chat) => {
-        console.log('SUB CHAT NO >>>>>>>>>>>>' , chat.no);
-          stompClient.subscribe(`/topic/${chat.no}`,  (message) => {
+        console.log('SUB CHAT NO >>>>>>>>>>>>' , chat);
+          stompClient.subscribe(`/topic/${chat}`,  (message) => {
             const msg =  JSON.parse(message.body);
             console.log("3. AlertDATA >>" , msg);
             const time = moment(now()).format('HH:mm');
