@@ -32,22 +32,18 @@ import moment, { now } from 'moment';
 export default function DashboardApp() {
 
   const auth = useAuthState();
-  const time = moment(now()).format('YY/MM/DD   HH:mm');
-  const [name,setName] = useState(`안녕하세요 ${auth.name}`);
-  const [regTime,setRegtime] = useState(``);
-  const [contents,setContents] = useState('');
-  const [alert ,setAlert] =useState(false);
+  const time = moment(now()).format('HH:mm');
+  const [contents,setContents] = useState(`${time}`);
+  const [alert ,setAlert] =useState(0);
   
   useEffect(() => {
-
-    setInterval
-    AlertSocket();
   }, []);
-
+  
   
   useEffect(() => {
-    toast(`${name} 님  :    ${contents} `);
-  }, [alert])
+    AlertSocket();
+    toast(`${contents}`);
+  }, [contents])
   
   
   const AlertSocket = async() => {
@@ -78,16 +74,26 @@ export default function DashboardApp() {
           stompClient.subscribe(`/topic/${chat.no}`,  (message) => {
             const msg =  JSON.parse(message.body);
             console.log("3. AlertDATA >>" , msg);
-            setName(msg.name);
-            setRegtime(msg.regTime);
-            setContents(msg.contents);
-            setAlert(true);
+            const time = moment(now()).format('HH:mm');
+            if(msg.type === 'TEXT'){
+              const contents = `${msg.name} : ${msg.contents} | 전송시각 : ${time}`
+              setContents(contents);
+              setAlert(alert + 1 );
+            }else if(msg.type === 'IMAGE'){
+              const contents = `${msg.name} 님이 사진을 보냈습니다. | 전송시각 : ${time}`
+              setContents(contents);
+              setAlert(alert + 1 );
+
+
+            }
+          
           });
   
         })
     
       })
     }
+
   
   }
   
