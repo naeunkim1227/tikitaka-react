@@ -94,81 +94,161 @@ const UpdateProfile = () => {
 
     return (
         <div align="center">
-            <Container >
-            <Box
-                component="form"
-                noValidate
-                autoComplete="off"
-                >
-            <Card sx={{ minWidth: 500 }} align="center">
-            <CardContent>
-                <form encType="multipart/form-data">
-                    <Badge color="success" overlap="circular" badgeContent=" ">
-                    <Avatar id='avatar' alt="" src={`http://localhost:8080/TT${auth.profile}`} sx={{ width: 100, height: 100 }} onChange={change} ref={profileRef}/>
-                    </Badge>
-                    <br />
-                    <br />
-                    <Button size="small" variant="contained" >
-                    <label for='load-img' >사진등록</label>
-                    <input id='load-img' type="file" accept="image/*" onChange={imageHandle} style={{display:"none"}}/>
-                    </Button>
-                    <Button size="small" variant="contained" onClick={changeImage}>프로필 변경</Button>
-                </form>
-                
-                <TextField
-                    id="outlined-required"
-                    label="이름:"
-                    defaultValue={auth.name}
-                    InputProps={{
-                        readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="사원번호:"
-                    defaultValue={`${auth.token}`}
-                    InputProps={{
-                        readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <br />
-                <TextField
-                    id="inline"
-                    label="이메일:"
-                    defaultValue={auth.email}
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                    onChange={emailChange}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="연락처:"
-                    defaultValue={auth.phone}
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                    onChange={phoneChange}
-                />
-                <br />
+            {
+                auth.role === 'CP' ?
+                <Container >
+                    <Box
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        >
+                    <Card sx={{ minWidth: 500 }} align="center">
+                    <CardContent>
+                        <form encType="multipart/form-data">
+                            <Badge color="success" overlap="circular" badgeContent=" ">
+                            <Avatar id='avatar' alt="" src={`http://localhost:8080/TT${auth.profile}`} sx={{ width: 100, height: 100 }} onChange={change} ref={profileRef}/>
+                            </Badge>
+                            <br />
+                            <br />
+                            <Button size="small" variant="contained" >
+                            <label for='load-img' >사진등록</label>
+                            <input id='load-img' type="file" accept="image/*" onChange={imageHandle} style={{display:"none"}}/>
+                            </Button>
+                            <Button size="small" variant="contained" onClick={changeImage}>프로필 변경</Button>
+                        </form>
+                        
+                        <TextField
+                            id="outlined-required"
+                            label="이름:"
+                            defaultValue={auth.name}
+                            InputProps={{
+                                readOnly: true
+                            }}
+                            variant="filled"
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                        />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="사원번호:"
+                            defaultValue={`${auth.token}`}
+                            InputProps={{
+                                readOnly: true
+                            }}
+                            variant="filled"
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                        />
+                        <br />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="이메일:"
+                            defaultValue={auth.email}
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                            onChange={emailChange}
+                        />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="연락처:"
+                            defaultValue={auth.phone}
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                            onChange={phoneChange}
+                        />
+                        <br />
+                    
+                    </CardContent>
+                    <CardActions>
+                        <Button variant="contained" 
+                                style={{position: 'absolute', right:300, marginRight: "10px", marginBottom: "10px"}} 
+                                size="small"
+                                onClick={updateProfile}>수정하기</Button>
+                    </CardActions><br/>
+                    </Card>
+                    </Box>
+                </Container>
+                :
+                <Container >
+                    <Box
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        >
+                    <Card sx={{ minWidth: 500 }} align="center">
+                    <CardContent>
+                        <form encType="multipart/form-data">
+                            <Badge color="success" overlap="circular" badgeContent=" ">
+                            <Avatar id='avatar' alt="" src={`http://localhost:8080/TT${auth.profile}`} sx={{ width: 100, height: 100 }} onChange={change} ref={profileRef}/>
+                            </Badge>
+                            <br />
+                            <br />
+                            <Button size="small" variant="contained" >
+                            <label for='load-img' >사진등록</label>
+                            <input id='load-img' type="file" accept="image/*" onChange={imageHandle} style={{display:"none"}}/>
+                            </Button>
+                            <Button size="small" variant="contained" onClick={changeImage}>프로필 변경</Button>
+                        </form>
+                        
+                        <TextField
+                            id="outlined-required"
+                            label="거래처명:"
+                            defaultValue={auth.name}
+                            InputProps={{
+                                readOnly: true
+                            }}
+                            variant="filled"
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                        />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="제품번호:"
+                            defaultValue={`${auth.token}`}
+                            InputProps={{
+                                readOnly: true
+                            }}
+                            variant="filled"
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                        />
+                        <br />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="이메일:"
+                            defaultValue={auth.email}
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                            onChange={emailChange}
+                        />
+                        <br />
+                        <TextField
+                            id="inline"
+                            label="연락처:"
+                            defaultValue={auth.phone}
+                            focused
+                            style={{minWidth: 350, marginBottom:10}}
+                            onChange={phoneChange}
+                        />
+                        <br />
+                    
+                    </CardContent>
+                    <CardActions>
+                        <Button variant="contained" 
+                                style={{position: 'absolute', right:300, marginRight: "10px", marginBottom: "10px"}} 
+                                size="small"
+                                onClick={updateProfile}>수정하기</Button>
+                    </CardActions><br/>
+                    </Card>
+                    </Box>
+                </Container>
+            }
             
-            </CardContent>
-            <CardActions>
-                <Button variant="contained" 
-                        style={{position: 'absolute', right:300, marginRight: "10px", marginBottom: "10px"}} 
-                        size="small"
-                        onClick={updateProfile}>수정하기</Button>
-            </CardActions><br/>
-            </Card>
-            </Box>
-        </Container>
         </div>
     );
 };
