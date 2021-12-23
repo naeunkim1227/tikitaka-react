@@ -41,8 +41,9 @@ const data = {
 }
 
 useEffect(() => {
-  getAlertData();
+    getAlertData();
 }, []);
+
 
 const getAlertData =  async () => {
     
