@@ -127,7 +127,7 @@ export default function Chatlist() {
           {chatNolist && chatNolist.map((chatno) => {
             return (             
             <ListItemButton alignItems="flex-start"
-            onClick={(e) => {
+            onClick={() => {
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
                 navigate('/tikitaka/chat', { replace: true});
             }}
