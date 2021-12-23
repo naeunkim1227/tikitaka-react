@@ -51,6 +51,7 @@ import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
 import { useNavigate } from 'react-router-dom';
+import { DataStateContext, DataContext, useDataStateContext, useDataContext } from 'src/Context/context';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -75,6 +76,10 @@ const ChatRoom = () => {
    
     const socket = new SockJS('http://localhost:8080/TT/websocket');
     const stompClient = Stomp.over(socket);
+
+    const datastate = useDataStateContext();
+    const datas = useDataContext();
+    
     // const chatinfo= {
     //   userNo: auth.token
     // }
@@ -151,6 +156,9 @@ const ChatRoom = () => {
             }else{
               showMessage(msg);
             }
+
+            datastate({type: 'STORE_MESSAGE', data: msg});
+            sessionStorage.setItem('Data', msg);
             
             
           });
@@ -216,6 +224,8 @@ const ChatRoom = () => {
       //   regTime: time        
       // }
       console.log('SEND MESSAGE TO ', auth.chatNo)
+      console.log('SEND TO >' , opuser);
+      console.log('SEND TO >' , opuser.no);
       const time = moment(now()).format('YY/MM/DD HH:mm');
     
       switch(typeState){
@@ -229,7 +239,7 @@ const ChatRoom = () => {
             readCount: 1,
             regTime: time
           }
-          return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return await axios.post(`/TT/talk/topic/${opuser.no}`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
                   // showMessage(response);
                   messageReset();
@@ -263,7 +273,7 @@ const ChatRoom = () => {
             regTime: time
           } 
           
-          return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return  axios.post(`/TT/talk/topic/${opuser.no}`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
                             //showMessage(response);
