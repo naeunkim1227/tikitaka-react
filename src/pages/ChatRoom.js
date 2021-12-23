@@ -46,7 +46,6 @@ import moment from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
-import { Avatar, CardHeader } from '@mui/material';
 
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
@@ -69,7 +68,6 @@ const ChatRoom = () => {
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
     const [stateCalendar, setStateCalendar] = useState(new Date());
-    const opuser = useChatContext();
     const [file, setFile] = useState();
     const [loadFile, setloadFile] = useState(); // append로 보낼 formData
     const fileRef = useRef(null);
