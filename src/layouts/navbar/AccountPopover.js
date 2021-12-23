@@ -89,7 +89,7 @@ export default function AccountPopover() {
           })
         }}
       >
-        <Avatar src={auth.profile} alt="photoURL" /> 
+        <Avatar src={`http://localhost:8080/TT${auth.profile}`} alt="photoURL" /> 
         {/* photo경로 예제: photoURL: '/static/mock-images/avatars/avatar_default.jpg' */}
       </IconButton>
       {
