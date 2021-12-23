@@ -544,7 +544,7 @@ const ChatRoom = () => {
                                 +"</div></div></div>");
     } else {
       return $("#chat-room").append("<div id='yourCal'><p>알림등록</p>" +
-                                    "<div id='cal-body'>"+ "<div id='cal-text'>" +
+                                    "<div id='cal-yourbody'>"+ "<div id='cal-text'>" +
                                     "<p><strong>제목:&nbsp;</strong>"+ `${cal.title}</p>` + 
                                     "<p><strong>내용:&nbsp;</strong>"+ `${cal.contents}</p>` +
                                     "<p><strong>시작일:&nbsp;</strong>"+ `${cal.startDate}</p>` +
