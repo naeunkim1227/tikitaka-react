@@ -34,7 +34,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { Block } from '@mui/icons-material';
+import { Block, RoomOutlined } from '@mui/icons-material';
 import { Air } from '@mui/icons-material';
 
 // Stomp
@@ -67,12 +67,14 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
+    const[roomNo, setRoomNo] = useState(auth.chatNo);
 
     const [file, setFile] = useState();
     const [loadFile, setloadFile] = useState(); // append로 보낼 formData
     const fileRef = useRef(null);
     const sendFileRef = useRef();
-   
+    const thisRoomNo = null;
+
     const socket = new SockJS('http://localhost:8080/TT/websocket');
     const stompClient = Stomp.over(socket);
     // const chatinfo= {
@@ -93,13 +95,16 @@ const ChatRoom = () => {
     console.log(auth.profile);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
-
     return() => {
       stompClient.disconnect();
       socket.close();
       exitTimeUpdate(); //chatroom 나갈떄 현재 시간 DB에 update
     }
 }, [auth.chatNo]);
+
+  useEffect(() => {
+    chatList();
+  },[]);
  
     const messageHandle = (e) =>{
         setContents(e.target.value);
@@ -372,11 +377,12 @@ const ChatRoom = () => {
                                .then((res)=>{
                                  setMessageList(res.data);
                                  console.log('함 보자.....' ,res.data);
+                                 showList(res.data);
                                })
       } catch (error) {
         console.log(error);
       }
-      showList();
+      
     }
 
 
@@ -384,8 +390,8 @@ const ChatRoom = () => {
 
 
     //채팅목록 띄우기
-    const showList = () => {
-      messageList.map((list) => {
+    const showList = (listData) => {
+      listData.map((list) => {
         const time = moment(list.reg_time).format('YY/MM/DD   HH:mm');
         switch(list.type){
           case 'TEXT':
@@ -420,7 +426,7 @@ const ChatRoom = () => {
             }
         }
       })
-      setRoomCallState(true);
+      //setRoomCallState(true);
     }
 
     const showMessage = (msg) =>{
@@ -480,13 +486,7 @@ const ChatRoom = () => {
     // const authNo = no;
     // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
   
-  useEffect(() => {
-    if (roomCallState === false) {
-      chatList();
-    } else {
-      return;
-    }
-  });
+  
   // const authNo = no;
   // //const fuserNo = res.data.userNo; // response데이터의 userNo 변수로저장 후 userNo와 현재로그인한 유저의 번호를 비교하여
   //                                 // 화면에 채팅창을 나눠서 표시

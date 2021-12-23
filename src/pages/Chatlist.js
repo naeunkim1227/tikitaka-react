@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useNavigate } from 'react-router-dom';
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -20,6 +20,7 @@ import { gettopic } from 'src/Context/action';
 import { Box, styled } from '@mui/system';
 import Badge from "@mui/material/Badge";
 import {makeStyles} from "@material-ui/core";
+import ChatRoom from './ChatRoom';
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: -50,
@@ -129,6 +130,7 @@ export default function Chatlist() {
             <ListItemButton alignItems="flex-start"
             onClick={() => {
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
+                console.log("변경후 chatNo" + auth.chatNo);
                 navigate('/tikitaka/chat', { replace: true});
             }}
             >
