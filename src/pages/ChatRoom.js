@@ -46,6 +46,7 @@ import moment from 'moment';
 import Modal from '@mui/material/Modal';
 import ChatNotice from 'src/components/ChatNotice';
 import { useChatContext, useChatStateContext } from 'src/Context/context';
+
 import IconButton from 'src/theme/overrides/IconButton';
 import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
@@ -54,6 +55,10 @@ import { width } from '@mui/system';
 
 
 import ChatList from './Chatlist'
+
+import saveAs from 'file-saver';
+
+import UserContact from 'src/components/UserContact';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -70,10 +75,13 @@ const ChatRoom = () => {
     const imgRef = useRef(null);
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
+
     const [file, setFile] = useState();
     const [loadFile, setloadFile] = useState(); // append로 보낼 formData
     const fileRef = useRef(null);
     const sendFileRef = useRef();
+
+    
    
     const socket = new SockJS('http://localhost:8080/TT/websocket');
     const stompClient = Stomp.over(socket);
@@ -134,6 +142,8 @@ const ChatRoom = () => {
       setloadFile(e.target.files[0]);
       setTypeState('FILE'); // switch(typeState){ => case 'FILE':
       // e.target.value =''; // Spring에 보낸 파일 삭제
+
+      
     }
 
     const [soc,setSoc] = useState();
@@ -146,6 +156,9 @@ const ChatRoom = () => {
           stompClient.subscribe(`/topic/${auth.chatNo}`,  (message) => {
             const msg =  JSON.parse(message.body);
             
+            setMsg(msg);
+            console.log("hihi>>>>>>>>>>" , msg)
+
             console.log("3. DATA >>" , msg);
             console.log("subData type!!!!"+msg.type);
             if(msg.type === undefined){
@@ -368,25 +381,51 @@ const ChatRoom = () => {
               + "</div>"
                );
             }
+
           case 'IMAGE':
             if(list.user_no === auth.token){
-              return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-              + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
+              return $("#chat-room").append("<div id='mybubble'><div id='bubble-name'>"+ list.name+ `<img id='bubble-image' src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`
+              +"</div><div id='myMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
                );
-  
+            }else {
+              return $("#chat-room").append("<div id='mybubble'><div id='bubble-name'>"+ list.name+ `<img id='bubble-image' src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`
+              +"</div><div id='myMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+               );
+            }
+
+          case 'FILE':
+            if(list.user_no === auth.token){
+              return $("#chat-room").append("<div id='mybubble'>" +
+              "<div id='bubble-name'>"
+              + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={fileRef}></img>`  
+              + "</div><div id='fileMessage'>" + list.contents + "<br></br>" + "<button id='fileDownButton' onclick='fileDown()'> 다운로드 </button>" + "<div id='bubble-time'>" + time + "</div></div>"
+              + "</div>"
+              ); 
 
             }else {
-              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
-              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+              return $("#chat-room").append("<div id='mybubble'>" +
+              "<div id='bubble-name'>"
+              + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={fileRef}></img>`  
+              + "</div><div id='fileMessage'>" + list.contents + "<br></br>" + "<button id='fileDownButton' onclick='fileDown()'> 다운로드 </button>" + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
-               );
-  
+              ); 
             }
+
         }
       })
       setRoomCallState(true);
+    }
+    
+    
+    // 채팅창에서 파일다운로드 버튼 클릭시 
+    window.fileDown = async(e) => {
+      console.log('파일 다운로드 합시다')
+      // location.href = "http://www.naver.com";
+      console.log("받아오나요? >>>>>>>> ", msg.contents)
+
+      
     }
 
     const showMessage = (msg) =>{
@@ -417,7 +456,7 @@ const ChatRoom = () => {
           console.log("IMAGE 실행됨!!");
           if(msg.userNo === auth.token){
             return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='1250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='1250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
              );
 
@@ -434,9 +473,23 @@ const ChatRoom = () => {
         case 'FILE':
           console.log("FILE UPLOAD 실행됨!!")
           if(msg.userNo === auth.token){ // 다운로드 이미지하면서 수정할겁니다,,,
-            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
-          } else {
-            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+            return $("#chat-room").append("<div id='mybubble'>" +
+             "<div id='bubble-name'>"
+             + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+             + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
+            //  + `<a href=http://localhost:8080/TT${msg.contents} download>`  
+             + "<button id='fileDownButton' onclick='fileDown()'> 다운로드 </button> " 
+             + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+             + "</div>"
+              );
+          } else if(auth.token !== msg.userNo){
+            return $("#chat-room").append("<div id='mybubble'>" +
+            "<div id='bubble-name'>"
+            + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='fileMessage'>" + ` <div> <a href=http://localhost:8080/TT/${msg.contents} download>  </a> </div>`  + "<br></br>" + "<button id='fileDownButton' onclick='fileDown()'> 다운로드 </button>" + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+            + "</div>"
+             );
+
           }
       }
       
@@ -462,7 +515,7 @@ const ChatRoom = () => {
 
 
   //--------------------------------------------------
-  // modal open
+  // notice Modal
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -471,12 +524,21 @@ const ChatRoom = () => {
     setOpen(false);
   };
 
+  // contact Modal
+  const [ctState, setCtState] = React.useState(false);
+  const openContact = () => {
+    setCtState(true);
+  }
+  const closeContact = () => {
+    setOpen(false);
+  }
 
 
   const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
   
   
   //--------------------------------------------------
+  // cal Modal
   const [calState, setCalstate] = React.useState(false);
   const calClose = () =>{
     setCalstate(false);
@@ -510,7 +572,7 @@ const ChatRoom = () => {
                                 +"</div></div></div>");
     } else {
       return $("#chat-room").append("<div id='yourCal'><p>알림등록</p>" +
-                                    "<div id='cal-body'>"+ "<div id='cal-text'>" +
+                                    "<div id='cal-yourbody'>"+ "<div id='cal-text'>" +
                                     "<p><strong>제목:&nbsp;</strong>"+ `${cal.title}</p>` + 
                                     "<p><strong>내용:&nbsp;</strong>"+ `${cal.contents}</p>` +
                                     "<p><strong>시작일:&nbsp;</strong>"+ `${cal.startDate}</p>` +
@@ -620,7 +682,7 @@ const ChatRoom = () => {
             <Button onClick={handleOpen}>
               <ArticleIcon sx={{ width: 40, height: 40}} />
             </Button>
-                <Modal
+            <Modal
               open={open}
               onClose={handleClose}
               aria-labelledby="parent-modal-title"
@@ -630,8 +692,14 @@ const ChatRoom = () => {
             </Modal>
           </div>
           
-          <Button>
+          <Button onClick={openContact}>
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
+              <Modal
+                open={ctState}
+                onClose={closeContact}
+              >
+                <UserContact />
+              </Modal>
           </Button>
 
           <Button >

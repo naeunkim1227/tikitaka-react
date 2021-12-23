@@ -65,12 +65,10 @@ const Profile = () => {
     const [userInfo, setUserInfo] = useState([]);
     const navigate = useNavigate();
     const getInfo = async () => {
-        
         try {
             const res = await axios.get(`/TT/getInfo/${auth.token}`)
                                 .then((res) => {
-                                    const result = JSON.parse(JSON.stringify(res.data))
-                                    setUserInfo(result);
+                                    setUserInfo(res.data);
                                 })
         } catch (error) {
             
@@ -86,117 +84,219 @@ const Profile = () => {
 
     useEffect(() => {
         getInfo();
-    })
+    },[])
     return (
         <div align="center">
-        <Container >
-            <Card sx={{ minWidth: 500 }} align="center" >
-            <CardContent>
-                <StyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    variant="dot"
-      >
-                <Avatar alt="" src={`/TT${auth.profile}`} sx={{ width: 100, height: 100 }} />
-                </StyledBadge>
-                <br />
-                <br />
-                <Box
-                component="form"
-                sx={{
-                    "& < :not(style)": { m: 1, width: "25ch" }
-                }}
-                noValidate
-                autoComplete="off"
-                >
-                <TextField
-                    id="inline"
-                    label="이름:"
-                    color="warning"
-                    value={auth.name}
-                    InputProps={{
-                    readOnly: true
+        {
+            
+            auth.role === 'CP' ?
+            <Container >
+                <Card sx={{ minWidth: 500 }} align="center" >
+                <CardContent>
+                    <StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+        >
+                    <Avatar alt="" src={`/TT${auth.profile}`} sx={{ width: 100, height: 100 }} />
+                    </StyledBadge>
+                    <br />
+                    <br />
+                    <Box
+                    component="form"
+                    sx={{
+                        "& < :not(style)": { m: 1, width: "25ch" }
                     }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="근무지사:"
-                    color="warning"
-                    value={userInfo[0]}
-                    InputProps={{
-                    readOnly: true
+                    noValidate
+                    autoComplete="off"
+                    >
+                    <TextField
+                        id="inline"
+                        label="이름:"
+                        color="warning"
+                        value={auth.name}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="근무지사:"
+                        color="warning"
+                        value={userInfo[0]}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="부서:"
+                        color="warning"
+                        value={userInfo[1]}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="직책:"
+                        color="warning"
+                        value={userInfo[2]}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="이메일:"
+                        color="warning"
+                        value={auth.email}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="연락처:"
+                        color="warning"
+                        value={auth.phone}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    </Box>
+                </CardContent>
+                <CardActions>
+                    <Button variant="contained" 
+                            style={{position: 'absolute', right:400, marginRight: "10px", marginBottom: "10px"}} 
+                            size="large"
+                            onClick={move}>회원정보 수정하기</Button>
+                </CardActions><br/>
+                </Card>
+            </Container>
+                :
+            <Container >
+                <Card sx={{ minWidth: 500 }} align="center" >
+                <CardContent>
+                    <StyledBadge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        variant="dot"
+        >
+                    <Avatar alt="" src={`/TT${auth.profile}`} sx={{ width: 100, height: 100 }} />
+                    </StyledBadge>
+                    <br />
+                    <br />
+                    <Box
+                    component="form"
+                    sx={{
+                        "& < :not(style)": { m: 1, width: "25ch" }
                     }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="부서:"
-                    color="warning"
-                    value={userInfo[1]}
-                    InputProps={{
-                    readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="직책:"
-                    color="warning"
-                    value={userInfo[2]}
-                    InputProps={{
-                    readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="이메일:"
-                    color="warning"
-                    value={auth.email}
-                    InputProps={{
-                    readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                <TextField
-                    id="inline"
-                    label="연락처:"
-                    color="warning"
-                    value={auth.phone}
-                    InputProps={{
-                    readOnly: true
-                    }}
-                    variant="filled"
-                    focused
-                    style={{minWidth: 350, marginBottom:10}}
-                />
-                <br />
-                </Box>
-            </CardContent>
-            <CardActions>
-                <Button variant="contained" 
-                        style={{position: 'absolute', right:400, marginRight: "10px", marginBottom: "10px"}} 
-                        size="large"
-                        onClick={move}>회원정보 수정하기</Button>
-            </CardActions><br/>
-            </Card>
-        </Container>
+                    noValidate
+                    autoComplete="off"
+                    >
+                    <TextField
+                        id="inline"
+                        label="거래처명:"
+                        color="warning"
+                        value={auth.name}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="사용제품명:"
+                        color="warning"
+                        value={userInfo[1]}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="제품 담당 지사:"
+                        color="warning"
+                        value={userInfo[0]}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    
+                    <TextField
+                        id="inline"
+                        label="이메일:"
+                        color="warning"
+                        value={auth.email}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    <TextField
+                        id="inline"
+                        label="연락처:"
+                        color="warning"
+                        value={auth.phone}
+                        InputProps={{
+                        readOnly: true
+                        }}
+                        variant="filled"
+                        focused
+                        style={{minWidth: 350, marginBottom:10}}
+                    />
+                    <br />
+                    </Box>
+                </CardContent>
+                <CardActions>
+                    <Button variant="contained" 
+                            style={{position: 'absolute', right:400, marginRight: "10px", marginBottom: "10px"}} 
+                            size="large"
+                            onClick={move}>회원정보 수정하기</Button>
+                </CardActions><br/>
+                </Card>
+            </Container>
+        }
+        
         </div>
       );
 };
