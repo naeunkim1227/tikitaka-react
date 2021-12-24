@@ -12,6 +12,8 @@ let profile = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('cha
 let role = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').role : '';
 let status = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').status : '';
 let careNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').careNo : '';
+let title = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').title : '';
+let chatNo = sessionStorage.getItem('chatMessage')? sessionStorage.getItem('chatMessage').chatNo : '';
 
 
 export const init = {
@@ -25,7 +27,9 @@ export const init = {
     profile:  "" || profile,
     role:  "" || role,
     status: "" || status,
-    careNo: "" || careNo
+    careNo: "" || careNo,
+    title : "" || title,
+    chatNo : "" || chatNo
 }
 
 
@@ -66,7 +70,18 @@ export const ChatReducer = (init,action) => {
                 status: action.chatdata[0].status
 
              }
-             
+        case 'STORE_TITLE' : 
+        console.log('>>>>>>> STORE_TITLE', action.chatdata);
+            
+             return {
+                ...init,
+                title : action.chatdata.title,
+                chatNo : action.chatdata.chatNo
+             }
         
+        
+        default : 
+            throw new Error(`명시 되지 않은 Action :  ${action.type}`)
+
     }
 }

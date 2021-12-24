@@ -15,7 +15,7 @@ import axios from 'axios';
 import Page from 'src/components/Page';
 import Scrollbar from 'src/components/Scrollbar';
 import {  useAuthDispatch } from 'src/Context'; // gettopic 나중에 수정후 필요
-import { useChatStateContext } from 'src/Context/context';
+import { useChatContext, useChatStateContext } from 'src/Context/context';
 import { gettopic } from 'src/Context/action';
 import { Box, styled } from '@mui/system';
 import Badge from "@mui/material/Badge";
@@ -64,6 +64,7 @@ export default function Chatlist() {
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
+  const opuser = useChatContext();
   const userno = auth.token;
 
   const socket = new SockJS('http://localhost:8080/TT/alertsocket');
@@ -99,6 +100,7 @@ export default function Chatlist() {
             for(var i=0; i<response.data.length; i++){
                 arr.push(response.data[i].no);
                 arrtitlemap.set(response.data[i].no, response.data[i].title);
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>', response.data);
             }
             setChaproomMap(arrtitlemap);
             return arr;
@@ -122,6 +124,16 @@ export default function Chatlist() {
             }).catch((err)=>{
             console.log(err);
             })
+
+            // 채팅방번호로 속한 멤버 정보 가져오기
+            const res3 = await axios.post(`/TT/searchlotinfo/${userno}`)
+                        .then((response) => {
+                          console.log(response);
+                          chatstate({type: 'STORE_TITLE', chatdata: response.data})
+                          sessionStorage.setItem('chatMessage',response.data)
+                        }).catch((err)=> {
+                          console.log(err);
+                        })
             
         }
         catch(err){
