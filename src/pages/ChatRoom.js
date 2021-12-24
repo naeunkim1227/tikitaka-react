@@ -69,6 +69,7 @@ const ChatRoom = () => {
     const sendImgRef = useRef();
     const sendMsgRef = useRef();
     const[roomNo, setRoomNo] = useState(auth.chatNo);
+    const scrollRef = useRef();
 
     const [file, setFile] = useState();
     const [loadFile, setloadFile] = useState(); // append로 보낼 formData
@@ -109,7 +110,7 @@ const ChatRoom = () => {
 
   useEffect(() => {
     chatList();
-  },[]);
+  },[auth.chatNo]);
  
     const messageHandle = (e) =>{
         setContents(e.target.value);
@@ -409,14 +410,14 @@ const ChatRoom = () => {
               return $("#chat-room").append("<div id='mybubble'><div id='bubble-name'>"+ list.name+ `<img id='bubble-image' src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`
               +"</div><div id='myMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
-               );
+               )
             }else {
               return $("#chat-room").append("<div id='yourbubble'>" +
               "<div id='bubble-name'>"
               + list.name+`<img id='bubble-image' src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
               + "</div><div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
-               );
+               )
             }
           case 'IMAGE':
             if(list.user_no === auth.token){
@@ -435,6 +436,7 @@ const ChatRoom = () => {
   
             }
         }
+       
       })
       //setRoomCallState(true);
     }
@@ -571,6 +573,17 @@ const ChatRoom = () => {
     sendCalendar(data);
   }  
 
+  const scrollToBottom = ()=>{
+    const rollfick = document.getElementById("chat-room");
+
+    rollfick.scrollIntoView(false);
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }
+
+  useEffect(()=>{
+    scrollToBottom();
+  })
+
     return (
       <Card sx={{ minWidth: 275 }}>
 
@@ -603,11 +616,11 @@ const ChatRoom = () => {
         
       </CardContent>
       <CardContent id='room' sx={{ width:'100%' , height:"70vh"}}>
-        <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
-        <div id='chat-room'>
-          
+      <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
+        <div id='chat-room' ref={scrollRef}>
+        
         </div>  
-        </Scrollbar>
+      </Scrollbar>
       </CardContent>
       <CardContent id='room-bottom'>
       <form style={{alignItems: "center"}}>
