@@ -66,8 +66,7 @@ export const ChatReducer = (init,action) => {
                 status: action.chatdata[0].status
 
              }
-            default : 
-            throw new Error(`명시 되지 않은 Action :  ${action.type}`)
-
+             
+        
     }
 }
