@@ -111,6 +111,11 @@ const ChatRoom = () => {
 
   useEffect(() => {
     chatList();
+    exitTimeUpdate();
+
+    return() => {
+      exitTimeUpdate();
+    }
   },[auth.chatNo]);
  
     const messageHandle = (e) =>{

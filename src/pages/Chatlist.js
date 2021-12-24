@@ -72,7 +72,7 @@ export default function Chatlist() {
 
 
   useEffect(() => {
-    getChatlist1(userno);
+    getChatlistinit(userno);
     return() => {
       stompClient.disconnect();
       socket.close();
@@ -80,17 +80,24 @@ export default function Chatlist() {
   },[])
 
   useEffect(() => { 
-    getChatlist(userno);
+    opensocket(userno);
     return() => {
       stompClient.disconnect();
       socket.close();
     }
   },[chatContentMap]); 
 
+  const upsert = (key, value) => {
+    setChatContentMap((prev) => new Map(prev).set(key, value));
+  }
+  
+  const upsertcount = (key, value) => {
+    setChatNoreadMap((prev) => new Map(prev).set(key, value+1));
+  }
 
 
       //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
-      const getChatlist1 = async(userno) => {
+      const getChatlistinit = async(userno) => {
         try{
             
             //사용자 연결되어있는 채팅리스트를 출력
@@ -144,27 +151,9 @@ export default function Chatlist() {
     }
 
   
-    //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
-    const getChatlist = async(userno) => {
+    //소켓으로 실시간으로 받아옴
+    const opensocket = (userno) => {
         try{
-
-            // //사용자 연결되어있는 채팅리스트를 출력
-            // const chatnolist = await axios.post(`/TT/talk/topiclist/${userno}`)
-            // .then((response) => {
-            // var arr = [];
-            // arrtitlemap.clear();
-            // for(var i=0; i<response.data.length; i++){
-            //     arr.push(response.data[i].no);
-            //     arrtitlemap.set(response.data[i].no, response.data[i].title);
-            // }
-            // setChaproomMap(arrtitlemap);
-            // return arr;
-            // }).catch((err)=>{
-            // console.log(err);
-            // })
-            // setChatlist(chatnolist);
-
-
 
             stompClient.connect({},function(){
               console.log('SUB USER NO(ChatList) >>>>>>>>>>>>' , userno);
@@ -173,41 +162,27 @@ export default function Chatlist() {
               console.log("lastMsgDATA 222222>>" , msg);
               for(var i=0; i<chatNolist.length; i++){
                 if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
-                  //arrcontentmap = preContentMap;
-                  let arrcontentmap22222 = new Map();
-                  // for(var i=0; i<chatNolist.length; i++){
-                  //   if(chatNolist[i] == msg.chatNo){
-                  //     arrcontentmap22222.set(msg.chatNo, msg.contents);
-                  //     console.log("내가 원하는거임 ㅅㅅ")
-                  //   }
-                  //   else{
-                  //     arrcontentmap22222.set(chatNolist[i],preContentMap.get(chatNolist[i]));
-                  //   }
-                    
-                  // }
-
                   upsert(parseInt(msg.chatNo), msg.contents);
 
-                  upsertcount(parseInt(msg.chatNo),chatNoreadMap.get(parseInt(msg.chatNo))+1)
+                  console.log("나의 안읽은메시지 카운트갯수",chatNoreadMap)
+                  upsertcount(parseInt(msg.chatNo),)
                 }
               }
-              
                   // if(msg.type === 'TEXT'){
                   //   arrcontentmap = preContentMap;
                   //   arrcontentmap.set(chat, msg.contents);
                   //   setPreContentMap(arrcontentmap);
                   //   setChatContentMap(arrcontentmap);
-
-                    
-
                   // }
                   // else if(msg.type === 'IMAGE'){
                   //   const contents = `${msg.name} 님이 사진을 보냈습니다.`
                   //   setContents(contents);
                   // }
-
               });
             })    
+
+
+
         }
         catch(err){
             console.log("chatlist error" + err);
@@ -215,13 +190,7 @@ export default function Chatlist() {
     }
 
 
-    const upsert = (key, value) => {
-      setChatContentMap((prev) => new Map(prev).set(key, value));
-    }
 
-    const upsertcount = (key, value) => {
-      setChatNoreadMap((prev) => new Map(prev).set(key, value));
-    }
     
 
 
@@ -257,6 +226,7 @@ export default function Chatlist() {
             onClick={() => {
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
                 navigate('/tikitaka/chat', { replace: true});
+                getChatlistinit(userno);
             }}
             >
             <ListItemAvatar>
@@ -305,27 +275,6 @@ export default function Chatlist() {
           })}
 
         <Divider variant="inset" component="li" />
-        <ListItem alignItems="flex-start">
-            <ListItemAvatar>
-            <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-            </ListItemAvatar>
-            <ListItemText 
-             primary="Design수정"
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: 'inline' }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    seung woo
-                  </Typography>
-                  {' — Do you have Paris recommendations? Have you ever…'}
-                </React.Fragment>
-              }
-            />
-        </ListItem>
         </List>      
         </Page>
     
