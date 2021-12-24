@@ -87,14 +87,14 @@ export default function Chatlist() {
     }
   },[chatContentMap]); 
 
-  const upsert = (key, value) => {
+  //socket으로 받아오는 마지막 메시지
+  const upsetContent = (key, value) => {
     setChatContentMap((prev) => new Map(prev).set(key, value));
   }
-  
-  const upsertcount = (key, value) => {
-    setChatNoreadMap((prev) => new Map(prev).set(key, value+1));
+  //socket으로 받아오는 안읽은 메시지 카운트
+  const upsetnoReadcount = (key) => {
+    setChatNoreadMap((prev) => new Map(prev).set(key, prev.get(key)+1));
   }
-
 
       //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
       const getChatlistinit = async(userno) => {
@@ -162,10 +162,8 @@ export default function Chatlist() {
               console.log("lastMsgDATA 222222>>" , msg);
               for(var i=0; i<chatNolist.length; i++){
                 if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
-                  upsert(parseInt(msg.chatNo), msg.contents);
-
-                  console.log("나의 안읽은메시지 카운트갯수",chatNoreadMap)
-                  upsertcount(parseInt(msg.chatNo),)
+                  upsetContent(parseInt(msg.chatNo), msg.contents);
+                  upsetnoReadcount(parseInt(msg.chatNo))
                 }
               }
                   // if(msg.type === 'TEXT'){
