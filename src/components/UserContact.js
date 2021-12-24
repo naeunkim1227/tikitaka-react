@@ -7,48 +7,13 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import UserContactTable from './UserContactTable';
 import { Card, CardHeader } from '@mui/material';
+import Button from '@mui/material/Button';
+
 
 
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
-  const enter = async(dispatch,no,auth) => {
-    console.log('enterchat 실행')
-      let response = await enterchat(dispatch.no,auth);
-     console.log(response);
-  
-     if(response === "0"){
-           console.log('false >> create topic');
-          createTopic(no, auth);
-  
-     }
-  
-  }  
-  
-    const createTopic = async (no, auth) =>{
-      console.log('토픽 추가, 스톰프 실행!')
-        // chatNo 반환 + topic 생성
-        let res = await maketopic(dispatch, no, auth);
-        console.log('res 값 출력 :' ,res);
-  
-        //chatNo 가지고 socket연결
-         const cno = res.replace(/"/g,"");
-         await opensocket(cno);
-          
-  
-        if(!res){
-            console.log("실패");
-              return;
-        }else{
-            //chatNo 가지고 socket연결
-            const cno = res.replace(/"/g,"");
-            await opensocket(cno);
-            navigate('/tikitaka/chat', { replace: true});
-        }
-   
-  
-  }
 
 
   return (
@@ -96,11 +61,11 @@ function a11yProps(index) {
   pb: 3
 };
 
-const UserlistTabbar = () => {
+const UserContact = ({contactCallback, closeContact}) => {
 
     const [value, setValue] = React.useState(0);
     const [type, setType] =React.useState("CP");
-    
+
     const handleChange = (event, newValue) => {
       setValue(newValue);
       if(newValue==1){
@@ -110,6 +75,15 @@ const UserlistTabbar = () => {
         setType("CS");
       }
     };
+
+    const close = () => {
+      closeContact();
+    }
+
+    const callback = (contactData) => {
+      console.log(contactData)
+      contactCallback(contactData);
+    }
 
     return (
       <Box
@@ -121,25 +95,27 @@ const UserlistTabbar = () => {
         <CardHeader title="연락처 전송하기" />
         <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" >
             <Tab label="전  체" {...a11yProps(0)} />
             <Tab label="부  서" {...a11yProps(1)} />
             <Tab label="거 래 처" {...a11yProps(2)} />
           </Tabs>
         </Box>
         <TabPanel value={value} index={0}>
-          <UserContactTable/>
+          <UserContactTable contactCallback={contactCallback} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <UserContactTable type={type}/>
+          <UserContactTable type={type} contactCallback={contactCallback} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <UserContactTable type={type}/>
+          <UserContactTable type={type} contactCallback={contactCallback} />
         </TabPanel>
+      <Button variant="contained" color='error' onClick={close}>닫기</Button>
       </Box>
+
       </Card>
       </Box>
     );
 };
 
-export default UserlistTabbar;
+export default UserContact;

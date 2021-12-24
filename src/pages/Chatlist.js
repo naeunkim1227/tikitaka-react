@@ -95,6 +95,7 @@ export default function Chatlist() {
             .then((response) => {
             var arr = [];
             arrtitlemap.clear();
+            console.log("chatlist data!!!!!!!!"+JSON.stringify(response));
             for(var i=0; i<response.data.length; i++){
                 arr.push(response.data[i].no);
                 arrtitlemap.set(response.data[i].no, response.data[i].title);
@@ -242,7 +243,6 @@ export default function Chatlist() {
             <ListItemButton alignItems="flex-start"
             onClick={() => {
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
-                console.log("변경후 chatNo" + auth.chatNo);
                 navigate('/tikitaka/chat', { replace: true});
             }}
             >

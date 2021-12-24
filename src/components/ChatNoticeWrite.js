@@ -24,7 +24,7 @@ export default function NoticeForm({notice}) {
   // -------------------------------------------
 
   const navigate = useNavigate();
-  const [state, setState] = useState(''); // 공지 중요도 
+  const [state, setState] = useState('0'); // 공지 중요도 
 
   // 입력칸이 빈 칸일 때 에러 메세지 띄우기 -> formik에서 적용시켜준다.
   const RegisterSchema = Yup.object().shape({
@@ -69,13 +69,17 @@ export default function NoticeForm({notice}) {
                           alert("뭔가 잘못됐다;");
                           return;
                         }
-                        navigate('/tikitaka', {replace: true});
+                        navigate('/tikitaka/chat', { replace: true});
+                        // navigate('/tikitaka', {replace: true});
                         })
                         .catch((error) => {
                           console.log("ChatNoticeWrite" + error);
                         })
     }
+
   });
+
+  // navigate('/tikitaka/chat', { replace: true});
 
   const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
