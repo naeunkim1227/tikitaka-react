@@ -87,8 +87,8 @@ const ChatRoom = () => {
     // }
 
   //보낸 메세지 상태 관리,저장 context
-  const chatstate = useChatStateContext();
-  const ttmessage = useChatContext();
+  // const chatstate = useChatStateContext();
+  const grouptitle = useChatContext();
   const [msg,setMsg] = useState({});
 
   // 최근 공지 채팅방 상단에 띄우기
@@ -339,45 +339,10 @@ const ChatRoom = () => {
                 })
     }
 
-
-
-    //  **순서: 채널추가 -> 해당채널번호로 메시지 전송 -> 채널삭제 / 채널리스트 출력(한개씩 주석풀면서 테스트해보면)
-      //메시지 보내기
-      // const res = await axios.post(`/TT/talk/topic`, JSON.stringify(data), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
-      // .then((response) => {
-      //   console.log("msg send: ", response);
-      //   return response;
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // })
-      
-      // //사용자의 연결되어있는 채팅리스트를 출력
-      // const res = await axios.get(`/TT/talk/topic`)
-      //                   .then((res) => {
-      //                     const channellist = res.data;
-      //                     console.log("추후 채팅목록에 사용:"+ channellist);
-      //                   }).catch((err)=>{
-      //                     console.log(err);
-      //                   })
       
     }
 
-    // //이전 채팅 목록 불러오기 아직 완료 안함 스프링 연동만 했음
-    // const getmessage = async(e) => {
-    //   try{
-    //     console.log('데이터 보내버렷',chatinfo.chatNo);
-    //     const res = await axios.post('/TT/talk/getmsg', JSON.stringify(chatinfo),{headers:{"Content-Type":"application/json"}})
-    //     .then((res) => {
-    //       console.log('data test', res)
-    //       if(res.statusText !== "OK"){
-    //         throw `${res.status} ${res.statusText}`
-    //       }
-    //     })
-    //   }catch{
-  
-    //   }
-    // }
+
 
     const chatList =  async () =>{
       // auth의 chatNo로 chatNo가 가진 UserNo을 모두 가져오기 
