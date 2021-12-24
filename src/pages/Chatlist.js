@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { useNavigate } from 'react-router-dom';
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useState, useRef, Fragment} from 'react';
 import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -74,17 +74,19 @@ export default function Chatlist() {
   useEffect(() => {
     getChatlist1(userno);
     return() => {
-      // stompClient.disconnect();
-      // socket.close();
+      stompClient.disconnect();
+      socket.close();
     }
   },[])
 
   useEffect(() => { 
     getChatlist(userno);
-    
+    return() => {
+      stompClient.disconnect();
+      socket.close();
+    }
   },[chatContentMap]); 
-//처음 마운트될때 오픈소켓 켜지고  구독하고있는문자날라오면
-//chatContentMap 변할꺼고 변하면 리렌더링되게해야하는데
+
 
 
       //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
@@ -184,13 +186,9 @@ export default function Chatlist() {
                     
                   // }
 
-                  arrcontentmap22222.set(msg.chatNo, msg.contents);
+                  upsert(parseInt(msg.chatNo), msg.contents);
 
-                  arrcontentmap22222 = preContentMap;
-                  setPreContentMap(arrcontentmap22222);
-                  console.log("안녕",chatContentMap)
-                  setChatContentMap(arrcontentmap22222); //chatContentMap값 설정완료
-                  console.log("안녕2222222222",chatContentMap)
+                  upsertcount(parseInt(msg.chatNo),chatNoreadMap.get(parseInt(msg.chatNo))+1)
                 }
               }
               
@@ -200,12 +198,7 @@ export default function Chatlist() {
                   //   setPreContentMap(arrcontentmap);
                   //   setChatContentMap(arrcontentmap);
 
-                  //   // arrnoreadmap = preNoreadMap;
-                  //   // let countplus = arrnoreadmap.get(chat) + 1; //해당 챗넘버 key로 안읽은 메시지 수량 파악하고
-                  //   // console.log("청소부청소부청소부청소부청소부",countplus);
-                  //   // arrnoreadmap.set(chat, countplus);
-                  //   // setChatNoreadMap(arrnoreadmap);
-
+                    
 
                   // }
                   // else if(msg.type === 'IMAGE'){
@@ -222,6 +215,14 @@ export default function Chatlist() {
     }
 
 
+    const upsert = (key, value) => {
+      setChatContentMap((prev) => new Map(prev).set(key, value));
+    }
+
+    const upsertcount = (key, value) => {
+      setChatNoreadMap((prev) => new Map(prev).set(key, value));
+    }
+    
 
 
   //채팅방 사용자가 읽지않은 Message 갯수 count
