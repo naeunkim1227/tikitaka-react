@@ -52,6 +52,7 @@ import { CardFooter } from 'reactstrap';
 import Scrollbar from 'src/components/Scrollbar';
 import { useNavigate } from 'react-router-dom';
 import { DataStateContext, DataContext, useDataStateContext, useDataContext } from 'src/Context/context';
+import UserContact from 'src/components/UserContact';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -338,6 +339,7 @@ const ChatRoom = () => {
                 .catch((err) => {
                   console.log(err);
                 })
+
          
     }
 
@@ -436,6 +438,8 @@ const ChatRoom = () => {
               ); 
             }
 
+          
+
         }
        
       })
@@ -503,6 +507,13 @@ const ChatRoom = () => {
 
           case 'CONTACT':
             if(msg.userNo === auth.token){
+ 
+              // return $("#chat-room").append("<div id='mybubble'>" +
+              // "<div id='bubble-name'>"
+              // + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+              // + "</div><div id='myMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+              // + "</div>"
+              //  );
 
               return $("#chat-room").append("<div id='myContact'>"
                                             + "<div id='con-head'> <p> 연락처 <p> </div> <br /> "
@@ -565,6 +576,7 @@ const ChatRoom = () => {
   //--------------------------------------------------
   const sendContact = async (contactData) => {
 
+    console.log("contactData >>>>>>>>>", contactData)
     const cData = {
       authNo : auth.token, // Long
       chatNo : auth.chatNo, // Long
@@ -572,7 +584,9 @@ const ChatRoom = () => {
       userPhone : contactData.userPhone.phone // String
     }
 
-    
+    console.log("cData>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" ,cData)
+
+    // 받을 게 없으니 보내기만 하면 된다 - 메세지 보내듯이
     const res = await axios.post('/TT/talk/topic/sendContact', cData);
 
     return await axios.post(`/TT/talk/topic/sendContact`, 
@@ -582,6 +596,9 @@ const ChatRoom = () => {
                             })
                       .then((response) => {
 
+
+                      console.log("dsfsdfsd >>>>>> >>>>>>>>> ", response)
+                      console.log("sdfsdfdsf" , response.data)
                       messageReset();
                       return response;
                     })
@@ -662,6 +679,7 @@ const ChatRoom = () => {
 
   const contactCallback = (data) => {
     closeContact(); // cantact Modal 닫아주기
+    console.log("contact!!!!!!!!!!!"+data);
     sendContact(data);   
   }
   
