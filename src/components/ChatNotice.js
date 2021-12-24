@@ -7,6 +7,14 @@ import ChatNoticeList from './ChatNoticeList';
 
 import { useAuthState } from 'src/Context';
 import Box from "@mui/material/Box";
+import Scrollbar from 'src/components/Scrollbar';
+
+import { Button } from '@mui/material';
+
+import Modal from '@mui/material/Modal';
+
+import ChatNoticeWrite from 'src/components/ChatNoticeWrite'
+
 
 
 export default function ChatNotice() {
@@ -59,6 +67,16 @@ export default function ChatNotice() {
     
     }
 
+    //--------------------------------------------------
+    // modal open
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => {
+      setOpen(true);
+    };
+    const handleClose = () => {
+      setOpen(false);
+    };
+
     // box style
   const style = {
     position: "absolute",
@@ -82,11 +100,27 @@ export default function ChatNotice() {
     >
     <Card>
       <CardHeader title="공지 목록" />
+      <Scrollbar sx={{ height: { xs: 500, sm: 600 } }}>
       <Grid item xs={30} sm={6} md={3}>
         <Stack spacing={5} sx={{ p: 3, pr: 0 }}>
           <ChatNoticeList notice={ notice }/>
         </Stack>
         </Grid>
+      </Scrollbar>
+      <div>
+          <Button type="button" variant="contained" onClick={handleOpen}>
+            공지 작성
+          </Button>
+
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="parent-modal-title"
+            aria-describedby="parent-modal-description"
+          >
+            <ChatNoticeWrite notice={notice}/>
+          </Modal>
+        </div>
     </Card>
         </Box>
     );

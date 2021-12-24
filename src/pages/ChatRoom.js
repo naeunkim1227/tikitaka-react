@@ -89,7 +89,7 @@ const ChatRoom = () => {
 
   //보낸 메세지 상태 관리,저장 context
   const chatstate = useChatStateContext();
-  const ttmessage = useChatContext();
+  // const ttmessage = useChatContext();
   const [msg,setMsg] = useState({});
 
   // 최근 공지 채팅방 상단에 띄우기
@@ -315,9 +315,9 @@ const ChatRoom = () => {
           const fResult = await fileResult;
 
           const sendFileData = {
-            chatNo : JSON.parse(auth.chatNo),
             userNo : auth.token,
             name : auth.name,
+            chatNo : JSON.parse(auth.chatNo),
             type : typeState,
             message : fResult,
             readCount : 1,
@@ -338,6 +338,7 @@ const ChatRoom = () => {
                 .catch((err) => {
                   console.log(err);
                 })
+         
     }
 
 
@@ -432,13 +433,22 @@ const ChatRoom = () => {
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
               + "</div>"
-               );
-  
+              ); 
             }
+
         }
        
       })
       //setRoomCallState(true);
+    }
+    
+    
+    // 채팅창에서 파일다운로드 버튼 클릭시 
+    window.fileDown = async(e) => {
+      console.log('파일 다운로드 합시다')
+      console.log("받아오나요? >>>>>>>> ", msg.contents)
+
+      
     }
 
     const showMessage = (msg) =>{
@@ -490,6 +500,31 @@ const ChatRoom = () => {
           } else {
             return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
           }
+
+          case 'CONTACT':
+            if(msg.userNo === auth.token){
+
+              return $("#chat-room").append("<div id='myContact'>"
+                                            + "<div id='con-head'> <p> 연락처 <p> </div> <br /> "
+                                            + "<div id='con-body>"
+                                            + "<div id='con-text'>"
+                                            + "<p><strong> 이름 : </strong>" + msg.name + "</p>"
+                                            + "<p><strong> 전화번호 : </strong>" + msg.contents + "</p>"
+                                            + "</div> </div> </div>"
+              );
+           
+           }else if(auth.token !== msg.userNo){
+            return $("#chat-room").append("<div id='yourContact'>"
+                                          + "<div id='con-head'> <p> 연락처 <p> </div> <br /> "
+                                          + "<div id='con-body>"
+                                          + "<div id='con-text'>"
+                                          + "<p><strong> 이름 : </strong>" + msg.name + "</p>"
+                                          + "<p><strong> 전화번호 : </strong>" + msg.contents + "</p>"
+                                          + "</div> </div> </div>"
+            );
+ 
+           }  
+
       }
       
       
@@ -517,6 +552,46 @@ const ChatRoom = () => {
     setOpen(false);
   };
 
+
+  //--------------------------------------------------
+  // contact Modal
+  const [ctState, setCtState] = React.useState(false);
+  const openContact = () => {
+    setCtState(true);
+  }
+  const closeContact = () => {
+    setCtState(false);
+  }
+  //--------------------------------------------------
+  const sendContact = async (contactData) => {
+
+    const cData = {
+      authNo : auth.token, // Long
+      chatNo : auth.chatNo, // Long
+      userName : contactData.userName.name, // String
+      userPhone : contactData.userPhone.phone // String
+    }
+
+    
+    const res = await axios.post('/TT/talk/topic/sendContact', cData);
+
+    return await axios.post(`/TT/talk/topic/sendContact`, 
+                            JSON.stringify(cData), 
+                            {headers:
+                              {"Content-Type":"application/json", "charset":"UTF-8"}
+                            })
+                      .then((response) => {
+
+                      messageReset();
+                      return response;
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    })
+    }
+
+    
+  
 
 
   const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
@@ -573,6 +648,7 @@ const ChatRoom = () => {
     sendCalendar(data);
   }  
 
+
   const scrollToBottom = ()=>{
     const rollfick = document.getElementById("chat-room");
 
@@ -583,6 +659,13 @@ const ChatRoom = () => {
   useEffect(()=>{
     scrollToBottom();
   })
+
+  const contactCallback = (data) => {
+    closeContact(); // cantact Modal 닫아주기
+    sendContact(data);   
+  }
+  
+
 
     return (
       <Card sx={{ minWidth: 275 }}>
@@ -651,9 +734,21 @@ const ChatRoom = () => {
             </Modal>
           </div>
           
-          <Button>
+
+          {/* 연락처 >>> Button, Modal */}
+          <div>
+          <Button onClick={openContact}>
             <AssignmentIndIcon sx={{ width: 40, height: 40}} />
           </Button>
+          <Modal
+                open={ctState}
+                onClose={closeContact}
+              >
+              {/* callback과 close 전달 */}
+              <UserContact contactCallback={contactCallback} closeContact={closeContact}/>
+          </Modal>
+          </div>
+
 
           <Button >
             <label for='input-file'><ImageIcon sx={{ width: 40, height: 40}}/></label>

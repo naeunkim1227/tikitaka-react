@@ -1,10 +1,6 @@
 /* eslint-disable */ 
 import { filter } from 'lodash';
-import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
-import { useRef, useState } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 // material
 import {
   Table,
@@ -28,14 +24,11 @@ import Scrollbar from 'src/components/Scrollbar';
 import SearchNotFound from 'src/components/SearchNotFound';
 import { UserListToolbar } from 'src/components/_dashboard/user';
 
-// import UserSendContact from 'src/components/UserSendContact';
 import { LoadingButton } from '@mui/lab';
 
-// import { UserListHead } from './_dashboard/user';
-
-// import USERLIST from '../_mocks_/user'; // 임시 데이터
 import { useEffect } from 'react';
-import { useAuthState, useAuthDispatch } from 'src/Context';
+import { useAuthState } from 'src/Context';
+
 
 // ----------------------------------------------------------------------
 
@@ -128,10 +121,11 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function UserlistTable({type}) {
-  const navigate = useNavigate();
+export default function UserContactTable({type, contactCallback}) {
+  
   const [user, setUser] = useState([]);
   const [userList ,setUserList] = useState([]);
+  
   
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
@@ -141,57 +135,8 @@ export default function UserlistTable({type}) {
   const [selected, setSelected] = useState([]);
   const [selectedname, setSelectedname] = useState([]);
   let [isItemSelected, setIsItemSelected] = useState(false);
+
   
-
-  // const handleRequestSort = (event, property) => {
-  //   const isAsc = orderBy === property && order === 'asc';
-  //   setOrder(isAsc ? 'desc' : 'asc');
-  //   setOrderBy(property);
-  // };
-
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelecteds = user.map((n) => n.name);
-  //     setSelected(newSelecteds);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
-
-  const handleClick = (event, no, name) => {
-    const selectedIndex = selected.indexOf(no);
-    const selectedNameIndex = selectedname.indexOf(name);
-    let newSelected = [];
-    let newSelectedName = [];
-    //-1은 indexof로 했을때 값이 없을때
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, no);
-      newSelectedName = newSelectedName.concat(selectedname, name);
-    } //indexof로 찾는 값이 첫값
-    else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-      newSelectedName = newSelectedName.concat(selectedname.slice(1));
-    }//indexof로 찾는 값이 배열 제일 마지막에 있으면 
-    else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-      newSelectedName = newSelectedName.concat(selectedname.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-
-      newSelectedName = newSelectedName.concat(
-        selectedname.slice(0, selectedNameIndex),
-        selectedname.slice(selectedNameIndex + 1)
-      );
-
-    }
-    setSelected(newSelected);
-    setSelectedname(newSelectedName);
-  };
-
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -221,12 +166,11 @@ export default function UserlistTable({type}) {
   const isUserNotFound = filteredUsers.length === 0;
 
   //-----------------------------------------------------------------------------------------------
-  const [messages, setMessages] = useState([]);
-  const [chatNo, setChatNo] = useState(0);
+
 
   const auth = useAuthState();
-  const dispatch = useAuthDispatch();
 
+  
 
   useEffect(() => {
     getStatusData();
@@ -249,8 +193,6 @@ export default function UserlistTable({type}) {
       const json = await response.json();
 
       setUser(json.data);
-      //console.log('데이터',json.data)
-      //console.log('길이', json.data.length)
       setUserList(json.data.length);
 
     } catch (err) {
@@ -260,9 +202,6 @@ export default function UserlistTable({type}) {
 
 
   useEffect(() => {
-    console.log('page >>> ',page)
-    console.log('rowsPerPage >>> ',rowsPerPage)
-
   },[page,rowsPerPage])
 
 
@@ -274,27 +213,22 @@ export default function UserlistTable({type}) {
 
   // 연락처 전송하기
   const isSubmitting = (userName, userPhone) => {
-    
-    var state = {
+
+    console.log("이름만? >>>", userName)
+    console.log("전화번호만? >>>", userPhone)
+
+    const contactData = {
       userName : userName,
       userPhone : userPhone
-    };
 
-    console.log("우하하 >>> ", state)
+    }
 
-    console.log("이름만? >>>", state.userName)
-    console.log("전화번호만? >>>", state.userPhone)
-    
+    contactCallback(contactData);
 
   }
+  
 
-
-
-
-
-
-var index = 0;
-
+// var index = 0;
 
 
   return (
@@ -311,21 +245,12 @@ var index = 0;
           <Scrollbar>
             <TableContainer sx={{ minWidth: 280 }}>
               <Table>
-                {/* <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={user.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                /> */}
 
                 <TableBody>
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((value) => {
-                      //console.log('value >>>',value)
+
                       // row 라고 지정해둔거 >>> 기존 템플릿에서 임시 지정
                       const {no, name, role, status, profile, phone} = value;
 
@@ -340,18 +265,8 @@ var index = 0;
                           role="checkbox"
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
-                          // onClick={(event) => handleClick(event, no, name)
-                          // }
                         >
 
-                          {/* <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, no)}
-                              style={{
-                                transform: "scale(0.5)",}}
-                            />
-                          </TableCell> */}
 
                           <TableCell component="th" scope="row" padding="none">
                           
@@ -383,22 +298,12 @@ var index = 0;
                             </Stack>
                           </TableCell>
 
-                          {/* <TableCell align="left">{role}</TableCell> */}
-
-                          {/* <TableCell>
-                            <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
-                            <Button type="button" variant="contained" onClick={(e) =>{ sockettest()}} > 소켓 테스트</Button>
-                          </TableCell> */}
-
-                          {/* ... click button(delete, edit) */}
                           <TableCell align="right">
-                            {/* <UserSendContact />  */}
                               <LoadingButton
                                   size="small"
                                   type="submit"
                                   variant="contained"
-                                  // loading={isSubmitting}
-                                  onClick={(e) => {isSubmitting({name}, {phone})}}
+                                  onClick={() => isSubmitting({name}, {phone} )}
                                 >
                                   연락처 전송
                             </LoadingButton>
@@ -436,7 +341,6 @@ var index = 0;
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-            //sx={{border:"1px solid magenta"}}
             labelRowsPerPage={"Page:"}
           />
     </Page>
