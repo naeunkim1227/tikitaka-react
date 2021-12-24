@@ -66,15 +66,24 @@ export default function Chatlist() {
   const chatstate = useChatStateContext();
   const userno = auth.token;
 
+  const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+  const stompClient = Stomp.over(socket);
+
 
   useEffect(() => {
     getChatlist1(userno);
+    return() => {
+      // stompClient.disconnect();
+      // socket.close();
+    }
   },[])
 
-  useEffect(() => { //처음 마운트될때 실행됨
+  useEffect(() => { 
     getChatlist(userno);
     
-  },[chatContentMap]);
+  },[chatContentMap]); 
+//처음 마운트될때 오픈소켓 켜지고  구독하고있는문자날라오면
+//chatContentMap 변할꺼고 변하면 리렌더링되게해야하는데
 
 
       //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
@@ -123,82 +132,84 @@ export default function Chatlist() {
     //로그인하고있는 사용자의 no을 가지고 chatlist를 return 받아옴
     const getChatlist = async(userno) => {
         try{
-            
-            //사용자 연결되어있는 채팅리스트를 출력
-            const chatnolist = await axios.post(`/TT/talk/topiclist/${userno}`)
-            .then((response) => {
-            var arr = [];
-            arrtitlemap.clear();
-            for(var i=0; i<response.data.length; i++){
-                arr.push(response.data[i].no);
-                arrtitlemap.set(response.data[i].no, response.data[i].title);
-            }
-            setChaproomMap(arrtitlemap);
-            return arr;
-            }).catch((err)=>{
-            console.log(err);
-            })
-            setChatlist(chatnolist);
+
+            // //사용자 연결되어있는 채팅리스트를 출력
+            // const chatnolist = await axios.post(`/TT/talk/topiclist/${userno}`)
+            // .then((response) => {
+            // var arr = [];
+            // arrtitlemap.clear();
+            // for(var i=0; i<response.data.length; i++){
+            //     arr.push(response.data[i].no);
+            //     arrtitlemap.set(response.data[i].no, response.data[i].title);
+            // }
+            // setChaproomMap(arrtitlemap);
+            // return arr;
+            // }).catch((err)=>{
+            // console.log(err);
+            // })
+            // setChatlist(chatnolist);
 
 
-            const socket = new SockJS('http://localhost:8080/TT/alertsocket');
-            const stompClient = Stomp.over(socket);
-            
 
-            if(chatnolist){
             stompClient.connect({},function(){
-              chatnolist.map((chat) => {
-              console.log('SUB CHAT NO(ChatList) >>>>>>>>>>>>' , chat);
-                stompClient.subscribe(`/topic/${chat}`,  (message) => {
-                  const msg =  JSON.parse(message.body);
-                  console.log("lastMsgDATA 222222>>" , msg);
-                  if(msg.type === 'TEXT'){
-                    arrcontentmap = preContentMap;
-                    arrcontentmap.set(chat, msg.contents);
-                    setPreContentMap(arrcontentmap);
-                    setChatContentMap(arrcontentmap);
+              console.log('SUB USER NO(ChatList) >>>>>>>>>>>>' , userno);
+              stompClient.subscribe(`/topic/${userno}`,  (message) => {
+              const msg =  JSON.parse(message.body);
+              console.log("lastMsgDATA 222222>>" , msg);
+              for(var i=0; i<chatNolist.length; i++){
+                if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
+                  //arrcontentmap = preContentMap;
+                  let arrcontentmap22222 = new Map();
+                  // for(var i=0; i<chatNolist.length; i++){
+                  //   if(chatNolist[i] == msg.chatNo){
+                  //     arrcontentmap22222.set(msg.chatNo, msg.contents);
+                  //     console.log("내가 원하는거임 ㅅㅅ")
+                  //   }
+                  //   else{
+                  //     arrcontentmap22222.set(chatNolist[i],preContentMap.get(chatNolist[i]));
+                  //   }
+                    
+                  // }
 
-                    // arrnoreadmap = preNoreadMap;
-                    // let countplus = arrnoreadmap.get(chat) + 1; //해당 챗넘버 key로 안읽은 메시지 수량 파악하고
-                    // console.log("청소부청소부청소부청소부청소부",countplus);
-                    // arrnoreadmap.set(chat, countplus);
-                    // setChatNoreadMap(arrnoreadmap);
+                  arrcontentmap22222.set(msg.chatNo, msg.contents);
+
+                  arrcontentmap22222 = preContentMap;
+                  setPreContentMap(arrcontentmap22222);
+                  console.log("안녕",chatContentMap)
+                  setChatContentMap(arrcontentmap22222); //chatContentMap값 설정완료
+                  console.log("안녕2222222222",chatContentMap)
+                }
+              }
+              
+                  // if(msg.type === 'TEXT'){
+                  //   arrcontentmap = preContentMap;
+                  //   arrcontentmap.set(chat, msg.contents);
+                  //   setPreContentMap(arrcontentmap);
+                  //   setChatContentMap(arrcontentmap);
+
+                  //   // arrnoreadmap = preNoreadMap;
+                  //   // let countplus = arrnoreadmap.get(chat) + 1; //해당 챗넘버 key로 안읽은 메시지 수량 파악하고
+                  //   // console.log("청소부청소부청소부청소부청소부",countplus);
+                  //   // arrnoreadmap.set(chat, countplus);
+                  //   // setChatNoreadMap(arrnoreadmap);
 
 
-                  }
+                  // }
                   // else if(msg.type === 'IMAGE'){
                   //   const contents = `${msg.name} 님이 사진을 보냈습니다.`
                   //   setContents(contents);
                   // }
 
-                });
-              })
-          
-            })
-          }
-
-
-
-
-
-
-            // //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
-            // const res2 = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
-            // .then((response) => {
-            //   arrcontentmap.clear();
-            //   for(var i=0; i<response.data.length; i++){
-            //     arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
-            //   }
-            //   setChatContentMap(arrcontentmap);
-            // }).catch((err)=>{
-            // console.log(err);
-            // })
-            
+              });
+            })    
         }
         catch(err){
             console.log("chatlist error" + err);
         }
     }
+
+
+
 
   //채팅방 사용자가 읽지않은 Message 갯수 count
   const getnoReadmsgCount = async(userno, chatno) => {
@@ -222,7 +233,8 @@ export default function Chatlist() {
     }
   }
 
-  return (
+
+    return (
       <Page>
           <List sx={{ width: '100%', maxWidth: 300, bgcolor: 'background.paper'}}>
           {chatNolist && chatNolist.map((chatno) => {
@@ -305,4 +317,5 @@ export default function Chatlist() {
         </Page>
     
     );
+
 }
