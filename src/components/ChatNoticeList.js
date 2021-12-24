@@ -14,15 +14,15 @@ import ChatNoticeWrite from 'src/components/ChatNoticeWrite'
 
 export default function ChatNoticeList( {notice} ) {
 
-    //--------------------------------------------------
-    // modal open
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-      setOpen(true);
-    };
-    const handleClose = () => {
-      setOpen(false);
-    };
+    // //--------------------------------------------------
+    // // modal open
+    // const [open, setOpen] = React.useState(false);
+    // const handleOpen = () => {
+    //   setOpen(true);
+    // };
+    // const handleClose = () => {
+    //   setOpen(false);
+    // };
 
     const style = {
         position: "absolute",
@@ -53,7 +53,7 @@ export default function ChatNoticeList( {notice} ) {
         />)}
         
 
-        <div>
+        {/* <div>
           <Button type="button" variant="contained" onClick={handleOpen}>
             공지 작성
           </Button>
@@ -66,7 +66,7 @@ export default function ChatNoticeList( {notice} ) {
           >
             <ChatNoticeWrite notice={notice}/>
           </Modal>
-        </div>
+        </div> */}
 
       </Fragment>
     )
