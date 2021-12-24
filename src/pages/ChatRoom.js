@@ -453,7 +453,7 @@ const ChatRoom = () => {
           console.log("IMAGE 실행됨!!");
           if(msg.userNo === auth.token){
             return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='1250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
             + "</div>"
              );
 
