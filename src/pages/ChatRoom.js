@@ -87,8 +87,8 @@ const ChatRoom = () => {
     // }
 
   //보낸 메세지 상태 관리,저장 context
-  // const chatstate = useChatStateContext();
-  const grouptitle = useChatContext();
+  const chatstate = useChatStateContext();
+  const ttmessage = useChatContext();
   const [msg,setMsg] = useState({});
 
   // 최근 공지 채팅방 상단에 띄우기
@@ -338,6 +338,9 @@ const ChatRoom = () => {
                   console.log(err);
                 })
     }
+
+
+
 
       
     }
