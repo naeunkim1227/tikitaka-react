@@ -11,6 +11,7 @@ let status = sessionStorage.getItem('currentUser')? sessionStorage.getItem('curr
 let message = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').message : '';
 let chatNo = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').chatNo : '';
 let title = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').title : '';
+let role = sessionStorage.getItem('currentUser')? sessionStorage.getItem('currentUser').role : '';
 
 export const initialState ={ //초기값 설정
     token:""||token,
@@ -22,7 +23,8 @@ export const initialState ={ //초기값 설정
     status:""||status,
     message:""||message,
     chatNo:""||chatNo,
-    title:""||title
+    title:""||title,
+    role: ""||role
     // loading:false,
     // errorMessage:null
 }
@@ -44,7 +46,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 email:action.payload.email,
                 profile:action.payload.profile,
                 phone:action.payload.phone,
-                status:action.payload.status
+                status:action.payload.status,
+                role:action.payload.role
                 //loading: false
             }
         case 'LOGOUT':
@@ -72,8 +75,8 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
         case 'STORE_CHATNO':
             return{
                 ...initialState,
+                title: action.payload.title,
                 chatNo: action.payload.chatNo,
-                title: action.payload.title
             }
         case 'CHANGE_PROFILE':
             return{
