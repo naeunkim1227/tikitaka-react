@@ -239,9 +239,7 @@ const title = (
     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
     {notification.c_title}
     </Typography>
-    <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-    {moment(notification.createdAt).format('YY/MM/DD   HH:mm')}
-    </Typography>
+  
   </div>
 );
 

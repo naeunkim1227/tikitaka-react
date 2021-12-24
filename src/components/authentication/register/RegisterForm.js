@@ -53,10 +53,6 @@ export default function RegisterForm() {
                         if(response.statusText !== "OK") {
                           throw  `${response.status} ${response.statusText}`;
                         }
-                        if(!response.data){
-                          alert("중복된 이메일입니다");
-                          return;
-                        }
                         navigate('/login', { replace: true });
                       })
                       .catch((error) => {
