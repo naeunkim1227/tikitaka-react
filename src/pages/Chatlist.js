@@ -180,7 +180,6 @@ export default function Chatlist() {
                     upsetContent(parseInt(msg.chatNo), contents);
                   }
 
-                  //upsetContent(parseInt(msg.chatNo), msg.contents);
                   if(msg.userNo != userno){
                     upsetnoReadcount(parseInt(msg.chatNo))
 
@@ -213,9 +212,6 @@ export default function Chatlist() {
         //사용자 연결되어있는 채팅리스트를 출력
         const res = await axios.post(`/TT/talk/topiclistnoread/${userno}/${chatno}`)
         .then((response) => {
-          //arrnoreadmap.clear();
-          console.log("여기찍히니",response.data);
-          //arrnoreadmap = preNoreadMap;
           arrnoreadmap.set(chatno, response.data);
           setpreNoreadMap(arrnoreadmap);
           setChatNoreadMap(arrnoreadmap);
@@ -236,8 +232,8 @@ export default function Chatlist() {
             return (             
             <ListItemButton alignItems="flex-start"
             onClick={() => {
-                gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
-                navigate('/tikitaka/chat', { replace: true});
+                gettopic(dispatch,chatno, chatroomNameMap.get(chatno)); //컨테츠에 챗넘버랑 타이틀 업테이트해주면 네비게이트로 chat컴포넌트만 들어가면 저기 sub을 해준다.
+                navigate('/tikitaka/chat');
                 getChatlistinit(userno);
             }}
             >
