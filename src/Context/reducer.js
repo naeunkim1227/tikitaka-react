@@ -83,6 +83,11 @@ export const AuthReducer =(initialState,action)=>{  //action타입에 따라 값
                 ...initialState,
                 profile: action.payload
             }
+        case 'NULL_CHATNO':
+            return{
+                ...initialState,
+                chatNo: ''
+            }
         default:
             throw new Error( `Unhandled action type: ${action.type}`)
     }

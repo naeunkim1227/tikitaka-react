@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import { green, grey, lightGreen, red } from '@mui/material/colors';
 import Icon from '@mui/material/Icon';
 import axios from 'axios';
-import { useAuthState } from 'src/Context';
+import { useAuthState,useAuthDispatch } from 'src/Context';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import Box from '@mui/material/Box';
 import ImageIcon from '@mui/icons-material/Image';
@@ -59,6 +59,7 @@ import UserContact from 'src/components/UserContact';
 const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
+    const dispatch = useAuthDispatch();
     const navigate = useNavigate();
     //const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
@@ -106,6 +107,7 @@ const ChatRoom = () => {
       stompClient.disconnect();
       socket.close();
       exitTimeUpdate(); //chatroom 나갈떄 현재 시간 DB에 update
+      chatinit(dispatch); //나갈때 chat번호 초기화
     }
 }, [auth.chatNo]);
 
@@ -207,7 +209,12 @@ const ChatRoom = () => {
         chatno:auth.chatNo
       }
       const res = await axios.post(`/TT/talk/updateouttime/`, JSON.stringify(data),{headers:{"Content-Type":"application/json", "charset":"UTF-8"}}) 
-      }
+
+    }
+    const chatinit = (dispatch) => {
+      dispatch({type: 'NULL_CHATNO', payload: ""}); //방 나갔을때 chatno초기화
+      sessionStorage.setItem('currentUser', ''); 
+    }
 
     // 최근 공지 채팅방 상단에 띄우기
     const recentNotice = async() => {
@@ -749,7 +756,8 @@ const ChatRoom = () => {
       <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
         Send
       </Button>
-      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={outChat}>
+      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {outChat(); 
+        chatinit(dispatch);}}>
         나가기
       </Button>
 
