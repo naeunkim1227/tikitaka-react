@@ -179,14 +179,19 @@ export default function Chatlist() {
                     const contents = `사진을 보냈습니다.`
                     upsetContent(parseInt(msg.chatNo), contents);
                   }
+                  console.log("11111111",msg.chatNo,"22222222222222222",auth.chatNo)
+                  
+                  if(msg.chatNo != auth.chatNo){
 
-                  if(msg.userNo != userno){
-                    upsetnoReadcount(parseInt(msg.chatNo))
-
+                    if(msg.userNo != userno){
+                      upsetnoReadcount(parseInt(msg.chatNo))
+  
+                    }
+                    else{
+                      console.log("NO COUNT")
+                    } 
                   }
-                  else{
-                    console.log("NO COUNT")
-                  } 
+
                 }
               }
             });

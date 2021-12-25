@@ -90,8 +90,15 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
       {/* <User /> */}
       {/* navConfig={sidebarConfig} */}
-      <Button type='button' size="large" variant='contained'  onClick={myListState} 
-      style={{width: '80%', margin: 'auto'}}>ChatList</Button>
+
+      {
+        listUp === true ?
+        <Button type='button' size="large" variant='contained'  onClick={myListState} 
+        style={{width: '80%', margin: 'auto'}}>UserList</Button>
+        :
+        <Button type='button' size="large" variant='contained'  onClick={myListState} 
+        style={{width: '80%', margin: 'auto'}}>ChatList</Button>
+      }
       {
         listUp === true ?
         <Chatlist /> 
