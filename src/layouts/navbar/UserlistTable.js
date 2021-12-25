@@ -362,14 +362,14 @@ var index = 0;
                             </Stack>
                           </TableCell>
 
-                          {/* <TableCell align="left">{role}</TableCell> */}
+                          {/* <TableCell align="left">{role}</TableCell>
 
-                          {/* <TableCell>
+                          <TableCell>
                             <Button type="button" variant="contained" onClick={(e) =>{ createTopic(no, auth)}} >대화하기</Button>
                             <Button type="button" variant="contained" onClick={(e) =>{ sockettest()}} > 소켓 테스트</Button>
-                          </TableCell> */}
+                          </TableCell>
 
-                          {/* ... click button(delete, edit) */}
+                          ... click button(delete, edit) */}
                           <TableCell align="right">
                             <UserMoreMenu /> 
                           </TableCell>

@@ -117,16 +117,25 @@ export default function Chatlist() {
             console.log(err);
             })
             setChatlist(res);
+
             //noReadMessage count하기
             for(var i=0; i<res.length; i++){
               await getnoReadmsgCount(userno,res[i]);
             }
+
             //채팅방 list에서 마지막으로 보여지는 메시지만 가져옴
             const res2 = await axios.post(`/TT/talk/topiclistmsg/${userno}`)
             .then((response) => {
               arrcontentmap.clear();
               for(var i=0; i<response.data.length; i++){
-                arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
+                if(response.data[i].type == 'IMAGE'){
+                  const contents = `사진을 보냈습니다.`
+                  arrcontentmap.set(response.data[i].chat_no, contents);
+                }
+                else{
+                  arrcontentmap.set(response.data[i].chat_no, response.data[i].contents);
+                }
+                
               }
               setPreContentMap(arrcontentmap);
               setChatContentMap(arrcontentmap);
@@ -159,26 +168,30 @@ export default function Chatlist() {
               console.log('SUB USER NO(ChatList) >>>>>>>>>>>>' , userno);
               stompClient.subscribe(`/topic/${userno}`,  (message) => {
               const msg =  JSON.parse(message.body);
-              console.log("lastMsgDATA 222222>>" , msg);
+              console.log("Chatlist Data>>" , msg);
               for(var i=0; i<chatNolist.length; i++){
                 if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
-                  upsetContent(parseInt(msg.chatNo), msg.contents);
-                  upsetnoReadcount(parseInt(msg.chatNo))
-                  
+
+                  if(msg.type === 'TEXT'){
+                    upsetContent(parseInt(msg.chatNo), msg.contents);
+                  }
+                  else if(msg.type === 'IMAGE'){
+                    const contents = `사진을 보냈습니다.`
+                    upsetContent(parseInt(msg.chatNo), contents);
+                  }
+
+                  //upsetContent(parseInt(msg.chatNo), msg.contents);
+                  if(msg.userNo != userno){
+                    upsetnoReadcount(parseInt(msg.chatNo))
+
+                  }
+                  else{
+                    console.log("NO COUNT")
+                  } 
                 }
               }
-                  // if(msg.type === 'TEXT'){
-                  //   arrcontentmap = preContentMap;
-                  //   arrcontentmap.set(chat, msg.contents);
-                  //   setPreContentMap(arrcontentmap);
-                  //   setChatContentMap(arrcontentmap);
-                  // }
-                  // else if(msg.type === 'IMAGE'){
-                  //   const contents = `${msg.name} 님이 사진을 보냈습니다.`
-                  //   setContents(contents);
-                  // }
-              });
-            })    
+            });
+          })    
 
 
 
