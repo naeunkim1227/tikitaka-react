@@ -60,7 +60,6 @@ const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
     const navigate = useNavigate();
-    //const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -98,7 +97,6 @@ const ChatRoom = () => {
 
   useEffect(() => {
     console.log('1. OPEN SOCKET')
-    //console.log('>>>>>opuser',opuser);
     console.log(auth.profile);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
@@ -236,7 +234,7 @@ const ChatRoom = () => {
       //   regTime: time        
       // }
       console.log('SEND MESSAGE TO ', auth.chatNo)
- 
+
       const time = moment(now()).format('YY/MM/DD HH:mm');
     
       switch(typeState){
@@ -248,7 +246,7 @@ const ChatRoom = () => {
             type: typeState,
             message: contents,
             readCount: 1,
-            regTime: time
+            regTime: time,
           }
           return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
@@ -387,8 +385,10 @@ const ChatRoom = () => {
                )
             }else {
               return $("#chat-room").append("<div id='yourbubble'>" +
-              "<div id='bubble-name'>"
-              + list.name+``  
+
+              "<div id='yourbubble-name'>"
+              + list.name 
+
               + "</div><div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
                )
@@ -402,7 +402,7 @@ const ChatRoom = () => {
   
 
             }else {
-              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + list.name  
+              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + list.name  
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
               ); 
@@ -439,8 +439,10 @@ const ChatRoom = () => {
           
           }else if(auth.token !== msg.userNo){
             return $("#chat-room").append("<div id='yourbubble'>" +
-            "<div id='bubble-name'>"
-            + msg.name
+
+            "<div id='yourbubble-name'>"
+            + msg.name  
+
             + "</div><div id='yourMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
              );
@@ -458,7 +460,9 @@ const ChatRoom = () => {
 
 
           }else{
-            return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + msg.name  
+
+            return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + msg.name 
+
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time+ "</div></div>"
               + "</div>"
                );
@@ -564,7 +568,7 @@ const ChatRoom = () => {
   
 
 
-  // const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
+
   
   
   //--------------------------------------------------
@@ -640,7 +644,13 @@ const ChatRoom = () => {
     return (
       <Card sx={{ minWidth: 275 }}>
 
-  
+
+      <CardHeader
+        title={auth.title}
+      >
+        
+      </CardHeader>
+
 
       <CardContent id='room-top'>
         {/* chatNo에 해당하는 채팅방의 최근 공지 가져와서 채팅방 상단에 띄우기 
