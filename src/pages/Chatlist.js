@@ -164,6 +164,7 @@ export default function Chatlist() {
                 if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
                   upsetContent(parseInt(msg.chatNo), msg.contents);
                   upsetnoReadcount(parseInt(msg.chatNo))
+                  
                 }
               }
                   // if(msg.type === 'TEXT'){
