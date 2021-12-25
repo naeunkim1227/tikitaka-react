@@ -80,7 +80,7 @@ export default function Chatlist() {
   },[])
 
   useEffect(() => { 
-    opensocket(userno);
+    //opensocket(userno);
     return() => {
       stompClient.disconnect();
       socket.close();
@@ -224,8 +224,8 @@ export default function Chatlist() {
             <ListItemButton alignItems="flex-start"
             onClick={() => {
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
-                navigate('/tikitaka/chat', { replace: true});
                 getChatlistinit(userno);
+                navigate('/tikitaka/chat');
             }}
             >
             <ListItemAvatar>

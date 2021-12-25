@@ -60,7 +60,6 @@ const ChatRoom = () => {
     const [contents, setContents] = useState();
     const auth = useAuthState();
     const navigate = useNavigate();
-    const opuser = useChatContext();
     const [messageList, setMessageList] = useState([]);
     const [roomCallState, setRoomCallState] = useState(false);
     const [image, setImage] = useState();
@@ -98,7 +97,6 @@ const ChatRoom = () => {
 
   useEffect(() => {
     console.log('1. OPEN SOCKET')
-    console.log('>>>>>opuser',opuser);
     console.log(auth.profile);
     opensocket();
     recentNotice(); // 최근 공지 상단에 고정
@@ -236,8 +234,7 @@ const ChatRoom = () => {
       //   regTime: time        
       // }
       console.log('SEND MESSAGE TO ', auth.chatNo)
-      console.log('SEND TO >' , opuser);
-      console.log('SEND TO >' , opuser.no);
+      
       const time = moment(now()).format('YY/MM/DD HH:mm');
     
       switch(typeState){
@@ -249,9 +246,9 @@ const ChatRoom = () => {
             type: typeState,
             message: contents,
             readCount: 1,
-            regTime: time
+            regTime: time,
           }
-          return await axios.post(`/TT/talk/topic/${opuser.no}`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return await axios.post(`/TT/talk/topic`, JSON.stringify(messageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then((response) => {
                   // showMessage(response);
                   messageReset();
@@ -285,7 +282,7 @@ const ChatRoom = () => {
             regTime: time
           } 
           
-          return  axios.post(`/TT/talk/topic/${opuser.no}`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
+          return  axios.post(`/TT/talk/topic`, JSON.stringify(imageData), {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                           .then((response) => {
                             console.log("img send: ", response);
                             //showMessage(response);
@@ -388,8 +385,8 @@ const ChatRoom = () => {
                )
             }else {
               return $("#chat-room").append("<div id='yourbubble'>" +
-              "<div id='bubble-name'>"
-              + list.name+`<img id='bubble-image' src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+              "<div id='yourbubble-name'>"
+              + list.name 
               + "</div><div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
                )
@@ -403,9 +400,8 @@ const ChatRoom = () => {
   
 
             }else {
-              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+              return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + list.name  
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + time + "</div></div>"
-              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${list.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
               + "</div>"
               ); 
             }
@@ -441,8 +437,8 @@ const ChatRoom = () => {
           
           }else if(auth.token !== msg.userNo){
             return $("#chat-room").append("<div id='yourbubble'>" +
-            "<div id='bubble-name'>"
-            + msg.name+`<img id='bubble-image'  src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+            "<div id='yourbubble-name'>"
+            + msg.name  
             + "</div><div id='yourMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
              );
@@ -460,7 +456,7 @@ const ChatRoom = () => {
 
 
           }else{
-            return $("#chat-room").append("<div id='yourbubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${opuser.profile} ref={imgRef}></img>`  
+            return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + msg.name 
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time+ "</div></div>"
               + "</div>"
                );
@@ -566,7 +562,7 @@ const ChatRoom = () => {
   
 
 
-  const logintime = moment(opuser.login_time).format('YY/MM/DD HH:mm');
+ 
   
   
   //--------------------------------------------------
@@ -643,12 +639,7 @@ const ChatRoom = () => {
       <Card sx={{ minWidth: 275 }}>
 
       <CardHeader
-        avatar={
-          <Avatar aria-label="recipe"  src={`http://localhost:8080/TT${opuser.profile}`}>
-          </Avatar>
-        }
-        title={opuser.name}
-        subheader={`마지막 접속 시간 : ${logintime}`}
+        title={auth.title}
       >
         
       </CardHeader>
