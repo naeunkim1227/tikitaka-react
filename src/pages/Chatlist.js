@@ -180,7 +180,6 @@ export default function Chatlist() {
                     upsetContent(parseInt(msg.chatNo), contents);
                   }
 
-                  //upsetContent(parseInt(msg.chatNo), msg.contents);
                   if(msg.userNo != userno){
                     upsetnoReadcount(parseInt(msg.chatNo))
 
@@ -213,9 +212,6 @@ export default function Chatlist() {
         //사용자 연결되어있는 채팅리스트를 출력
         const res = await axios.post(`/TT/talk/topiclistnoread/${userno}/${chatno}`)
         .then((response) => {
-          //arrnoreadmap.clear();
-          console.log("여기찍히니",response.data);
-          //arrnoreadmap = preNoreadMap;
           arrnoreadmap.set(chatno, response.data);
           setpreNoreadMap(arrnoreadmap);
           setChatNoreadMap(arrnoreadmap);
@@ -236,6 +232,7 @@ export default function Chatlist() {
             return (             
             <ListItemButton alignItems="flex-start"
             onClick={() => {
+
                 gettopic(dispatch,chatno, chatroomNameMap.get(chatno));
                 getChatlistinit(userno);
                 navigate('/tikitaka/chat');

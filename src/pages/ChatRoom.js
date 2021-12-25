@@ -234,7 +234,7 @@ const ChatRoom = () => {
       //   regTime: time        
       // }
       console.log('SEND MESSAGE TO ', auth.chatNo)
-      
+
       const time = moment(now()).format('YY/MM/DD HH:mm');
     
       switch(typeState){
@@ -385,8 +385,10 @@ const ChatRoom = () => {
                )
             }else {
               return $("#chat-room").append("<div id='yourbubble'>" +
+
               "<div id='yourbubble-name'>"
               + list.name 
+
               + "</div><div id='yourMessage'>" + list.contents + "<div id='bubble-time'>" + time + "</div></div>"
               + "</div>"
                )
@@ -437,8 +439,10 @@ const ChatRoom = () => {
           
           }else if(auth.token !== msg.userNo){
             return $("#chat-room").append("<div id='yourbubble'>" +
+
             "<div id='yourbubble-name'>"
             + msg.name  
+
             + "</div><div id='yourMessage'>" + msg.contents + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
              );
@@ -456,7 +460,9 @@ const ChatRoom = () => {
 
 
           }else{
+
             return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + msg.name 
+
               + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time+ "</div></div>"
               + "</div>"
                );
@@ -562,7 +568,7 @@ const ChatRoom = () => {
   
 
 
- 
+
   
   
   //--------------------------------------------------
@@ -638,11 +644,13 @@ const ChatRoom = () => {
     return (
       <Card sx={{ minWidth: 275 }}>
 
+
       <CardHeader
         title={auth.title}
       >
         
       </CardHeader>
+
 
       <CardContent id='room-top'>
         {/* chatNo에 해당하는 채팅방의 최근 공지 가져와서 채팅방 상단에 띄우기 
