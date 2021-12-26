@@ -17,10 +17,18 @@ import ChatNoticeWrite from 'src/components/ChatNoticeWrite'
 
 
 
-export default function ChatNotice() {
+export default function ChatNotice({handleClose, recentNotice}) {
     const auth = useAuthState();
 
     const [notice, setNotice] = useState([]);
+
+    const recent = () => {
+      recentNotice();
+    }
+
+    const close = () => {
+      handleClose();
+    }
     
     let data= {
       userNo: auth.token,
@@ -70,10 +78,10 @@ export default function ChatNotice() {
     //--------------------------------------------------
     // modal open
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
+    const writeOpen = () => {
       setOpen(true);
     };
-    const handleClose = () => {
+    const writeClose = () => {
       setOpen(false);
     };
 
@@ -104,21 +112,23 @@ export default function ChatNotice() {
       <Grid item xs={30} sm={6} md={3}>
         <Stack spacing={5} sx={{ p: 3, pr: 0 }}>
           <ChatNoticeList notice={ notice }/>
+        
+
         </Stack>
         </Grid>
       </Scrollbar>
       <div>
-          <Button type="button" variant="contained" onClick={handleOpen}>
+          <Button type="button" variant="contained" onClick={writeOpen} >
             공지 작성
           </Button>
 
           <Modal
             open={open}
-            onClose={handleClose}
+            onClose={writeClose}
             aria-labelledby="parent-modal-title"
             aria-describedby="parent-modal-description"
           >
-            <ChatNoticeWrite notice={notice}/>
+            <ChatNoticeWrite notice={notice} close={close} onClose={writeClose} recent={recent}/>
           </Modal>
         </div>
     </Card>

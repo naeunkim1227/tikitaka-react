@@ -54,6 +54,8 @@ import { useNavigate } from 'react-router-dom';
 import { DataStateContext, DataContext, useDataStateContext, useDataContext } from 'src/Context/context';
 import UserContact from 'src/components/UserContact';
 
+import { saveAs } from 'file-saver';
+
 ///////////////////////////////////////////////////////////////////////
 
 const ChatRoom = () => {
@@ -302,7 +304,7 @@ const ChatRoom = () => {
         case 'FILE':
           const fileData = new FormData(); // FormData에는 키와 값 쌍으로 담아주어야 함
           // "file" -> key값 => Spring @RequestParam
-          fileData.append("file", loadFile); // const [loadImg, setLoadImg] = useState(); 
+          fileData.append('file', loadFile); // const [loadImg, setLoadImg] = useState(); 
 
           // Spring에서 File url을 리턴(fileResult로)받기 
           const fileResult = await axios.post(`/TT/talk/topic/sendFile`, 
@@ -335,11 +337,8 @@ const ChatRoom = () => {
           }
 
           // 메세지 전송하듯이
-          return axios.post(`/TT/talk/topic`,
-                            JSON.stringify(sendFileData),
-                            {headers: {"Content-Type":"application/json" , 
-                                      "charset":"UTF-8"}
-                          })
+          return axios.post(`/TT/talk/topic/${opuser.no}`, JSON.stringify(sendFileData), 
+                            {headers:{"Content-Type":"application/json", "charset":"UTF-8"}})
                 .then ((response) => {
                   console.log("file send >>> ", response);
 
@@ -366,7 +365,7 @@ const ChatRoom = () => {
         const res =  await axios.get(`/TT/talk/chatList/${chatNo}`)
                                .then((res)=>{
                                  setMessageList(res.data);
-                                 console.log('함 보자.....' ,res.data);
+                                 console.log('res.data...' ,res.data);
                                  showList(res.data);
                                })
       } catch (error) {
@@ -414,20 +413,107 @@ const ChatRoom = () => {
               + "</div>"
               ); 
             }
-
+            
+          case 'FILE':
+          console.log("FILE UPLOAD 실행됨!!")
+          if(list.user_no === auth.token){ 
+            
+            return $("#chat-room").append("<div id='mybubble'>" +
+            "<div id='bubble-name'>"
+            + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
+           //  + `<a href=http://localhost:8080/TT${msg.contents} download>` 
+            + `<button id='fileDownButton' onclick='fileDown("` + list.contents + `")'> 다운로드1 </button>` 
+            + "<div id='bubble-time'>" + time + "</div></div>"
+            + "</div>"
+              );
+          } else {
+            return $("#chat-room").append("<div id='mybubble'>" +
+            "<div id='bubble-name'>"
+            + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
+           //  + `<a href=http://localhost:8080/TT${msg.contents} download>` 
+            + `<button id='fileDownButton' onclick='fileDown("` + list.contents + `")'> 다운로드2 </button>` 
+            + "<div id='bubble-time'>" + time + "</div></div>"
+            + "</div>"
+              );
+          }
+          
+          
         }
        
       })
       //setRoomCallState(true);
     }
     
-    
+    //======================================================================================================
     // 채팅창에서 파일다운로드 버튼 클릭시 
-    window.fileDown = async(e) => {
-      console.log('파일 다운로드 합시다')
-      console.log("받아오나요? >>>>>>>> ", msg.contents)
+    window.fileDown = async(contents) => {
+      
+      console.log('파일 다운로드 합시다 >>>>>', contents)
+
+  
+      // const res =  await axios.get(`/TT/talk/topic/getFileData${contents}`, 
+      //                       JSON.stringify(sendFileData),
+      //                        {headers:{"Content-Type":"application/json", 
+      //                        "charset":"UTF-8"}})
+      
+      //                          .then((res)=>{
+      //                            console.log('getFileData' ,res.data);
+      //                          })
+
+      const fd = {
+        url : contents
+      }
+
+      const res =  await axios.post(`/TT/talk/topic/getFileData/`, 
+                            JSON.stringify(fd),
+                            {headers: {
+                              'Content-Type' : 'application/json',
+                              'Accept' : 'application/json'
+                            }}
+                            )
+                            .then((res)=>{
+                              console.log('getFileData >>>> ' ,res.data);
+                            })
+                               
+
+      // const res = await axios.post(`/TT/talk/topic/recentNotice/${auth.chatNo}`,
+      //                               {headers: {
+      //                                 'Content-Type' : 'application/json',
+      //                                 'Accept' : 'application/json'
+      //                               }}
+
+      // let binary = base64.decode(json.data);
+      // let blob = new Blob([new String(binary)], {type: "text/plain;charset=utf-8"});
+      // saveAs(blob, file.name);                         
+
+      // const blob = new Blob([content], {type: 'text/plain'})
+      // const url = window.URL.createObjectURL(blob)
+      // const a = document.createElement("a")
+      // a.href = url
+      // a.download = `${this.$store.state.nickname}_${this.title}.md`
+      // a.click()
+      // a.remove()
+      // window.URL.revokeObjectURL(url);
 
       
+
+      axios({
+        url: `http://localhost:9988/TT${contents}`,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then((response) => {
+        console.log('이게 먼뒈? >>>> ',response.data )
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.txt');
+        document.body.appendChild(link);
+        link.click();
+      });
+
+
     }
 
     const showMessage = (msg) =>{
@@ -464,8 +550,6 @@ const ChatRoom = () => {
             + "</div>"
              );
 
-
-
           }else{
 
             return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + msg.name 
@@ -478,11 +562,28 @@ const ChatRoom = () => {
 
         case 'FILE':
           console.log("FILE UPLOAD 실행됨!!")
-          if(msg.userNo === auth.token){ // 다운로드 이미지하면서 수정할겁니다,,,
-            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
-          } else {
-            return $("#chat-room").append("<h3>" + msg.name + ": </h3>" + "</br>" + "<button > 다운로드 </button>" );
+        
+          if(msg.userNo === auth.token){ 
+            return $("#chat-room").append("<div id='mybubble'>" +
+            "<div id='bubble-name'>"
+            + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
+            // + `<button id='fileDownButton' onclick='(e) => {alert(e);fileDown(e,${msg})}'> 다운로드 </button>` 
+            + `<button id='fileDownButton' onclick='fileDown("` + msg.contents + `")'> 다운로드1 </button>`
+            + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+            + "</div>"
+             );
+         } else if(auth.token !== msg.userNo){
+            return $("#chat-room").append("<div id='yourbubble'>" +
+            "<div id='bubble-name'>"
+            + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
+            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
+            + `<button id='fileDownButton' onclick='fileDown("` + msg.contents + `")'> 다운로드2 </button>`
+            // + `<button id='fileDownButton' onclick='(e) => {alert(e);fileDown(e,${msg})}'> 다운로드 </button>` 
+            + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
+            + "</div>");
           }
+        
 
           case 'CONTACT':
             if(msg.userNo === auth.token){
@@ -665,9 +766,9 @@ const ChatRoom = () => {
         {rcNotice.map((rclist)=> {
           return(
             <div>
-            <h4>공지 제목 : {rclist.title} </h4>  
-            <h5>내용 : {rclist.contents} </h5> 
-            <h5>작성자 : {rclist.name} / 작성일 : {rclist.reg_date} </h5>
+            <h4>최근 등록 공지 </h4>  
+            <h5>제목 : {rclist.title} <br / > 내용 : {rclist.contents} </h5> 
+            {/* <h5>작성자 : {rclist.name} / 작성일 : {rclist.reg_date} </h5> */}
             </div>
           ); 
          
@@ -708,7 +809,7 @@ const ChatRoom = () => {
               aria-labelledby="parent-modal-title"
               aria-describedby="parent-modal-description"
             >
-              <ChatNotice />
+              <ChatNotice handleClose={handleClose} recentNotice={recentNotice}/>
             </Modal>
           </div>
           
@@ -727,17 +828,20 @@ const ChatRoom = () => {
           </Modal>
           </div>
 
-
+          {/* 이미지 업로드 */}
           <Button >
             <label for='input-file'><ImageIcon sx={{ width: 40, height: 40}}/></label>
             <input id='input-file' type='file' accept='images/*' onChange={uploadImage} ref={sendImgRef} style={{display:"none"}}/>
           </Button>
 
+          {/* 파일 업로드 */}
           <Button>
             <label for='input-file2'><UploadFileRoundedIcon sx={{ width: 40, height: 40}} /></label>
             {/* input태그의 accept : 서버로 업로드할 수 있는 파일의 타입을 명시 */}
             <input id='input-file2' type='file' accept='text/plain' onChange={uploadFile} ref={sendFileRef} style={{display:"none"}}/>
           </Button>
+
+          {/* 캘린더 */}
           <div>
             <Button onClick={openCalendar}>
               <CalendarIcon sx={{ width: 40, height: 40}} />
@@ -747,6 +851,7 @@ const ChatRoom = () => {
               <Calendar callback={callback} calClose={calClose}/>
             </Modal>
           </div>
+          
         </ButtonGroup>
         <TextField
           inputMode

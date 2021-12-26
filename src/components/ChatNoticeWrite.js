@@ -16,15 +16,27 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 
 
-export default function NoticeForm({notice}) {
+export default function ChatNoticeWrite({notice, close, writeClose, recent}) {
   // 접속해있는 userNo, 들어와있는 chatNo
   const auth = useAuthState();
 
+  const nclose = () => {
+    console.log('qqqqqqsdfsdfds>>>>>>>>>>>>')
+    close();
+    writeClose();
+  }
+
+  const recentnotice = () => {
+    console.log('하///')
+    recent();
+    
+  }
   
   // -------------------------------------------
 
   const navigate = useNavigate();
   const [state, setState] = useState('0'); // 공지 중요도 
+
 
   // 입력칸이 빈 칸일 때 에러 메세지 띄우기 -> formik에서 적용시켜준다.
   const RegisterSchema = Yup.object().shape({
@@ -62,6 +74,8 @@ export default function NoticeForm({notice}) {
                                           )
                         .then((response) => {
                           console.log("axios response >>> " + response)
+                          recentnotice();
+                          nclose();
                         if(response.statusText != "OK") {
                           throw `${response.status} ${response.statusText}`;
                         }
@@ -77,6 +91,8 @@ export default function NoticeForm({notice}) {
                         })
     }
 
+
+        
   });
 
   // navigate('/tikitaka/chat', { replace: true});
@@ -102,6 +118,9 @@ export default function NoticeForm({notice}) {
   const important = (e) => {
     setState(e.target.value);
   };
+
+  
+
 // ------------------------------------------------------------------
  
   return (
@@ -155,6 +174,7 @@ export default function NoticeForm({notice}) {
             type="submit"
             variant="contained"
             loading={isSubmitting}
+            close={close}
           >
             공지 등록
           </LoadingButton>

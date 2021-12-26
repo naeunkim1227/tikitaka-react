@@ -4,25 +4,11 @@ import React from 'react';
 import { Fragment } from 'react';
 
 import ChatNoticeListItem from './ChatNoticeListItem';
-import { Button } from '@mui/material';
-
-import Modal from '@mui/material/Modal';
-
-import ChatNoticeWrite from 'src/components/ChatNoticeWrite'
 
     
 
 export default function ChatNoticeList( {notice} ) {
 
-    // //--------------------------------------------------
-    // // modal open
-    // const [open, setOpen] = React.useState(false);
-    // const handleOpen = () => {
-    //   setOpen(true);
-    // };
-    // const handleClose = () => {
-    //   setOpen(false);
-    // };
 
     const style = {
         position: "absolute",
@@ -51,23 +37,6 @@ export default function ChatNoticeList( {notice} ) {
         name={notice.name}
         reg_date={notice.reg_date}
         />)}
-        
-
-        {/* <div>
-          <Button type="button" variant="contained" onClick={handleOpen}>
-            공지 작성
-          </Button>
-
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="parent-modal-title"
-            aria-describedby="parent-modal-description"
-          >
-            <ChatNoticeWrite notice={notice}/>
-          </Modal>
-        </div> */}
-
       </Fragment>
     )
 };
