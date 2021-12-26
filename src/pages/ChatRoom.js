@@ -214,6 +214,7 @@ const ChatRoom = () => {
     const chatinit = (dispatch) => {
       dispatch({type: 'NULL_CHATNO', payload: ""}); //방 나갔을때 chatno초기화
       sessionStorage.setItem('currentUser', ''); 
+      console.log("chatno값 초기화")
     }
 
     // 최근 공지 채팅방 상단에 띄우기
@@ -871,8 +872,10 @@ const ChatRoom = () => {
       <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
         Send
       </Button>
-      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {outChat(); 
-        chatinit(dispatch);}}>
+      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {
+        chatinit(dispatch);
+        outChat(); 
+        }}>
         나가기
       </Button>
 
