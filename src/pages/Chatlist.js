@@ -87,6 +87,7 @@ export default function Chatlist() {
     }
   },[chatContentMap, auth.chatNo]); 
 
+
   //socket으로 받아오는 마지막 메시지
   const upsetContent = (key, value) => {
     setChatContentMap((prev) => new Map(prev).set(key, value));

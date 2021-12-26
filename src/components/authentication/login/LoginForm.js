@@ -118,11 +118,11 @@ export default function LoginForm() {
           />
         </Stack>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
           <Link component={RouterLink} variant="subtitle2" to="/register">
             회원이 아니신가요?
           </Link>
-        </Stack>
+        </Stack> */}
         <LoadingButton
           fullWidth
           size="large"
