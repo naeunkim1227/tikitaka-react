@@ -80,7 +80,7 @@ export default function Chatlist() {
   },[])
 
   useEffect(() => { 
-    //opensocket(userno);
+    opensocket(userno);
     return() => {
       stompClient.disconnect();
       socket.close();
