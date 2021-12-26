@@ -860,8 +860,11 @@ const ChatRoom = () => {
           ref = {sendMsgRef}
         />
        
-        
-      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
+       
+      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={(e) => {
+        sendMessage(e);
+        exitTimeUpdate();
+        }}>
         Send
       </Button>
       <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {
