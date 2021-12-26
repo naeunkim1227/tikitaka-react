@@ -214,6 +214,7 @@ const ChatRoom = () => {
     const chatinit = (dispatch) => {
       dispatch({type: 'NULL_CHATNO', payload: ""}); //방 나갔을때 chatno초기화
       sessionStorage.setItem('currentUser', ''); 
+      console.log("chatno값 초기화")
     }
 
     // 최근 공지 채팅방 상단에 띄우기
@@ -420,8 +421,7 @@ const ChatRoom = () => {
             
             return $("#chat-room").append("<div id='mybubble'>" +
             "<div id='bubble-name'>"
-            + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div></br>" 
+            + list.name+ "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
             + `<button id='fileDownButton' onclick='fileDown("` + list.contents + `")'> 다운로드 </button>` 
             + "<div id='bubble-time'>" + time + "</div></div>"
             + "</div>"
@@ -429,8 +429,7 @@ const ChatRoom = () => {
           } else {
             return $("#chat-room").append("<div id='mybubble'>" +
             "<div id='bubble-name'>"
-            + list.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div></br>" 
+            + list.name+ "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div> <br> </br>" 
             + `<button id='fileDownButton' onclick='fileDown("` + list.contents + `")'> 다운로드 </button>` 
             + "<div id='bubble-time'>" + time + "</div></div>"
             + "</div>"
@@ -541,10 +540,9 @@ const ChatRoom = () => {
           }
 
         case 'IMAGE':
-          console.log("IMAGE 실행됨!!");
           if(msg.userNo === auth.token){
             return $("#chat-room").append("<div id='mybubble'>"+"<div id='bubble-name'>"  + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time + "</div></div>"
+            + "</div><div id='imgMessage'>" +  `<img id='myimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
              );
 
@@ -552,7 +550,7 @@ const ChatRoom = () => {
 
             return $("#chat-room").append("<div id='yourbubble'>"+"<div id='yourbubble-name'>"  + msg.name 
 
-              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.time+ "</div></div>"
+              + "</div><div id='imgMessage'>" +  `<img id='yourimg' src=http://localhost:8080/TT${msg.contents} width='250' height='250' ref={imgRef}/>` + "<div id='bubble-time'>" + msg.regTime+ "</div></div>"
               + "</div>"
                );
   
@@ -564,9 +562,7 @@ const ChatRoom = () => {
           if(msg.userNo === auth.token){ 
             return $("#chat-room").append("<div id='mybubble'>" +
             "<div id='bubble-name'>"
-            + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div></br>" 
-            // + `<button id='fileDownButton' onclick='(e) => {alert(e);fileDown(e,${msg})}'> 다운로드 </button>` 
+            + msg.name+ "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div>"  
             + `<button id='fileDownButton' onclick='fileDown("` + msg.contents + `")'> 다운로드 </button>`
             + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>"
@@ -574,10 +570,8 @@ const ChatRoom = () => {
          } else if(auth.token !== msg.userNo){
             return $("#chat-room").append("<div id='yourbubble'>" +
             "<div id='bubble-name'>"
-            + msg.name+ `<img id='bubble-image'  src=http://localhost:8080/TT${auth.profile} ref={imgRef}></img>`  
-            + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div></br>" 
+            + msg.name + "</div><div id='fileMessage'>" + "<div> 파일 다운로드 </div>" 
             + `<button id='fileDownButton' onclick='fileDown("` + msg.contents + `")'> 다운로드 </button>`
-            // + `<button id='fileDownButton' onclick='(e) => {alert(e);fileDown(e,${msg})}'> 다운로드 </button>` 
             + "<div id='bubble-time'>" + msg.regTime + "</div></div>"
             + "</div>");
           }
@@ -865,12 +859,17 @@ const ChatRoom = () => {
           ref = {sendMsgRef}
         />
        
-        
-      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={sendMessage}>
+       
+      <Button variant="contained" style={{position: 'absolute', right:110 ,bottom: 40}} size="large" endIcon={<SendIcon />} onClick={(e) => {
+        sendMessage(e);
+        exitTimeUpdate();
+        }}>
         Send
       </Button>
-      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {outChat(); 
-        chatinit(dispatch);}}>
+      <Button variant="outlined" style={{position: 'absolute', right:0, bottom: 40}}  size="medium" startIcon={<LogoutIcon />} onClick={() => {
+        chatinit(dispatch);
+        outChat(); 
+        }}>
         나가기
       </Button>
 
