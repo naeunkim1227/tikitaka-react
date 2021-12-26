@@ -85,7 +85,7 @@ export default function Chatlist() {
       stompClient.disconnect();
       socket.close();
     }
-  },[chatContentMap]); 
+  },[chatContentMap,auth.chatNo]); 
 
   //socket으로 받아오는 마지막 메시지
   const upsetContent = (key, value) => {
