@@ -83,6 +83,7 @@ const UpdateProfile = () => {
         const response = await axios.post('/TT/updateProfile', JSON.stringify(userFormData), {headers:{"Content-Type":"application/json"}})
                                     .then((res) => {
                                         console.log(res);
+                                        dispatch({type:'LOGIN_SUCCESS', payload:res.data});
                                         navigate('/tikitaka/profile', { replace: true });
                                     })
                                     .catch((err) => {
