@@ -173,15 +173,19 @@ export default function Chatlist() {
               for(var i=0; i<chatNolist.length; i++){
                 if(msg.chatNo == chatNolist[i]){ //해당 chatno if문으로 비교
 
-                  if(msg.type === 'TEXT'){
-                    upsetContent(parseInt(msg.chatNo), msg.contents);
-                  }
-                  else if(msg.type === 'IMAGE'){
+                  if(msg.type === 'IMAGE'){
                     const contents = `사진을 보냈습니다.`
                     upsetContent(parseInt(msg.chatNo), contents);
                   }
-                  console.log("11111111",msg.chatNo,"22222222222222222",auth.chatNo)
+                  else if(msg.type === 'FILE'){
+                    const contents = `파일을 보냈습니다.`
+                    upsetContent(parseInt(msg.chatNo), contents);
+                  }
+                  else{
+                    upsetContent(parseInt(msg.chatNo), msg.contents);
+                  }
                   
+                  ////////카운트
                   if(msg.chatNo != auth.chatNo){
 
                     if(msg.userNo != userno){
