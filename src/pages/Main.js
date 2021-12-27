@@ -33,7 +33,7 @@ export default function DashboardApp() {
 
   const auth = useAuthState();
   const time = moment(now()).format('HH:mm');
-  const [contents,setContents] = useState(`${time}`);
+  const [contents,setContents] = useState(`안녕하세요 ${auth.name}님 현재 시각은 ${time}입니다.`);
   const [alert ,setAlert] =useState(0);
   const socket = new SockJS('http://localhost:8080/TT/alertsocket');
   const stompClient = Stomp.over(socket);

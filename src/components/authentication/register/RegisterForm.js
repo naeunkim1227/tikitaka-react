@@ -232,9 +232,9 @@ export default function RegisterForm() {
             variant="contained"
             loading={isSubmitting}
           >
-            회원가입
+            가입하기
           </LoadingButton>
-          <LoadingButton
+          {/* <LoadingButton
             fullWidth
             size="large"
             type="submit"
@@ -242,7 +242,7 @@ export default function RegisterForm() {
             loading={isSubmitting}
           >
             로그인
-          </LoadingButton>
+          </LoadingButton> */}
         </Stack>
       </Form>
     </FormikProvider>
