@@ -1,6 +1,6 @@
 /* eslint-disable */
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
@@ -15,6 +15,7 @@ import { MHidden } from '../../components/@material-extend';
 import sidebarConfig from './SidebarConfig';
 import { useAuthState } from '../../Context';
 import UserlistTabbar from './UserlistTabbar';
+import Chatlist from 'src/pages/Chatlist';
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 350;
@@ -44,6 +45,11 @@ DashboardSidebar.propTypes = {
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
   const auth = useAuthState();
+  const [listUp,setListUp] = useState(false);
+
+  const myListState = ()=>{
+    setListUp(!listUp);  
+  }
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
@@ -69,7 +75,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
-            <Avatar src={auth.profile} alt="photoURL" />
+            <Avatar src={`http://localhost:8080/TT${auth.profile}`} alt="photoURL" />
             <Box sx={{ ml: 1 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
                 {auth.name}
@@ -83,10 +89,27 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box>
 
       {/* <User /> */}
-      <NavSection navConfig={sidebarConfig} />
-      <UserlistTabbar/>
+      {/* navConfig={sidebarConfig} */}
+
+      {
+        listUp === true ?
+        <Button type='button' size="large" variant='contained'  onClick={myListState} 
+        style={{width: '80%', margin: 'auto'}}>UserList</Button>
+        :
+        <Button type='button' size="large" variant='contained'  onClick={myListState} 
+        style={{width: '80%', margin: 'auto'}}>ChatList</Button>
+      }
+      {
+        listUp === true ?
+        <Chatlist /> 
+        :
+        <UserlistTabbar/>
+      }
+      
       <Box sx={{ flexGrow: 1 }} />
 
+      {/*<ChatList /> */}
+      
       {/* 쓸모없는거긴한데 필요한거 있으면 빼서 쓰기 */}
       {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
         <Stack
@@ -125,6 +148,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           </Button>
         </Stack>
       </Box> */}
+      
     </Scrollbar>
   );
 

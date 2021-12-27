@@ -31,16 +31,25 @@ export default function ChatNoticeListItem({key, important, title, contents, nam
               </Typography>
             
 
-            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            
             <IconButton
             aria-label="expand row"
             size="small"
             onClick={() => setOpen(!open)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {
+            open 
+            ? 
+            <div>
+            <KeyboardArrowUpIcon /> 
+              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                {contents}
+              </Typography>
+            </div>
+            :
+            <KeyboardArrowDownIcon />
+            } 
           </IconButton>
-              {contents}
-            </Typography>
           </Box>
           <Typography variant="caption" sx={{ pr: 3, flexShrink: 0, color: 'text.secondary' }}>
             작성자 : {name}
@@ -52,3 +61,7 @@ export default function ChatNoticeListItem({key, important, title, contents, nam
 
     );
 }
+
+{/* <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            {contents}
+          </Typography> */}

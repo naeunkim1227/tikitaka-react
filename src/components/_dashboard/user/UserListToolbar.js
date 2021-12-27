@@ -15,13 +15,19 @@ import {
   Typography,
   OutlinedInput,
   InputAdornment,
-  Button
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  TextField,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import AddCommentOutlinedIcon from '@mui/icons-material/AddCommentOutlined';
 
 
 // import USERLIST from '../_mocks_/user'; // 임시 데이터
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthState, useAuthDispatch, maketopic } from 'src/Context';
 
 import axios from 'axios'
@@ -63,12 +69,12 @@ UserListToolbar.propTypes = {
   onFilterName: PropTypes.func,
   talkNo: PropTypes.array
 };
-export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, allUncheck }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, talkNo, talkName,allUncheck }) {
   const navigate = useNavigate();
   const auth = useAuthState();
   const dispatch = useAuthDispatch();
   const chatstate = useChatStateContext();
-  const message = useChatContext();
+  const opuser = useChatContext();
   const [open, setOpen] = useState(false);
   //선택된 유저들의 이름관리
   const basicTalkName = talkName.toString();
@@ -76,7 +82,8 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
 
 
   const handleClickOpen = () => {
-    setuseTalkname(basicTalkName);
+    const title = basicTalkName.concat(",",auth.name);
+    setuseTalkname(title);
     setOpen(true);
   };
 
@@ -124,29 +131,35 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           console.log('chatno 존재  >>>> socket sub');
           // chatstate({type: 'GET_CHATROOM', chatdata: res.data})
           // sessionStorage.setItem('chatMessage', chatNo);
-          dispatch({type:'STORE_TOPIC',payload: chatNo})
-         sessionStorage.setItem('currentUser',chatNo)
+          const title = auth.title;
+          dispatch({type:'STORE_CHATNO',payload: {chatNo, title}})
+         sessionStorage.setItem('currentUser',chatNo);
+         sessionStorage.setItem('currentUser', title);
         }
         else{
           console.log('새로운 채팅방 생성 >>>> create topic');
           //taleNo.length가 1이면 개인톡방 생성
+          createTopic(talkNo[0], auth, type, title);
           
-          createTopic(chatstate ,talkNo[0], auth, type, title);
 
         }
       }).catch((err) => {
         console.log('enterchat axios err :' , err);
       });
-   //   }
+  }  
   
   navigate('/tikitaka/chat', { replace: true});
-}  
-
+  
+}
 
 
   const createTopic = async (no, auth , type, title) =>{
     console.log('CREATE TOPIC >> ')
      await maketopic(dispatch, no, auth, type, title);
+     if(type == "GROUP"){
+       navigate('/tikitaka/chat', { replace: true});
+     }
+     
     }
 
 
@@ -204,7 +217,7 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
           <Button
           variant="text"
           onClick={(e) =>{
-            const title ="1대1채팅은 상대방이름을 title로 설정 아직 미구현"
+            const title =  talkNo[0];
             enterchat(chatstate, dispatch,talkNo,auth, title) 
             allUncheck();
           }}>
@@ -247,7 +260,8 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
             {(e) => {
               handleClose();
               const type = "GROUP";
-              createTopic(chatstate, talkNo, auth, type, useTalkname);
+              //여기서 useTalkname은 채팅방의 title
+              createTopic(talkNo, auth, type, useTalkname);
               console.log("설정된 title::",useTalkname); 
               allUncheck();
             }}>
@@ -257,5 +271,4 @@ const enterchat = async(chatstate,dispatch,talkNo,auth, title) => {
       </Dialog>
     </RootStyle>
   );
-}
 }

@@ -42,41 +42,49 @@ import { render } from 'react-dom';
 
 
 
-const NOTIFICATIONS =     [
-  {
-      id: '',
-      title: '',
-      description: '',
-      avatar: null,
-      type: 'order_placed',
-      createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-      isUnRead: true
-    }
- 
-    
-  ]
 
-const NEWCHAT =  [
-  {
-      no: '',
-      title: '',
-      type: 'chat_message',
-      create_time: set(new Date(), { hours: 10, minutes: 30 }),
-      isUnRead: true
-    }
-    
-  ]
 
 export default function NotificationsPopover() {
 
-  const anchorRef = useRef(null);
-  const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
-  const [newchats,setNewchat] = useState(NEWCHAT);
-  const [datalength, setDatalength] = useState(0);
-  //const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
-  const Auth = useAuthState();
   
+ 
+
+  const NOTIFICATIONS =     [
+    {
+        id:  '',
+        title: '',
+        description: '',
+        avatar: null,
+        type: 'order_placed',
+        createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+        isUnRead: true
+      }
+   
+      
+    ]
+
+  
+  const NEWCHAT =  [
+    {
+        no: '여기서?',
+        create_time : set(new Date(), { hours: 10, minutes: 30 }),
+        title: '이거임?',
+        type: 'chat_message',
+        isUnRead: true
+      }
+      
+    ]
+
+
+    const anchorRef = useRef(null);
+    const [open, setOpen] = useState(false);
+    const [notifications, setNotifications] = useState(NOTIFICATIONS);
+    const [newchats,setNewchat] = useState(NEWCHAT);
+    const [datalength, setDatalength] = useState(0);
+    //const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
+    const Auth = useAuthState();
+    
+
   const data = {
     token : Auth.token
   }
@@ -94,15 +102,16 @@ export default function NotificationsPopover() {
                       throw `${res.status} ${res.statusText}`
                     }
 
-                    setNotifications(res.data.data.Nlist);
-                    setDatalength(res.data.data.Nlist.length + res.data.data.Clist.length);
+                    setDatalength(res.data.data.Nlist.length);
                     
-                    console.log('공지리스트 >>>>>>',res.data.data.Clist)
-                    setNewchat(res.data.data.Clist);
-
+                    console.log('공지리스트 >>>>>>',res.data.data.Nlist)
+                    console.log('채팅리스트 >>>>>>',res.data.data.Clist)
                     newchats.map((newchat) => (
-                      console.log(`새 채팅 리스트 >>>>>`, newchat.no)
+                      console.log(`새 채팅 리스트 >>>>>`, newchat)
                       ))
+                    setNotifications(res.data.data.Nlist);
+                    setNewchat(res.data.data.Clist);
+                    
 
                   }).catch((err) => {console.log(err)})
                 }
@@ -119,16 +128,28 @@ export default function NotificationsPopover() {
     setNotifications(
       notifications.map((notification) => ({
         ...notificaton,
-        isUnRead: false
+        id:  notification.id,
+        title: notification.title,
+        avatar: null,
+        type: 'order_placed',
+        createdAt: set(new Date(), { hours: 10, minutes: 30 }),
+        isUnRead: true
+
+
       }))
     );
 
     setNewchat(
       newchats.map((newchat) => ({
         ...newchat,
-        isUnRead: false
+        no: newchat.no,
+        create_time : moment(newchat.create_time).format('YY/MM/DD HH:mm'),
+        title: newchat.title,
+        type: 'chat_message',
+        isUnRead: true
       }))
     );
+  
   };
 
     return (
@@ -187,7 +208,7 @@ export default function NotificationsPopover() {
                 <NotificationItem key={notification.id} notification={notification} />
                 ))}
             </List>
-            <List
+            {/* <List
               disablePadding
               subheader={
                 <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
@@ -197,7 +218,7 @@ export default function NotificationsPopover() {
               {newchats.map((newchat) => (
                 <NewChat key={newchat.no} newchat={newchat}/>
                 ))}
-            </List>
+            </List> */}
           </Scrollbar>
 
         </MenuPopover>
@@ -207,7 +228,8 @@ export default function NotificationsPopover() {
   
   
 function renderContent(notification, newchat , type) {
-
+// const time = moment(newchat.create_time).format('YY/MM/DD   HH:mm');
+// const  = moment(newchat.create_time).format('YY/MM/DD   HH:mm');
 
 const title = (
   <div>
@@ -217,9 +239,7 @@ const title = (
     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
     {notification.c_title}
     </Typography>
-    <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-    {/* {newchat.no} */}
-    </Typography>
+  
   </div>
 );
 
@@ -227,10 +247,10 @@ const title = (
 const chattitle = (
   <div>
   <Typography variant="subtitle2">
-    왜!왜! 안나오는데!
+    {newchat} 님과의 채팅방이 생성되었습니다.
   </Typography>
     <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-    {/* {newchat.data}  */}
+    {/* {create_time}  */}
     </Typography>
   </div>
 );
@@ -307,7 +327,7 @@ return (
 
 function NewChat({ newchat }) {
   const { chattitle } = renderContent(newchat);
-  //const date = moment(newchat.createdAt).format('YY/MM/DD HH:mm');
+  const date = moment(newchat.create_time).format('YY/MM/DD HH:mm');
   return (
     <ListItemButton
       to="#"
@@ -338,7 +358,7 @@ function NewChat({ newchat }) {
             }}
           >
             <Box component={Icon} icon={clockFill} sx={{ mr: 0.5, width: 16, height: 16 }} />
-            {/* //{date} */}
+            {date}
           </Typography>
         }
       />

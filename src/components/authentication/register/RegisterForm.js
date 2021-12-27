@@ -53,11 +53,7 @@ export default function RegisterForm() {
                         if(response.statusText !== "OK") {
                           throw  `${response.status} ${response.statusText}`;
                         }
-                        if(!response.data){
-                          alert("중복된 이메일입니다");
-                          return;
-                        }
-                        navigate('/tikitaka/login', { replace: true });
+                        navigate('/login', { replace: true });
                       })
                       .catch((error) => {
                         console.log(error);
@@ -236,9 +232,9 @@ export default function RegisterForm() {
             variant="contained"
             loading={isSubmitting}
           >
-            회원가입
+            가입하기
           </LoadingButton>
-          <LoadingButton
+          {/* <LoadingButton
             fullWidth
             size="large"
             type="submit"
@@ -246,7 +242,7 @@ export default function RegisterForm() {
             loading={isSubmitting}
           >
             로그인
-          </LoadingButton>
+          </LoadingButton> */}
         </Stack>
       </Form>
     </FormikProvider>

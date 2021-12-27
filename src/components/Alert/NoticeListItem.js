@@ -18,14 +18,7 @@ import moment from 'moment';
 
 export default function NoticeListItem({key,title, contents, reg_date,chatTitle,writer}) {
 
-  const test = async(e) => {
-    console.log(`test호츌`);
-    console.log(key);
-
-
-  }
-
-    
+ 
     const date = moment(reg_date).format('YY/MM/DD HH:mm');
     return (
           <Stack direction="row" alignItems="center" spacing={2}>

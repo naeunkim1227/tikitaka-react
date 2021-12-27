@@ -19,15 +19,25 @@ import Scrollbar from '../Scrollbar';
 import NoticeList from './NoticeList';
 import { useAuthState } from '../../Context';
 
+//socket
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import axios from 'axios';
 
 export default function AppNoticeUpdate() {
 
 
 const [notice, setNotice] = useState([]);
-const Auth = useAuthState();
+const auth = useAuthState();
+const [chatNolist,SetchatNolist] = useState();
+
+
+const socket = new SockJS('http://localhost:8080/TT/alertsocket');
+const stompClient = Stomp.over(socket);
+
 
 const data = {
-  token : Auth.token
+  token : auth.token
 }
 
 useEffect(() => {

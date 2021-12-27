@@ -92,9 +92,11 @@ export const maketopic=async (dispatch, no, auth, type, title)=>{
               console.log("res값 없음")
               return;
             }
-            console.log('MAKE TOPIC >>>>>>', res.data)
-            dispatch({type:'STORE_TOPIC',payload: res.data})
-            sessionStorage.setItem('currentUser',res.data)
+            console.log('MAKE TOPIC >>>>>>')
+            const chatNo = res.data;
+            dispatch({type:'STORE_CHATNO',payload: {chatNo, title}})
+            sessionStorage.setItem('currentUser',res.data);
+            sessionStorage.setItem('currentUser', title);
             
         }).catch((err) => {
             console.log(err);
@@ -107,4 +109,12 @@ export const maketopic=async (dispatch, no, auth, type, title)=>{
 }
 
 
+//이미 생성된 방일경우, chatno과 title을 Context에 저장
+export const gettopic = async (dispatch,chatNo, title) => {
 
+    console.log('gettopic');
+    console.log(chatNo);
+    dispatch({type:'STORE_CHATNO',payload: {chatNo, title} })
+    sessionStorage.setItem('currentUser', title);
+    sessionStorage.setItem('currentUser', chatNo); 
+} 

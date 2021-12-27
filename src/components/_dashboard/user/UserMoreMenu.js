@@ -19,7 +19,7 @@ export default function UserMoreMenu() {
         <Icon icon={moreVerticalFill} width={20} height={20} />
       </IconButton>
 
-      <Menu
+      {/* <Menu
         open={isOpen}
         anchorEl={ref.current}
         onClose={() => setIsOpen(false)}
@@ -42,7 +42,7 @@ export default function UserMoreMenu() {
           </ListItemIcon>
           <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
-      </Menu>
+      </Menu> */}
     </>
   );
 }
